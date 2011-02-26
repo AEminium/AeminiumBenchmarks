@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AeminiumGPU" basedir="." default="main">  
+    <property name="src.dir"     value="src"/>  
+    <property name="build.dir"   value="bin"/>  
+	<property name="lib.dir"   value="lib"/>  
+	<property name="logs.dir"   value="logs"/>  
+    <property name="classes.dir" value="${build.dir}/classes"/>  
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+	<property name="verbose" value="false" />
+   
+    <property name="main-class"  value="aeminium.runtime.benchmarks.fjtests.BenchmarkDispatcher"/>  
+    <property name="lib.dir"     value="lib"/>
+   
+    <path id="classpath">  
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    	<pathelement location="../AeminiumRuntime/bin/" />
+    </path>
+	
+	<path id="classpath.test">  
+		<pathelement location="${classes.dir}" />
+		<path refid="classpath" />
+	</path>
+   
+    <target name="clean">  
+           <echo message="In clean "/>  
+        <delete dir="${build.dir}"/>  
+    </target>  
+   
+    <target name="compile">  
+        <mkdir dir="${classes.dir}"/>  
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
+    </target>  
+   
+    <target name="jar" depends="compile">  
+        <mkdir dir="${jar.dir}"/>  
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">  
+            <manifest>  
+                <attribute name="Main-Class" value="${main-class}"/>  
+            </manifest>  
+        </jar>  
+    </target>  
+   
+    <target name="run" depends="jar">  
+        <java fork="true" classname="${main-class}">
+        	<jvmarg value="-Xms512m" />
+        	<jvmarg value="-Xmx1536m" />
+            <classpath>  
+                <path refid="classpath"/>  
+                <path location="${jar.dir}/${ant.project.name}.jar"/>  
+            </classpath>  
+        </java>  
+    </target>
+	
+    <target name="clean-build" depends="clean,jar"/>  
+   
+    <target name="main" depends="clean,run"/>  
+   
+	<target name="test" depends="compile">
+	    <junit failureProperty="test.failure">
+	      <classpath refid="classpath.test" />
+
+	      <formatter type="brief" usefile="false" />
+	      <batchtest>
+	        <fileset dir="${classes.dir}" includes="aeminium/gpu/tests/*.class" excludes="**/*$*.class" />
+	      </batchtest>
+	    </junit>
+
+	    <fail message="test failed" if="test.failure" />
+	  </target>
+	<!--
+	<target name="pre-benchmark" depends="compile,getsvndetails">
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+		  <classpath>
+		    <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
+		  </classpath>
+		</taskdef>
+		
+		<tstamp/>
+		<property name="logdir" value="${logs.dir}/${DSTAMP}_${TSTAMP}__rev-${svn.rev}/" />
+		<mkdir dir="${logdir}"/>
+	</target>
+	
+	<target name="benchmark" depends="pre-benchmark">
+		<antcall target="single_benchmark"></antcall>
+	</target>
+	
+	<target name="benchmark30" depends="pre-benchmark">
+		<taskdef resource="ise/antelope/tasks/antlib.xml">
+		  <classpath>
+		    <pathelement location="${lib.dir}/ant-repeat.jar"/>
+		  </classpath>
+		</taskdef>
+		<repeat count="30">
+		<antcall target="single_benchmark"></antcall>
+		</repeat>
+	</target>
+	
+	
+	<target name="single_benchmark">
+		<for param="file">
+		  <path>
+		    <fileset dir="${src.dir}/aeminium/gpu/benchmark" excludes="Benchmark.java,BenchmarkExecutor.java"/>
+		  </path>
+		  <sequential>
+		    <propertyregex override="yes"
+		      property="name"  input="@{file}"
+		      regexp=".*/([^\.]*)\.java" replace="\1"/>
+		  	<echo>${name}</echo>
+		  	<for list="0,1,2" param="test">
+		  	  <sequential>
+		  	 	 <java fork="true" classname="aeminium.gpu.benchmark.${name}" output="${logdir}/${name}.log" append="true">
+		  	 	 	<arg value="@{test}" />
+    				<classpath>  
+    			    	<path refid="classpath"/>  
+    					<pathelement location="${classes.dir}" />  
+    				</classpath>
+    			</java>
+		  	  </sequential>
+		  	</for>
+		  </sequential>
+		</for>
+	</target>
+	
+	<target name="getsvndetails" description="Sets property 'revision.number' to the head svn revision">
+        <property name="revision" value="HEAD"/>
+        <exec executable="svn" outputproperty="svnlog.out">
+            <arg line="log ${homedir}/.. -r ${revision} -q"/>
+        </exec>
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+        <propertyregex property="svn.rev" input="${svnlog.out}" select="\1">
+            <regexp pattern="r([0-9]*)"/>
+        </propertyregex>
+    </target>
+	-->
+	
+</project>  
