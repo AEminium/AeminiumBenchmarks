@@ -47,11 +47,11 @@ public class AeminiumFibonacci {
 			} else {
 				FibBody b1 = new FibBody(value - 1, threshold);
 				Task t1 = rt.createNonBlockingTask(b1, Runtime.NO_HINTS);
-				rt.schedule(t1, current, Runtime.NO_DEPS);
+				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
 				FibBody b2 = new FibBody(value - 2, threshold);
 				Task t2 = rt.createNonBlockingTask(b2, Runtime.NO_HINTS);
-				rt.schedule(t2, current, Runtime.NO_DEPS);
+				rt.schedule(t2, Runtime.NO_PARENT, Runtime.NO_DEPS);
 				 
 				t1.getResult();
 				t2.getResult();
