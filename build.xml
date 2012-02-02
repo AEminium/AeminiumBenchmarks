@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="AeminiumGPU" basedir="." default="main">  
+<project name="AeminiumRuntimeBenchmarks" basedir="." default="main">  
     <property name="src.dir"     value="src"/>  
     <property name="build.dir"   value="bin"/>  
 	<property name="lib.dir"   value="lib"/>  
@@ -11,9 +11,16 @@
     <property name="main-class"  value="aeminium.runtime.benchmarks.fjtests.BenchmarkDispatcher"/>  
     <property name="lib.dir"     value="lib"/>
    
+	<path id="rt-classpath">
+	   <fileset dir="../AeminiumRuntime/lib">
+	      <include name="*.jar"/>
+	   </fileset>
+	</path>
+
     <path id="classpath">  
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     	<pathelement location="../AeminiumRuntime/bin/" />
+		<path refid="rt-classpath" />
     </path>
 	
 	<path id="classpath.test">  
@@ -44,9 +51,10 @@
         <java fork="true" classname="${main-class}">
         	<jvmarg value="-Xms512m" />
         	<jvmarg value="-Xmx1536m" />
+			
             <classpath>  
                 <path refid="classpath"/>  
-                <path location="${jar.dir}/${ant.project.name}.jar"/>  
+                <path location="${jar.dir}/${ant.project.name}.jar"/>
             </classpath>  
         </java>  
     </target>
@@ -67,70 +75,19 @@
 
 	    <fail message="test failed" if="test.failure" />
 	  </target>
-	<!--
-	<target name="pre-benchmark" depends="compile,getsvndetails">
-		<taskdef resource="net/sf/antcontrib/antlib.xml">
-		  <classpath>
-		    <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
-		  </classpath>
-		</taskdef>
-		
-		<tstamp/>
-		<property name="logdir" value="${logs.dir}/${DSTAMP}_${TSTAMP}__rev-${svn.rev}/" />
-		<mkdir dir="${logdir}"/>
-	</target>
 	
-	<target name="benchmark" depends="pre-benchmark">
-		<antcall target="single_benchmark"></antcall>
-	</target>
-	
-	<target name="benchmark30" depends="pre-benchmark">
-		<taskdef resource="ise/antelope/tasks/antlib.xml">
-		  <classpath>
-		    <pathelement location="${lib.dir}/ant-repeat.jar"/>
-		  </classpath>
-		</taskdef>
-		<repeat count="30">
-		<antcall target="single_benchmark"></antcall>
-		</repeat>
-	</target>
-	
-	
-	<target name="single_benchmark">
-		<for param="file">
-		  <path>
-		    <fileset dir="${src.dir}/aeminium/gpu/benchmark" excludes="Benchmark.java,BenchmarkExecutor.java"/>
-		  </path>
-		  <sequential>
-		    <propertyregex override="yes"
-		      property="name"  input="@{file}"
-		      regexp=".*/([^\.]*)\.java" replace="\1"/>
-		  	<echo>${name}</echo>
-		  	<for list="0,1,2" param="test">
-		  	  <sequential>
-		  	 	 <java fork="true" classname="aeminium.gpu.benchmark.${name}" output="${logdir}/${name}.log" append="true">
-		  	 	 	<arg value="@{test}" />
-    				<classpath>  
-    			    	<path refid="classpath"/>  
-    					<pathelement location="${classes.dir}" />  
-    				</classpath>
-    			</java>
-		  	  </sequential>
-		  	</for>
-		  </sequential>
-		</for>
-	</target>
-	
-	<target name="getsvndetails" description="Sets property 'revision.number' to the head svn revision">
-        <property name="revision" value="HEAD"/>
-        <exec executable="svn" outputproperty="svnlog.out">
-            <arg line="log ${homedir}/.. -r ${revision} -q"/>
-        </exec>
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-        <propertyregex property="svn.rev" input="${svnlog.out}" select="\1">
-            <regexp pattern="r([0-9]*)"/>
-        </propertyregex>
+	<target name="fib" depends="jar">  
+        <java fork="true" classname="aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumFibonacci">
+        	<jvmarg value="-Xms512m" />
+        	<jvmarg value="-Xmx1536m" />
+			<arg value="25" /><!-- fib -->
+			<arg value="16" /><!-- threshold -->
+
+            <classpath>  
+                <path refid="classpath"/>  
+                <path location="${jar.dir}/${ant.project.name}.jar"/>  
+            </classpath>  
+        </java>  
     </target>
-	-->
 	
 </project>  
