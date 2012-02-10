@@ -40,6 +40,9 @@ public class AeminiumMergeSort {
 		this.array = array;
 		this.tmp = new long[array.length];
 		this.threshold = threshold;
+		if (this.threshold < 4) {
+		    this.threshold = 4;
+		} 
 	}
 	
 	public void doSort(Runtime rt) {
