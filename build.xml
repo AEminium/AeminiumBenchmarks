@@ -1,93 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="AeminiumRuntimeBenchmarks" basedir="." default="main">  
-    <property name="src.dir"     value="src"/>  
-    <property name="build.dir"   value="bin"/>  
+	<property name="src.dir"	 value="src"/>	
+	<property name="build.dir"	 value="bin"/> 
+	<property name="dist.dir"	value="dist"/>	
 	<property name="lib.dir"   value="lib"/>  
-	<property name="logs.dir"   value="logs"/>  
-    <property name="classes.dir" value="${build.dir}/classes"/>  
-    <property name="jar.dir"     value="${build.dir}/jar"/>
 	<property name="verbose" value="false" />
+	<property name="main-class"	 value="aeminium.runtime.benchmarks.fjtests.BenchmarkDispatcher"/>	
    
-    <property name="main-class"  value="aeminium.runtime.benchmarks.fjtests.BenchmarkDispatcher"/>  
-    <property name="lib.dir"     value="lib"/>
-   
-	<path id="rt-classpath">
+	<path id="rt.classpath">
 	   <fileset dir="../AeminiumRuntime/lib">
-	      <include name="*.jar"/>
+		  <include name="*.jar"/>
 	   </fileset>
 	</path>
 
-    <path id="classpath">  
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
-    	<pathelement location="../AeminiumRuntime/bin/" />
-		<path refid="rt-classpath" />
-    </path>
+	<path id="classpath">  
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<pathelement location="../AeminiumRuntime/bin/" />
+		<path refid="rt.classpath" />
+	</path>
 	
-	<path id="classpath.test">  
-		<pathelement location="${classes.dir}" />
+	<path id="classpath.test">	
+		<pathelement location="${build.dir}" />
 		<path refid="classpath" />
 	</path>
    
-    <target name="clean">  
-           <echo message="In clean "/>  
-        <delete dir="${build.dir}"/>  
-    </target>  
+	<target name="clean">  
+		<echo message="In clean "/>	
+		<delete dir="${build.dir}"/> 
+		<delete dir="${dist.dir}"/>	 
+	</target> 
+
+	<target name="check-for-runtime">
+		<available file="../AeminiumRuntime/bin/aeminium/runtime/Runtime.class" property="runtime.present"/>
+	</target>
    
-    <target name="compile">  
-        <mkdir dir="${classes.dir}"/>  
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
-    </target>  
+	<target name="compile" depends="check-for-runtime" if="runtime.present">  
+		<mkdir dir="${classes.dir}"/>  
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
+	</target>  
    
-    <target name="jar" depends="compile">  
-        <mkdir dir="${jar.dir}"/>  
-        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">  
-            <manifest>  
-                <attribute name="Main-Class" value="${main-class}"/>  
-            </manifest>  
-        </jar>  
-    </target>  
+	<target name="jar" depends="compile">  
+		<mkdir dir="${jar.dir}"/>  
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">  
+			<manifest>	
+				<attribute name="Main-Class" value="${main-class}"/>  
+			</manifest>	 
+		</jar>	
+	</target>  
    
-    <target name="run" depends="jar">  
-        <java fork="true" classname="${main-class}">
-        	<jvmarg value="-Xms512m" />
-        	<jvmarg value="-Xmx1536m" />
+	<target name="run" depends="jar">  
+		<java fork="true" classname="${main-class}">
+			<jvmarg value="-Xms512m" />
+			<jvmarg value="-Xmx1536m" />
 			
-            <classpath>  
-                <path refid="classpath"/>  
-                <path location="${jar.dir}/${ant.project.name}.jar"/>
-            </classpath>  
-        </java>  
-    </target>
+			<classpath>	 
+				<path refid="classpath"/>  
+				<path location="${jar.dir}/${ant.project.name}.jar"/>
+			</classpath>  
+		</java>	 
+	</target>
 	
-    <target name="clean-build" depends="clean,jar"/>  
+	<target name="clean-build" depends="clean,jar"/>  
    
-    <target name="main" depends="clean,run"/>  
+	<target name="main" depends="clean,run"/>  
    
 	<target name="test" depends="compile">
-	    <junit failureProperty="test.failure">
-	      <classpath refid="classpath.test" />
+		<junit failureProperty="test.failure">
+		  <classpath refid="classpath.test" />
 
-	      <formatter type="brief" usefile="false" />
-	      <batchtest>
-	        <fileset dir="${classes.dir}" includes="aeminium/gpu/tests/*.class" excludes="**/*$*.class" />
-	      </batchtest>
-	    </junit>
+		  <formatter type="brief" usefile="false" />
+		  <batchtest>
+			<fileset dir="${classes.dir}" includes="aeminium/gpu/tests/*.class" excludes="**/*$*.class" />
+		  </batchtest>
+		</junit>
 
-	    <fail message="test failed" if="test.failure" />
+		<fail message="test failed" if="test.failure" />
 	  </target>
 	
-	<target name="fib" depends="jar">  
-        <java fork="true" classname="aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumFibonacci">
-        	<jvmarg value="-Xms512m" />
-        	<jvmarg value="-Xmx1536m" />
-			<arg value="25" /><!-- fib -->
-			<arg value="16" /><!-- threshold -->
-
-            <classpath>  
-                <path refid="classpath"/>  
-                <path location="${jar.dir}/${ant.project.name}.jar"/>  
-            </classpath>  
-        </java>  
-    </target>
+	<target name="benchmark" depends="jar">
+		<property name="class" value="aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumFibonacci" />
+		<property name="p" value="-l" />
+		<java fork="true" classname="aeminium.runtime.benchmarks.fjtests.${class}">
+			<jvmarg value="-Xms512m" />
+			<jvmarg value="-Xmx1536m" />
+			<arg value="${p}" />
+			<classpath>	 
+				<path refid="classpath"/>  
+				<path location="${jar.dir}/${ant.project.name}.jar"/>  
+			</classpath>
+		</java>
+	</target>
 	
-</project>  
+	<target name="all" depends="jar">
+		<java fork="true" classname="aeminium.runtime.benchmarks.fjtests.MakeSureEverythingRuns">
+			<jvmarg value="-Xms512m" />
+			<jvmarg value="-Xmx1536m" />
+			<classpath>	 
+				<path refid="classpath"/>  
+				<path location="${jar.dir}/${ant.project.name}.jar"/>  
+			</classpath>
+		</java>
+	</target>
+</project>	

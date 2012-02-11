@@ -9,17 +9,15 @@ public class MakeSureEverythingRuns {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		/*
-		executeSuite(FibonacciBenchmarkSuite.class);
-		executeSuite(FFTBenchmarkSuite.class);
-		executeSuite(IntegrateBenchmarkSuite.class);
 		executeSuite(BFSBenchmarkSuite.class);
-		executeSuite(LCSBenchmarkSuite.class);
-		executeSuite(MergeSortBenchmarkSuite.class);
-		executeSuite(LogCounterBenchmarkSuite.class);
-		*/
-		
+		executeSuite(FFTBenchmarkSuite.class);
+		executeSuite(FibonacciBenchmarkSuite.class);
 		executeSuite(IntegrateBenchmarkSuite.class);
+		executeSuite(IntegrateBenchmarkSuite.class);
+		executeSuite(LCSBenchmarkSuite.class);
+		executeSuite(LogCounterBenchmarkSuite.class);
+		executeSuite(MergeSortBenchmarkSuite.class);
+
 	}
 
 	public static void executeSuite(Class<?> c) {
