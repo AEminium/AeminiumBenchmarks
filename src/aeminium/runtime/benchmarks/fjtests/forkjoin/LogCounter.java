@@ -168,8 +168,6 @@ public class LogCounter {
 	
 	static class FJCounter implements Callable<Integer> {
 
-		private static final long serialVersionUID = 2879359934394010878L;
-
 		File f;
 
 		public FJCounter(File f) {
