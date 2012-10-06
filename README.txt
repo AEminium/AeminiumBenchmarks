@@ -38,7 +38,7 @@ $ ant run
 Will list all available benchmark suites. To execute a particular benchmark, 
 use:
 
-$ ant -Dclass=<BENCHMARKSUITE> -Dp=<CODE>
+$ ant benchmark -Dclass=<BENCHMARKSUITE> -Dp=<CODE>
 
 The <BENCHMARKSUITE> is one of the options provided by "ant run".  Code can be 
 one of the three values:
