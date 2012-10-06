@@ -55,7 +55,7 @@ public class BFS extends RecursiveAction {
 			t = 0;
 
 		for (int i = 0; i < graph.children.length; i++) {
-			t += seqCount(target, graph.children[0]);
+			t += seqCount(target, graph.children[i]);
 		}
 		return t;
 	}
