@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.aeminium;
+package aeminium.runtime.benchmarks.integrate;
 
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -59,7 +59,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 
-public class AeminiumIntegrate {
+public class AeIntegrate {
 
 	static final double errorTolerance = 1.0e-11;
 	static double threshold = 10;

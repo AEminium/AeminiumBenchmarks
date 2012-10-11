@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.aeminium;
+package aeminium.runtime.benchmarks.lcs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ import aeminium.runtime.*;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.implementations.Factory;
 
-public class AeminiumLCS {
+public class AeLCS {
 
 	private int blockSize;
 	private int M;
@@ -39,7 +39,7 @@ public class AeminiumLCS {
 	private int[][] taskIndex;
 	public String solution;
 	
-	public AeminiumLCS(int blockS) {
+	public AeLCS(int blockS) {
 		this.blockSize = blockS;
 	}
 	
@@ -145,7 +145,7 @@ public class AeminiumLCS {
 		String s1 = "The quick fox jumps over the lazy dog.";
 		String s2 = "Jacob is a very lazy dog.";
 		
-		AeminiumLCS gen = new AeminiumLCS(5);
+		AeLCS gen = new AeLCS(5);
 		
 		Runtime rt = Factory.getRuntime();
 		rt.init();

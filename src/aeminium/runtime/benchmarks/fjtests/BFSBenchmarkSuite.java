@@ -26,9 +26,9 @@ import jsr166y.ForkJoinPool;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumBFS;
-import aeminium.runtime.benchmarks.fjtests.aeminium.Graph;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.BFS;
+import aeminium.runtime.benchmarks.bfs.AeBFS;
+import aeminium.runtime.benchmarks.bfs.FjBFS;
+import aeminium.runtime.benchmarks.bfs.Graph;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
@@ -57,7 +57,7 @@ public class BFSBenchmarkSuite implements BenchmarkSuite {
 			@Override
 			public long run() {
 				long start = System.nanoTime();
-				BFS.seqCount(TARGET, input);
+				FjBFS.seqCount(TARGET, input);
 				long end = System.nanoTime();
 				
 				return end-start;
@@ -75,7 +75,7 @@ public class BFSBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				BFS finder = new BFS(TARGET, input, THRESHOLD);
+				FjBFS finder = new FjBFS(TARGET, input, THRESHOLD);
 				long start = System.nanoTime();
 				pool.invoke(finder);
 				long end = System.nanoTime();
@@ -96,7 +96,7 @@ public class BFSBenchmarkSuite implements BenchmarkSuite {
 			@Override
 			public long run() {
 				rt.init();
-				Body searchBody = AeminiumBFS.createSearchBody(rt, TARGET, input, THRESHOLD);
+				Body searchBody = AeBFS.createSearchBody(rt, TARGET, input, THRESHOLD);
 				
 				long start = System.nanoTime();
 				Task t1 = rt.createNonBlockingTask(searchBody, Runtime.NO_HINTS);

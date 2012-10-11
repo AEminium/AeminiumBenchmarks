@@ -17,14 +17,12 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.forkjoin;
+package aeminium.runtime.benchmarks.fft;
 
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumFFT;
-import aeminium.runtime.benchmarks.fjtests.aeminium.Complex;
 import jsr166y.*;
 
 
-public class FFT extends RecursiveAction { 
+public class FjFFT extends RecursiveAction { 
 	/**
 	 * 
 	 */
@@ -35,7 +33,7 @@ public class FFT extends RecursiveAction {
 	private int threshold;
 	private int n;
 	
-	public FFT(Complex[] input, int thre) {
+	public FjFFT(Complex[] input, int thre) {
 		result = input;
 		n = input.length;
 		threshold = thre;
@@ -48,7 +46,7 @@ public class FFT extends RecursiveAction {
 	protected void compute() {
 		if (n == 1) return;
 		if (n <= threshold) {
-			result = AeminiumFFT.sequentialFFT(result);
+			result = AeFFT.sequentialFFT(result);
 			return;
 		}
 		
@@ -57,8 +55,8 @@ public class FFT extends RecursiveAction {
 			odd[k] = result[2*k+1];
 		}
 		
-		FFT f1 = new FFT(even, threshold);	
-		FFT f2 = new FFT(odd, threshold);
+		FjFFT f1 = new FjFFT(even, threshold);	
+		FjFFT f2 = new FjFFT(odd, threshold);
 		invokeAll(f1,f2);
 		
 		for (int k = 0; k < n/2; k++) {
@@ -71,12 +69,12 @@ public class FFT extends RecursiveAction {
 	}
 	
 	public static void main(String[] args) {
-		Complex[] input = AeminiumFFT.createRandomComplexArray(524288);
+		Complex[] input = AeFFT.createRandomComplexArray(524288);
 		
 		ForkJoinPool pool = new ForkJoinPool();
-		FFT t = new FFT(input, 1024);
+		FjFFT t = new FjFFT(input, 1024);
 		pool.invoke(t);
-		AeminiumFFT.show(t.result, "Result");
+		AeFFT.show(t.result, "Result");
 	}
 	
 }

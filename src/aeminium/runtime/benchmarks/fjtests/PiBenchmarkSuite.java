@@ -5,8 +5,8 @@ import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumPI;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumPI.MainBody;
+import aeminium.runtime.benchmarks.pi.AeminiumPI;
+import aeminium.runtime.benchmarks.pi.AeminiumPI.MainBody;
 import aeminium.runtime.implementations.Factory;
 
 public class PiBenchmarkSuite implements BenchmarkSuite {

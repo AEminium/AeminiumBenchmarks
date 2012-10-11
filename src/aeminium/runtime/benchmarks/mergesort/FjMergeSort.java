@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.forkjoin;
+package aeminium.runtime.benchmarks.mergesort;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -25,7 +25,7 @@ import java.util.Random;
 import jsr166y.*;
 
 @SuppressWarnings("serial")
-public class MergeSort extends RecursiveAction {
+public class FjMergeSort extends RecursiveAction {
 
 	final long[] array;
 	final long[] tmp;
@@ -33,15 +33,15 @@ public class MergeSort extends RecursiveAction {
 	final int hi;
 	final int threshold;
 
-	public MergeSort(long[] array) {
+	public FjMergeSort(long[] array) {
 		this(array, new long[array.length],0, array.length, array.length/(Runtime.getRuntime().availableProcessors())+1);
 	}
 	
-	public MergeSort(long[] array, int threshold) {
+	public FjMergeSort(long[] array, int threshold) {
 		this(array, new long[array.length],0, array.length, threshold);
 	}
 	
-	public MergeSort(long[] array, long[] tmp, int lo, int hi, int thre) {
+	public FjMergeSort(long[] array, long[] tmp, int lo, int hi, int thre) {
 		this.array = array;
 		this.tmp = tmp;
 		this.lo = lo;
@@ -55,8 +55,8 @@ public class MergeSort extends RecursiveAction {
 			quickSort(array, lo, hi);
 		else {
 			int mid = (lo + hi) >>> 1;
-			RecursiveAction m1 = new MergeSort(array, tmp, lo, mid, threshold);
-			RecursiveAction m2 = new MergeSort(array, tmp, mid+1, hi, threshold);
+			RecursiveAction m1 = new FjMergeSort(array, tmp, lo, mid, threshold);
+			RecursiveAction m2 = new FjMergeSort(array, tmp, mid+1, hi, threshold);
 
 			invokeAll(m1, m2);
 			merge(array, lo, mid, hi);
@@ -109,7 +109,7 @@ public class MergeSort extends RecursiveAction {
 	public static void main(String[] args) {
 		ForkJoinPool pool = new ForkJoinPool();
 		long[] original = generateRandomArray(100000);
-		MergeSort t = new MergeSort(original);
+		FjMergeSort t = new FjMergeSort(original);
 		pool.invoke(t);
 		System.out.println("Sorted: " + checkArray(t.array));
 		System.out.println("Array:" + Arrays.toString(t.array));

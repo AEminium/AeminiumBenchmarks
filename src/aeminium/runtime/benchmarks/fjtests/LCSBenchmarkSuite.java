@@ -24,8 +24,8 @@ import java.util.Random;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumLCS;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.LCS;
+import aeminium.runtime.benchmarks.lcs.AeLCS;
+import aeminium.runtime.benchmarks.lcs.FjLCS;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.implementations.Factory;
 
@@ -51,7 +51,7 @@ public class LCSBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				LCS gen = new LCS(BLOCKSIZE);
+				FjLCS gen = new FjLCS(BLOCKSIZE);
 				long start = System.nanoTime();
 				gen.seqCompute(s1, s2);
 				long end = System.nanoTime();
@@ -70,7 +70,7 @@ public class LCSBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				LCS gen = new LCS(BLOCKSIZE);
+				FjLCS gen = new FjLCS(BLOCKSIZE);
 				long start = System.nanoTime();
 				gen.parCompute(s1, s2);
 				long end = System.nanoTime();
@@ -92,7 +92,7 @@ public class LCSBenchmarkSuite implements BenchmarkSuite {
 			public long run() {
 
 				rt.init();
-				AeminiumLCS gen = new AeminiumLCS(BLOCKSIZE);
+				AeLCS gen = new AeLCS(BLOCKSIZE);
 				
 				long start = System.nanoTime();
 				gen.compute(rt, s1, s2);

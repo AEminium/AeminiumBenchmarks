@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.aeminium;
+package aeminium.runtime.benchmarks.mergesort;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -27,16 +27,16 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 
-public class AeminiumMergeSort {
+public class AeMergeSort {
 	final long[] array;
 	final long[] tmp;
 	int threshold;
 	
-	public AeminiumMergeSort(long[] array) {
+	public AeMergeSort(long[] array) {
 		this(array, array.length/(java.lang.Runtime.getRuntime().availableProcessors() + 1));
 	}
 	
-	public AeminiumMergeSort(long[] array, int threshold) {
+	public AeMergeSort(long[] array, int threshold) {
 		this.array = array;
 		this.tmp = new long[array.length];
 		this.threshold = threshold;
@@ -110,7 +110,7 @@ public class AeminiumMergeSort {
 	public static void main(String ...args) {
 		
 		long[] original = generateRandomArray(10);
-		AeminiumMergeSort merger = new AeminiumMergeSort(original);
+		AeMergeSort merger = new AeMergeSort(original);
 		
 		Runtime rt = Factory.getRuntime();
 		rt.init();

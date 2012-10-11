@@ -17,14 +17,14 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.aeminium;
+package aeminium.runtime.benchmarks.fibonacci;
 
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 
-public class AeminiumFibonacci {
+public class AeFibonacci {
 
 	public static class FibBody implements Body {
 		public volatile int value;
@@ -61,7 +61,7 @@ public class AeminiumFibonacci {
 	}
 
 	public static Body createFibBody(final Runtime rt, final int n, int threshold) {
-		return new  AeminiumFibonacci.FibBody(n, threshold);
+		return new  AeFibonacci.FibBody(n, threshold);
 	}
 
 	public static void main(String[] args) {
@@ -76,7 +76,7 @@ public class AeminiumFibonacci {
 	    
 		Runtime rt = Factory.getRuntime();
 		rt.init();
-		FibBody body = new AeminiumFibonacci.FibBody(fib, threshold);
+		FibBody body = new AeFibonacci.FibBody(fib, threshold);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();

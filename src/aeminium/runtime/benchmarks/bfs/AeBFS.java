@@ -17,17 +17,16 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.aeminium;
+package aeminium.runtime.benchmarks.bfs;
 
 import java.util.Random;
 
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.BFS;
 import aeminium.runtime.implementations.Factory;
 
-public class AeminiumBFS {
+public class AeBFS {
 
 	public static class SearchBody implements Body {
 		public volatile int value;
@@ -42,8 +41,8 @@ public class AeminiumBFS {
 		
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (BFS.probe(graph, threshold)) {
-				value = BFS.seqCount(value, graph);
+			if (FjBFS.probe(graph, threshold)) {
+				value = FjBFS.seqCount(value, graph);
 			} else {
 				int found;
 				if (value == graph.value) found = 1; else found = 0;
@@ -66,7 +65,7 @@ public class AeminiumBFS {
 	}
 
 	public static SearchBody createSearchBody(final Runtime rt, final int target, Graph graph, int threshold) {
-		return new AeminiumBFS.SearchBody(target, graph, threshold);
+		return new AeBFS.SearchBody(target, graph, threshold);
 	}
 
 	public static void main(String[] args) {

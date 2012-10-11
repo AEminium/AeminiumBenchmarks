@@ -23,9 +23,9 @@ import jsr166y.ForkJoinPool;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumFFT;
-import aeminium.runtime.benchmarks.fjtests.aeminium.Complex;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.FFT;
+import aeminium.runtime.benchmarks.fft.AeFFT;
+import aeminium.runtime.benchmarks.fft.Complex;
+import aeminium.runtime.benchmarks.fft.FjFFT;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
@@ -38,7 +38,7 @@ public class FFTBenchmarkSuite implements BenchmarkSuite {
 	protected int PARAMETER = 1048576;
 	protected int THRESHOLD = 32768;
 	
-	protected Complex[] input = AeminiumFFT.createRandomComplexArray(PARAMETER, 1234567890);
+	protected Complex[] input = AeFFT.createRandomComplexArray(PARAMETER, 1234567890);
 	
 	public FFTBenchmarkSuite() {
 		tests = new Benchmark[3];
@@ -52,7 +52,7 @@ public class FFTBenchmarkSuite implements BenchmarkSuite {
 			@Override
 			public long run() {
 				long start = System.nanoTime();
-				AeminiumFFT.sequentialFFT(input);
+				AeFFT.sequentialFFT(input);
 				long end = System.nanoTime();
 				
 				return end-start;
@@ -70,7 +70,7 @@ public class FFTBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				FFT fft = new FFT(input, THRESHOLD);
+				FjFFT fft = new FjFFT(input, THRESHOLD);
 				long start = System.nanoTime();
 				pool.invoke(fft);
 				long end = System.nanoTime();
@@ -91,7 +91,7 @@ public class FFTBenchmarkSuite implements BenchmarkSuite {
 			@Override
 			public long run() {
 				rt.init();
-				Body fftBody = AeminiumFFT.createFFTBody(rt, input, THRESHOLD);
+				Body fftBody = AeFFT.createFFTBody(rt, input, THRESHOLD);
 				
 				long start = System.nanoTime();
 				Task t1 = rt.createNonBlockingTask(fftBody, Runtime.NO_HINTS);

@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.forkjoin;
+package aeminium.runtime.benchmarks.lcs;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -25,11 +25,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
-public class LCS {
+public class FjLCS {
 	
 	private int blockN;
 	
-	public LCS(int blockSize) {
+	public FjLCS(int blockSize) {
 		this.blockN = blockSize;
 	}
 	
@@ -132,7 +132,7 @@ public class LCS {
 	}
 	
 	public static void main(String[] args) {
-		LCS longest = new LCS(5);
+		FjLCS longest = new FjLCS(5);
 		String s1 = "The quick fox jumps over the lazy dog.";
 		String s2 = "Jacob is a very lazy dog.";
 		

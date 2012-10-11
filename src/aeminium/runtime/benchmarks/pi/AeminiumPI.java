@@ -1,4 +1,4 @@
-package aeminium.runtime.benchmarks.fjtests.aeminium;
+package aeminium.runtime.benchmarks.pi;
 
 import java.util.ArrayList;
 import java.util.List;

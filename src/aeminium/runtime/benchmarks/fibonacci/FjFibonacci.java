@@ -17,18 +17,18 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.forkjoin;
+package aeminium.runtime.benchmarks.fibonacci;
 
 import jsr166y.*;
 
 @SuppressWarnings("serial")
 public
 
-class Fibonacci extends RecursiveAction { 
+class FjFibonacci extends RecursiveAction { 
 	public volatile int number;
 	private int threshold = 13;
 	
-	public Fibonacci(int n, int thre) { 
+	public FjFibonacci(int n, int thre) { 
 		number = n;
 		threshold = thre;
 	}
@@ -45,8 +45,8 @@ class Fibonacci extends RecursiveAction {
 		else if (n <= threshold) 
 			number = seqFib(n);
 		else {
-			Fibonacci f1 = new Fibonacci(n - 1, threshold);	
-			Fibonacci f2 = new Fibonacci(n - 2, threshold);
+			FjFibonacci f1 = new FjFibonacci(n - 1, threshold);	
+			FjFibonacci f2 = new FjFibonacci(n - 2, threshold);
 			invokeAll(f1,f2);
 			number = f1.number + f2.number; // compose
 		}
@@ -54,7 +54,7 @@ class Fibonacci extends RecursiveAction {
 	
 	public static void main(String[] args) {
 		ForkJoinPool pool = new ForkJoinPool();
-		Fibonacci t = new Fibonacci(14, 2);
+		FjFibonacci t = new FjFibonacci(14, 2);
 		pool.invoke(t);
 		System.out.println("Final result = " + t.number);
 	}

@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.forkjoin;
+package aeminium.runtime.benchmarks.logcounter;
 
 import java.io.BufferedReader;
 import java.io.File;

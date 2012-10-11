@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.forkjoin;
+package aeminium.runtime.benchmarks.integrate;
 import jsr166y.*;
 
 /*
@@ -68,7 +68,7 @@ import jsr166y.*;
  * <A href="http://www.cs.uga.edu/~dkl/filaments/dist.html">
  * Filaments</A> demo program.
  */
-public final class Integrate {
+public final class FjIntegrate {
 
     static final double errorTolerance = 1.0e-11;
     /** for time conversion */

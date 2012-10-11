@@ -23,8 +23,8 @@ import jsr166y.ForkJoinPool;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumMergeSort;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.MergeSort;
+import aeminium.runtime.benchmarks.mergesort.AeMergeSort;
+import aeminium.runtime.benchmarks.mergesort.FjMergeSort;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.implementations.Factory;
 
@@ -46,8 +46,8 @@ public class MergeSortBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				long[] arrayToSort = MergeSort.generateRandomArray(sizeOfTests);
-				MergeSort task = new MergeSort(arrayToSort, threshold);
+				long[] arrayToSort = FjMergeSort.generateRandomArray(sizeOfTests);
+				FjMergeSort task = new FjMergeSort(arrayToSort, threshold);
 				
 				long start = System.nanoTime();
 				task.sequentialSort();
@@ -67,9 +67,9 @@ public class MergeSortBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				long[] arrayToSort = MergeSort.generateRandomArray(sizeOfTests);
+				long[] arrayToSort = FjMergeSort.generateRandomArray(sizeOfTests);
 				
-				MergeSort task = new MergeSort(arrayToSort, threshold);
+				FjMergeSort task = new FjMergeSort(arrayToSort, threshold);
 				
 				long start = System.nanoTime();
 				pool.invoke(task);
@@ -90,9 +90,9 @@ public class MergeSortBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				long[] arrayToSort = MergeSort.generateRandomArray(sizeOfTests);
+				long[] arrayToSort = FjMergeSort.generateRandomArray(sizeOfTests);
 				
-				AeminiumMergeSort merger = new AeminiumMergeSort(arrayToSort, threshold);
+				AeMergeSort merger = new AeMergeSort(arrayToSort, threshold);
 				rt.init();
 				long start = System.nanoTime();
 				merger.doSort(rt);

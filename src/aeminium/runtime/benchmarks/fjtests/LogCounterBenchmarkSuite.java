@@ -30,7 +30,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.LogCounter;
+import aeminium.runtime.benchmarks.logcounter.LogCounter;
 import aeminium.runtime.implementations.Factory;
 
 public class LogCounterBenchmarkSuite implements BenchmarkSuite {

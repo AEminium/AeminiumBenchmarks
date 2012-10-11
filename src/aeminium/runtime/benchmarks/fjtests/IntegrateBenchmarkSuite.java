@@ -23,9 +23,9 @@ import jsr166y.ForkJoinPool;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumIntegrate;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.Integrate.FQuad;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.Integrate.SQuad;
+import aeminium.runtime.benchmarks.integrate.AeIntegrate;
+import aeminium.runtime.benchmarks.integrate.FjIntegrate.FQuad;
+import aeminium.runtime.benchmarks.integrate.FjIntegrate.SQuad;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
@@ -91,7 +91,7 @@ public class IntegrateBenchmarkSuite implements BenchmarkSuite {
 
 				rt.init();
 				long start = System.nanoTime();
-				Task t1 = AeminiumIntegrate.recursiveCall(rt, Runtime.NO_PARENT, START, END, 0);
+				Task t1 = AeIntegrate.recursiveCall(rt, Runtime.NO_PARENT, START, END, 0);
 				rt.shutdown();
 				long end = System.nanoTime();
 				assert(t1.getResult() != null);

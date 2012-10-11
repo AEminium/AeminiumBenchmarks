@@ -23,8 +23,8 @@ import jsr166y.ForkJoinPool;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumFibonacci;
-import aeminium.runtime.benchmarks.fjtests.forkjoin.Fibonacci;
+import aeminium.runtime.benchmarks.fibonacci.AeFibonacci;
+import aeminium.runtime.benchmarks.fibonacci.FjFibonacci;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
@@ -71,7 +71,7 @@ public class FibonacciBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				Fibonacci fib = new Fibonacci(PARAMETER, THRESHOLD);
+				FjFibonacci fib = new FjFibonacci(PARAMETER, THRESHOLD);
 				long start = System.nanoTime();
 				pool.invoke(fib);
 				long end = System.nanoTime();
@@ -93,7 +93,7 @@ public class FibonacciBenchmarkSuite implements BenchmarkSuite {
 			public long run() {
 
 				rt.init();
-				Body fibBody = AeminiumFibonacci.createFibBody(rt, PARAMETER, THRESHOLD);
+				Body fibBody = AeFibonacci.createFibBody(rt, PARAMETER, THRESHOLD);
 				
 				long start = System.nanoTime();
 				Task t1 = rt.createNonBlockingTask(fibBody, Runtime.NO_HINTS);

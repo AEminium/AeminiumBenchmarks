@@ -17,7 +17,7 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.aeminium;
+package aeminium.runtime.benchmarks.fft;
 
 /*
  * Parallel Version of the Cooley-Tukey FFT for series of size N, being N a power of two.
@@ -30,7 +30,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 
-public class AeminiumFFT {
+public class AeFFT {
 
 	public static class FFTBody implements Body {
 		/* It reuses the result array for both input and result */

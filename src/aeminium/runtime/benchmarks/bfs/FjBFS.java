@@ -17,19 +17,18 @@
  *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package aeminium.runtime.benchmarks.fjtests.forkjoin;
+package aeminium.runtime.benchmarks.bfs;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-import aeminium.runtime.benchmarks.fjtests.aeminium.Graph;
 
 
 import jsr166y.RecursiveAction;
 
-public class BFS extends RecursiveAction {
+public class FjBFS extends RecursiveAction {
 
 	private static final long serialVersionUID = 1L;
 	private int found;
@@ -37,7 +36,7 @@ public class BFS extends RecursiveAction {
 	private Graph graph;
 	private int threshold;
 
-	public BFS(int target, Graph graph, int threshold) {
+	public FjBFS(int target, Graph graph, int threshold) {
 		this.target = target;
 		this.graph = graph;
 		this.threshold = threshold;
@@ -72,14 +71,14 @@ public class BFS extends RecursiveAction {
 			found = seqCount();
 		} else {
 			if (target == graph.value) found = 1; else found = 0;
-			Collection<BFS> futures = new ArrayList<BFS>();
-			BFS tmp;
+			Collection<FjBFS> futures = new ArrayList<FjBFS>();
+			FjBFS tmp;
 			for (int i=0;i<graph.children.length;i++) {
-				tmp = new BFS(target, graph.children[i], threshold);
+				tmp = new FjBFS(target, graph.children[i], threshold);
 				invokeAll(tmp);
 				futures.add(tmp);
 			}
-			for (BFS finder : futures) {
+			for (FjBFS finder : futures) {
 				try {
 					finder.get();
 					found += finder.found;
@@ -110,7 +109,7 @@ public class BFS extends RecursiveAction {
 		Random r = new Random(1234567890);
 		Graph g = Graph.randomIntGraph(23, 2, r);
 		System.out.println("Created Graph");
-		BFS searcher = new BFS(target, g, 21);
+		FjBFS searcher = new FjBFS(target, g, 21);
 		long start = System.nanoTime();
 		int f = searcher.seqCount();
 		long end = System.nanoTime();
