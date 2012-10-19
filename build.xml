@@ -36,7 +36,7 @@
    
 	<target name="compile" depends="check-for-runtime" if="runtime.present">  
 		<mkdir dir="${build.dir}"/>  
-		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath"/>
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" debug="true"/>
 	</target>  
    
 	<target name="jar" depends="compile">  

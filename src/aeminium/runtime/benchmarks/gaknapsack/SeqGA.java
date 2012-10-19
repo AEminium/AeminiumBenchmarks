@@ -3,6 +3,9 @@ package aeminium.runtime.benchmarks.gaknapsack;
 import java.util.Arrays;
 
 public class SeqGA {
+	
+	public static boolean debug = true;
+	
 	public static void main(String[] args) {
 		Indiv[] pop = new Indiv[Knapsack.popSize];
 		Indiv[] next = new Indiv[Knapsack.popSize];
@@ -19,7 +22,9 @@ public class SeqGA {
 				Knapsack.evaluate(pop[i]);
 			}
 			Arrays.sort(pop);
-			System.out.println("Best fit at " + g + ": " + pop[0].fitness);
+			if (debug) {
+				System.out.println("Best fit at " + g + ": " + pop[0].fitness);
+			}
 			
 			// Elitism
 			for (int i=0; i < Knapsack.elitism; i++ ) {
@@ -28,7 +33,7 @@ public class SeqGA {
 			
 			// Recombine
 			for (int i=0; i < Knapsack.popSize - Knapsack.elitism; i++ ) {
-				Indiv other = (i < 10) ? pop[i+1] : pop[i-10];
+				Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
 				next[i] = Knapsack.recombine(pop[i], other);
 			}
 			

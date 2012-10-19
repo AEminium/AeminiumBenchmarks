@@ -22,7 +22,9 @@ public class BenchmarkDispatcher {
 				IntegrateBenchmarkSuite.class,
 				LCSBenchmarkSuite.class,
 				LogCounterBenchmarkSuite.class,
-				MergeSortBenchmarkSuite.class
+				MergeSortBenchmarkSuite.class,
+				PiBenchmarkSuite.class,
+				GABenchmarkSuite.class
 		};
 		
 		for (Class<?> klass : suites) {

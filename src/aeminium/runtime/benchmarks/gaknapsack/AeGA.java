@@ -11,9 +11,10 @@ import aeminium.runtime.implementations.Factory;
 
 public class AeGA {
 	
-	static Runtime rt = Factory.getRuntime();
+	public static Runtime rt = Factory.getRuntime();
 	static Indiv[] pop = new Indiv[Knapsack.popSize];
 	static Indiv[] next = new Indiv[Knapsack.popSize];
+	public static boolean debug = true;
 	
 	
 	public static void main(String[] args) {
@@ -64,7 +65,6 @@ public class AeGA {
 			muts.add(mutateIndivs(i, current, recs));
 		}
 		makeSwitch(current, muts);
-		
 	}
 
 	private static void makeSwitch(Task current,
@@ -79,21 +79,16 @@ public class AeGA {
 	}
 	
 	private static void performSwitch() {
-		Indiv[] tmp = pop;
 		pop = next;
-		next = tmp;
+		next = new Indiv[Knapsack.popSize];
 	}
 
 	private static Task mutateIndivs(final int i, Task current,
-			List<Task> prev) {
+			final List<Task> prev) {
 		Task ev = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
-				try {
-					Knapsack.mutate(next[i]);
-				} catch(Exception e) {
-					System.out.println("Here: " + next[i]);
-				}
+				Knapsack.mutate(next[i]);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(ev, current, prev);
@@ -105,8 +100,9 @@ public class AeGA {
 		Task ev = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
-				Indiv other = (i < 10) ? pop[i+1] : pop[i-10];
+				Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
 				next[i] = Knapsack.recombine(pop[i], other);
+				current.setResult(new Integer(i));
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(ev, current, prev);
@@ -118,9 +114,9 @@ public class AeGA {
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
 				Arrays.sort(pop);
-				System.out.println("Best fit at " + g + ": " + pop[0].fitness);
-				
-				// Elitism
+				if (debug) {
+					System.out.println("Best fit at " + g + ": " + pop[0].fitness);
+				}
 				for (int i=0; i < Knapsack.elitism; i++ ) {
 					next[Knapsack.popSize - i - 1] = pop[i];
 				}
@@ -153,7 +149,5 @@ public class AeGA {
 		rt.schedule(init, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		return init;
 	}
-	
-	
 	
 }

@@ -28,6 +28,12 @@ from 1000 Apache webserver gziped logs.
 MergeSort: Sorts an array of 1000000 random longs using parallel mergesort.
 (Threshold 10000)
 
+Pi: Estimates the Pi value using a monte-carlo simulation with 100000000
+darts and 48 of threshold.
+
+GA: Solves the Knapsack problem with 500 items using a Genetic Algorithm,
+with population size of 100, 100 generations, a probability of mutation 
+and recombination of 20% and elitism of the 10 best individuals.
 
 
 Running Benchmark Suite
