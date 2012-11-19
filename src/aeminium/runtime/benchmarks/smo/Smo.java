@@ -57,7 +57,7 @@ class object2intTask implements Body {
 }
 
 public class Smo {
-	public static String[] args; //= { "-f", "/home/cristiano/Documents/EclipseProjects/Aeminium/tictac", "-d", "27" };
+	public static String[] args;
 
 	public int N = 0; /* N points(rows) */
 	public int d = -1; /* d variables */
