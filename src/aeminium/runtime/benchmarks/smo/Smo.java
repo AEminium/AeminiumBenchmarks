@@ -10,13 +10,11 @@ import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+//AEMINIUM RUNTIME IMPORTS
 import aeminium.runtime.Body;
-import aeminium.runtime.DataGroup;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
-
-//AEMINIUM RUNTIME IMPORTS
 
 class sparse_binary_vector {
 	Vector<Integer> id = new Vector<Integer>();
@@ -33,57 +31,33 @@ class testClass implements Body {
 	public Smo my;
 
 	testClass(int examineAll, int numChanged, Smo my) {
-		this.examineAll = examineAll;
-		this.numChanged = numChanged;
-		this.my = my;
+
 	}
 
 	@Override
 	public void execute(Runtime rt, Task current) {
-		if (examineAll > 0) {
-			for (int k = 0; k < my.N; k++) {
-				numChanged += my.examineExample(k);
-			}
-		} else {
-			for (int k = 0; k < my.N; k++) {
-				if (my.object2float(my.alph.elementAt(k)) != 0 && my.object2float(my.alph.elementAt(k)) != my.C)
-					numChanged += my.examineExample(k);
-			}
-		}
 
-		if (examineAll == 1)
-			examineAll = 0;
-		else if (numChanged == 0)
-			examineAll = 1;
-		{
-			int non_bound_support = 0;
-			int bound_support = 0;
-			for (int i = 0; i < my.N; i++)
-				if (my.object2float(my.alph.elementAt(i)) > 0) {
-					if (my.object2float(my.alph.elementAt(i)) < my.C) {
-						non_bound_support++;
-					} else
-						bound_support++;
-				}
-			System.out.println("non_bound= " + non_bound_support + "\t" + "bound_support= " + bound_support);
-		}
 	}
 }
 
-class testClass2 implements Body {
+class object2intTask implements Body {
+	public int i1;
+	public Object o;
+	public int result;
 
-	testClass2(int examineAll, int numChanged, Smo my) {
-
+	object2intTask(int i1,Object o) {
+		this.i1=i1;
+		this.o=o;
 	}
 
 	@Override
 	public void execute(Runtime rt, Task current) {
-
+		result = (Integer) o;
 	}
 }
 
 public class Smo {
-	public static String[] args;// = { "-f", "/home/cristiano/Documents/EclipseProjects/Aeminium/tictac", "-d", "27" };
+	public static String[] args; //= { "-f", "/home/cristiano/Documents/EclipseProjects/Aeminium/tictac", "-d", "27" };
 
 	public int N = 0; /* N points(rows) */
 	public int d = -1; /* d variables */
@@ -159,6 +133,11 @@ public class Smo {
 	public static Runtime rt;
 
 	public static long initialTime, finalTime;
+
+	//CONFIGURATIONS
+	public static int numberOfTasksZeroBlockFor = 4;
+	public static int numberOfTasksNotLinearKernelFor = 5;	// my.N=270
+
 
 	public Smo() {
 
@@ -284,12 +263,29 @@ public class Smo {
 		if (i1 == i2)
 			return 0;
 
+
+
 		alph1 = object2float(alph.elementAt(i1));
 		y1 = object2int(target.elementAt(i1));
+
+		/*object2intTask objToInt=new object2intTask(i1, target.elementAt(i1));
+		Task init1=rt.createNonBlockingTask(objToInt,  Runtime.NO_HINTS);
+		rt.schedule(init1, Runtime.NO_PARENT, Runtime.NO_DEPS);
+		y1=objToInt.result;
+		System.out.println("y1="+y1);
+
+		System.out.println("Y1="+y1);*/
+
+
+
 		if (alph1 > 0 && alph1 < C)
 			E1 = object2float(error_cache.elementAt(i1));
 		else
 			E1 = learned_func(i1, learned_func_flag) - y1;
+
+
+
+
 
 		alph2 = object2float(alph.elementAt(i2));
 		y2 = object2int(target.elementAt(i2));
@@ -297,6 +293,7 @@ public class Smo {
 			E2 = object2float(error_cache.elementAt(i2));
 		else
 			E2 = learned_func(i2, learned_func_flag) - y2;
+
 
 		s = y1 * y2;
 
@@ -326,10 +323,15 @@ public class Smo {
 		}
 
 		// paralelizar aqui
+
+
 		k11 = kernel_func(i1, i1, kernel_flag);
 		k12 = kernel_func(i1, i2, kernel_flag);
 		k22 = kernel_func(i2, i2, kernel_flag);
 		eta = 2 * k12 - k11 - k22;
+
+
+
 
 		if (eta < 0) {
 			a2 = alph2 + y2 * (E2 - E1) / eta;
@@ -354,8 +356,16 @@ public class Smo {
 				a2 = alph2;
 		}
 
+
+
+
+
 		if (Math.abs(a2 - alph2) < eps * (a2 + alph2 + eps))
 			return 0;
+
+
+
+
 
 		a1 = alph1 - s * (a2 - alph2);
 		if (a1 < 0) {
@@ -459,6 +469,8 @@ public class Smo {
 		alph.set(i1, new Float(a1));
 		alph.set(i2, new Float(a2));
 
+
+
 		return 1;
 	}
 
@@ -560,8 +572,6 @@ public class Smo {
 	}
 
 	float dot_product_dense(int i1, int i2) {
-
-		// tentar fazer paralelizacao
 		float dot = 0;
 		for (int i = 0; i < d; i++) {
 			dot += dense_points[i1][i] * dense_points[i2][i];
@@ -893,6 +903,7 @@ public class Smo {
 	}
 
 	public static void main(String[] arg) {
+		args=arg;
 		initialTime = System.currentTimeMillis();
 
 		rt = Factory.getRuntime();
@@ -926,44 +937,9 @@ public class Smo {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				int numberOfTasks = 4;
-				int step = MATRIX / numberOfTasks;
+				int step = MATRIX / numberOfTasksZeroBlockFor;
 				for (int i = 0; i < MATRIX; i = i + step) {
 					forSMO(current, Runtime.NO_DEPS, i, (i + step));
-				}
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
-
-	private static Task wait1(Task current, Collection<Task> prev) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-				try {
-					System.out.println("wait1)");
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
-
-	private static Task wait2(Task current, Collection<Task> prev) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-				try {
-					System.out.println("wait2)");
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		}, Runtime.NO_HINTS);
@@ -1246,10 +1222,8 @@ public class Smo {
 				if (!my.is_linear_kernel) {
 					my.resize(my.precomputed_self_dot_product, my.N, 2);
 
-					// my.N=270
-
-					int numberOfTasks = 9;
-					int step = my.N / numberOfTasks;
+					System.out.println("N:"+my.N);
+					int step = my.N / numberOfTasksNotLinearKernelFor;
 					for (int i = 0; i < my.N; i = (i + step)) {
 						notLinearKernelFor(current, Runtime.NO_DEPS, i, (i + step));
 					}
@@ -1266,12 +1240,13 @@ public class Smo {
 			@Override
 			public void execute(Runtime rt, Task current) {
 				long it = System.currentTimeMillis();
-
+				//System.out.println(paramI+" "+paramP);
 				for (int i = paramI; i < paramP; i++) {
 					for (int j = 0; j < my.N; j++) {
 						if (i != j) {
 							my.precomputed_dot_product[i][j] = my.dot_product_func(i, j, my.dot_product_flag);
 						} else {
+
 							float temp = my.dot_product_func(i, i, my.dot_product_flag);
 							my.precomputed_self_dot_product.set(i, new Float(temp));
 							my.precomputed_dot_product[i][i] = temp;
@@ -1279,7 +1254,7 @@ public class Smo {
 					}
 				}
 				long ft = System.currentTimeMillis();
-				System.out.println("each for = " + (ft - it) * 1.0 / 1000);
+				//System.out.println("each for = " + (ft - it) * 1.0 / 1000);
 
 			}
 		}, Runtime.NO_HINTS);
@@ -1314,7 +1289,6 @@ public class Smo {
 
 			@Override
 			public void execute(Runtime rt, Task current) {
-				// long it = System.currentTimeMillis();
 
 				Collection<Task> prev1 = new ArrayList<Task>();
 				Task init1 = ifIsNotTestOnly(current, Runtime.NO_DEPS);
@@ -1324,9 +1298,6 @@ public class Smo {
 				Task init2 = errorRate(current, prev1);
 				prev2.add(init2);
 
-				// long ft = System.currentTimeMillis();
-				// System.out.println("Time cost isTestOnly = " + (ft - it) *
-				// 1.0 / 1000);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
@@ -1362,19 +1333,8 @@ public class Smo {
 				numChanged = 0;
 				examineAll = 1;
 
-				DataGroup dg = rt.createDataGroup();
-
 				while (numChanged > 0 || examineAll > 0) {
 					numChanged = 0;
-
-					/*
-					 * Collection<Task> prev1 = new ArrayList<Task>(); testClass
-					 * tc = new testClass(examineAll, numChanged, my); Task
-					 * init1 = firstFor(tc, current, Runtime.NO_DEPS, dg);
-					 * prev1.add(init1);
-					 * 
-					 * if (tc.numChanged <= 0 || tc.examineAll <= 0) { break; }
-					 */
 
 					if (examineAll > 0) {
 						for (int k = 0; k < my.N; k++) {
@@ -1410,19 +1370,6 @@ public class Smo {
 		return task;
 	}
 	
-	private static Task fer(Task current, Collection<Task> prev) {
-		Task task = rt.createNonBlockingTask(new Body() {
-
-			@Override
-			public void execute(Runtime rt, Task current) {
-
-				
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
-
 	private static Task printFileThreshold(Task current, Collection<Task> prev) {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
