@@ -135,8 +135,8 @@ public class Smo {
 	public static long initialTime, finalTime;
 
 	//CONFIGURATIONS
-	public static int numberOfTasksZeroBlockFor = 4;
-	public static int numberOfTasksNotLinearKernelFor = 5;	// my.N=270
+	public static int numberOfTasksZeroBlockFor;
+	public static int numberOfTasksNotLinearKernelFor;// my.N=270
 
 
 	public Smo() {
@@ -905,6 +905,9 @@ public class Smo {
 	public static void main(String[] arg) {
 		args=arg;
 		initialTime = System.currentTimeMillis();
+		
+		numberOfTasksZeroBlockFor=Integer.parseInt(args[4]);
+		numberOfTasksNotLinearKernelFor=Integer.parseInt(args[5]);
 
 		rt = Factory.getRuntime();
 		rt.init();
