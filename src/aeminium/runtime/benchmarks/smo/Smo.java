@@ -136,7 +136,7 @@ public class Smo {
 
 	//CONFIGURATIONS
 	public static int numberOfTasksZeroBlockFor;
-	public static int numberOfTasksNotLinearKernelFor;// my.N=270
+	public static int numberOfTasksNotLinearKernelFor;
 
 
 	public Smo() {
@@ -940,6 +940,7 @@ public class Smo {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
+				System.out.println("MATRIX:"+MATRIX);
 				int step = MATRIX / numberOfTasksZeroBlockFor;
 				for (int i = 0; i < MATRIX; i = i + step) {
 					forSMO(current, Runtime.NO_DEPS, i, (i + step));
@@ -954,6 +955,7 @@ public class Smo {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
+				System.out.println("for SMO:"+paramI+" : "+paramP);
 				for (int i = paramI; i < paramP; i++)
 					for (int j = 0; j < MATRIX; j++)
 						dense_points[i][j] = 0;
@@ -1098,6 +1100,7 @@ public class Smo {
 			@Override
 			public void execute(Runtime rt, Task current) {
 				{
+					System.out.println("printOutputFilename");
 					try {
 						PrintStream svm_file = new PrintStream(new FileOutputStream(output_file_name));
 						for (int i = my.first_test_i; i < my.N; i++) {
@@ -1106,6 +1109,7 @@ public class Smo {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					System.out.println("exit printOutputFilename");
 				}
 			}
 		}, Runtime.NO_HINTS);
@@ -1242,8 +1246,7 @@ public class Smo {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				long it = System.currentTimeMillis();
-				//System.out.println(paramI+" "+paramP);
+				System.out.println("notLinearKernelFor:"+paramI+" : "+paramP);
 				for (int i = paramI; i < paramP; i++) {
 					for (int j = 0; j < my.N; j++) {
 						if (i != j) {
@@ -1256,8 +1259,6 @@ public class Smo {
 						}
 					}
 				}
-				long ft = System.currentTimeMillis();
-				//System.out.println("each for = " + (ft - it) * 1.0 / 1000);
 
 			}
 		}, Runtime.NO_HINTS);
@@ -1265,34 +1266,13 @@ public class Smo {
 		return task;
 	}
 
-	private static Task fvfvf(Task current, Collection<Task> prev, final int i, final int j) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
-
-	private static Task frgregr(Task current, Collection<Task> prev, final int i) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
 
 	private static Task isNotTestOnly(Task current, Collection<Task> prev) {
 		Task task = rt.createNonBlockingTask(new Body() {
 
 			@Override
 			public void execute(Runtime rt, Task current) {
-
+				System.out.println("isNotTestOnly");
 				Collection<Task> prev1 = new ArrayList<Task>();
 				Task init1 = ifIsNotTestOnly(current, Runtime.NO_DEPS);
 				prev1.add(init1);
@@ -1300,7 +1280,7 @@ public class Smo {
 				Collection<Task> prev2 = new ArrayList<Task>();
 				Task init2 = errorRate(current, prev1);
 				prev2.add(init2);
-
+				System.out.println("exit isNotTestOnly");
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
