@@ -95,13 +95,19 @@ public class HistogramEQAeminium {
 			public void execute(Runtime rt, Task current) throws IOException {
 
 				histogramEQ = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
-
 				Collection<Task> prev = new ArrayList<Task>();
 				int step = original.getWidth() / numberOfHistogramEqualizationTaskFor;
-				System.out.println("Step:" + step);
-				for (int i = 0; i < original.getWidth(); i = i + step) {
-					Task init1 = histogramEqualizationTaskFor(current, Runtime.NO_DEPS, i, (i + step));
-					prev.add(init1);
+				int position=0;
+				for (int i = 0; i < numberOfHistogramEqualizationTaskFor; i++) {
+					if(i==numberOfHistogramEqualizationTaskFor-1){
+						Task init1 = histogramEqualizationTaskFor(current, Runtime.NO_DEPS, position, original.getWidth());
+						prev.add(init1);
+					}else{
+						Task init1 = histogramEqualizationTaskFor(current, Runtime.NO_DEPS, position, position+=step);
+						prev.add(init1);
+					}
+
+
 				}
 
 				writeImageTask(current, prev);
