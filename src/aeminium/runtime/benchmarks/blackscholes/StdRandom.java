@@ -1,4 +1,6 @@
 package aeminium.runtime.benchmarks.blackscholes;
+
+import external.MersenneTwisterFast;
 /*************************************************************************
  *  Compilation:  javac StdRandom.java
  *  Execution:    java StdRandom
@@ -45,7 +47,7 @@ package aeminium.runtime.benchmarks.blackscholes;
  *
  *************************************************************************/
 
-import java.util.Random;
+
 
 /**
  *  <i>Standard random</i>. This class provides methods for generating
@@ -56,14 +58,14 @@ import java.util.Random;
  */
 public final class StdRandom {
 
-    private static Random random;    // pseudo-random number generator
+    private static MersenneTwisterFast random;    // pseudo-random number generator
     private static long seed;        // pseudo-random number generator seed
 
     // static initializer
     static {
         // this is how the seed was set in Java 1.4
         seed = System.currentTimeMillis();
-        random = new Random(seed);
+        random = new MersenneTwisterFast(seed);
     }
 
     // don't instantiate
@@ -74,7 +76,7 @@ public final class StdRandom {
      */
     public static void setSeed(long s) {
         seed   = s;
-        random = new Random(seed);
+        random = new MersenneTwisterFast(seed);
     }
 
     /**
