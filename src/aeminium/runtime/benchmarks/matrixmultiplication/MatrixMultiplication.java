@@ -7,10 +7,10 @@ class MatrixMultiplication {
 
 		int m, n, p, q, sum = 0, c, d, k;
 
-		m = 2000;
-		n = 2000;
-		p = 2000;
-		q = 2000;
+		m = 4800;
+		n = 4800;
+		p = 4800;
+		q = 4800;
 
 		int first[][] = new int[m][n];
 

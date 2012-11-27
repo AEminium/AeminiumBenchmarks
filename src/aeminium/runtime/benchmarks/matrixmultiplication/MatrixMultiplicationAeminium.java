@@ -19,11 +19,11 @@ public class MatrixMultiplicationAeminium {
 	public static int second[][];
 	public static int multiply[][];
 	// first matrix
-	public static int m = 2000;
-	public static int n = 2000;
+	public static int m = 4800;
+	public static int n = 4800;
 	// second matrix
-	public static int p = 2000;
-	public static int q = 2000;
+	public static int p = 4800;
+	public static int q = 4800;
 
 	public static void main(String args[]) {
 
