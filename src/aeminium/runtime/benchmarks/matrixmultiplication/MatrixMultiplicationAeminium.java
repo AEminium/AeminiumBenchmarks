@@ -19,11 +19,11 @@ public class MatrixMultiplicationAeminium {
 	public static int second[][];
 	public static int multiply[][];
 	// first matrix
-	public static int m = 4800;
-	public static int n = 4800;
+	public static int m = 480;
+	public static int n = 480;
 	// second matrix
-	public static int p = 4800;
-	public static int q = 4800;
+	public static int p = 480;
+	public static int q = 480;
 
 	public static void main(String args[]) {
 
@@ -104,11 +104,9 @@ public class MatrixMultiplicationAeminium {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				System.out.println("createFirstMatrix " + paramI + " " + paramP);
 				for (int c = paramI; c < paramP; c++)
 					for (int d = 0; d < n; d++)
 						first[c][d] = d * c;
-				System.out.println("final createFirstMatrix");
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
@@ -119,11 +117,9 @@ public class MatrixMultiplicationAeminium {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				System.out.println("createSecondMatrix " + paramI + " " + paramP);
 				for (int c = paramI; c < paramP; c++)
 					for (int d = 0; d < q; d++)
 						second[c][d] = d * c;
-				System.out.println("final createSecondMatrix");
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
@@ -134,7 +130,6 @@ public class MatrixMultiplicationAeminium {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				System.out.println("multiply");
 				int sum = 0;
 				for (int c = paramI; c < paramP; c++) {
 					for (int d = 0; d < q; d++) {
@@ -145,7 +140,6 @@ public class MatrixMultiplicationAeminium {
 						sum = 0;
 					}
 				}
-				System.out.println("final multiply");
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
