@@ -121,7 +121,6 @@ public class BlackScholesAeminium {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				System.out.println("NCalc2 " + NCalc2);
 				Collection<Task> prev = new ArrayList<Task>();
 
 				int step = NCalc2 / numberOfTasks;
@@ -149,7 +148,6 @@ public class BlackScholesAeminium {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				System.out.println(paramI + " : " + paramP);
 				sumCalc2Array[taskNumber] = 0.0;
 				for (int i = paramI; i < paramP; i++) {
 					double price = S;
