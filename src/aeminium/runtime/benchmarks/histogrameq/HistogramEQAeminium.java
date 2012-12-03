@@ -43,7 +43,6 @@ public class HistogramEQAeminium {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				System.out.println(paramI + " a " + paramP);
 				int red;
 				int green;
 				int blue;
