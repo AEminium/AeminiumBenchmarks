@@ -29,20 +29,22 @@ public class AeFibonacci {
 	public static class FibBody implements Body {
 		public volatile long value;
 		private int threshold;
-		
+
 		public FibBody(long n, int threshold) {
 			this.value = n;
 			this.threshold = threshold;
 		}
-		
+
 		public long seqFib(long n) {
-			if (n <= 2) return 1;
-			else return (seqFib(n - 1) + seqFib(n - 2));
+			if (n <= 2)
+				return 1;
+			else
+				return (seqFib(n - 1) + seqFib(n - 2));
 		}
-		
+
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if ( value <= threshold  ) {
+			if (value <= threshold) {
 				value = seqFib(value);
 			} else {
 				FibBody b1 = new FibBody(value - 1, threshold);
@@ -52,39 +54,39 @@ public class AeFibonacci {
 				FibBody b2 = new FibBody(value - 2, threshold);
 				Task t2 = rt.createNonBlockingTask(b2, Runtime.NO_HINTS);
 				rt.schedule(t2, Runtime.NO_PARENT, Runtime.NO_DEPS);
-				 
+
 				t1.getResult();
 				t2.getResult();
 				value = b1.value + b2.value;
-			} 
+			}
 		}
 	}
 
 	public static Body createFibBody(final Runtime rt, final int n, int threshold) {
-		return new  AeFibonacci.FibBody(n, threshold);
+		return new AeFibonacci.FibBody(n, threshold);
 	}
 
 	public static void main(String[] args) {
 		long initialTime = System.currentTimeMillis();
-		
-	    int fib = 23;
-	    int threshold = 16;
-	    if (args.length > 1) {
-	        fib = Integer.parseInt(args[0]);
-	    }
-	    if (args.length > 2) {
-	        threshold = Integer.parseInt(args[1]);
-	    }
-	    
+
+		int fib = 23;
+		int threshold = 16;
+		if (args.length > 1) {
+			fib = Integer.parseInt(args[0]);
+		}
+		if (args.length > 2) {
+			threshold = Integer.parseInt(args[1]);
+		}
+
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		FibBody body = new AeFibonacci.FibBody(fib, threshold);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
-		
+
 		System.out.println("F(" + fib + ") = " + body.value);
-		
+
 		long finalTime = System.currentTimeMillis();
 		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
 	}
