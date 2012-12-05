@@ -27,15 +27,15 @@ import aeminium.runtime.implementations.Factory;
 public class AeFibonacci {
 
 	public static class FibBody implements Body {
-		public volatile int value;
+		public volatile long value;
 		private int threshold;
 		
-		public FibBody(int n, int threshold) {
+		public FibBody(long n, int threshold) {
 			this.value = n;
 			this.threshold = threshold;
 		}
 		
-		public int seqFib(int n) {
+		public long seqFib(long n) {
 			if (n <= 2) return 1;
 			else return (seqFib(n - 1) + seqFib(n - 2));
 		}
@@ -65,6 +65,8 @@ public class AeFibonacci {
 	}
 
 	public static void main(String[] args) {
+		long initialTime = System.currentTimeMillis();
+		
 	    int fib = 23;
 	    int threshold = 16;
 	    if (args.length > 1) {
@@ -82,5 +84,8 @@ public class AeFibonacci {
 		rt.shutdown();
 		
 		System.out.println("F(" + fib + ") = " + body.value);
+		
+		long finalTime = System.currentTimeMillis();
+		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
 	}
 }
