@@ -53,9 +53,14 @@ class FjFibonacci extends RecursiveAction {
 	}
 	
 	public static void main(String[] args) {
+		long initialTime = System.currentTimeMillis();
+		
 		ForkJoinPool pool = new ForkJoinPool();
-		FjFibonacci t = new FjFibonacci(14, 2);
+		FjFibonacci t = new FjFibonacci(38, 2);
 		pool.invoke(t);
 		System.out.println("Final result = " + t.number);
+		
+		long finalTime = System.currentTimeMillis();
+		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
 	}
 }
