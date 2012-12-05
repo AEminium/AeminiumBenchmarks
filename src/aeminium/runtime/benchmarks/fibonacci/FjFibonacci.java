@@ -56,7 +56,7 @@ class FjFibonacci extends RecursiveAction {
 		long initialTime = System.currentTimeMillis();
 		
 		ForkJoinPool pool = new ForkJoinPool();
-		FjFibonacci t = new FjFibonacci(40, 2);
+		FjFibonacci t = new FjFibonacci(50, 2);
 		pool.invoke(t);
 		System.out.println("Final result = " + t.number);
 		
