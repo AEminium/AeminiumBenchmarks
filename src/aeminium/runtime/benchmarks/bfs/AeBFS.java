@@ -70,6 +70,10 @@ public class AeBFS {
 
 	public static void main(String[] args) {
 		int target = 23;
+	    if (args.length > 1) {
+	        target = Integer.parseInt(args[0]);
+	    }
+		
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		SearchBody body = createSearchBody(rt, 1, Graph.randomIntGraph(target, 2, new Random(1234567890)), 21);
