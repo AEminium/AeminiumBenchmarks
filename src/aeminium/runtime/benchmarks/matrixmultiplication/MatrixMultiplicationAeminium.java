@@ -48,20 +48,22 @@ public class MatrixMultiplicationAeminium {
 			multiply = new int[m][q];
 
 			// System.out.println("Enter the elements of first matrix");
-			Collection<Task> prev = new ArrayList<Task>();
+			Collection<Task> prev1 = new ArrayList<Task>();
+			Collection<Task> prev2= new ArrayList<Task>();
+			Collection<Task> prev3 = new ArrayList<Task>();
 
 			int step1 = m / numberOfTasks;
 			for (int c = 0; c < m; c = c + step1) {
 				Task init1 = createFirstMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, c, (c + step1));
-				prev.add(init1);
+				prev1.add(init1);
 			}
 
 			// System.out.println("Enter the elements of second matrix");
 
 			int step2 = p / numberOfTasks;
 			for (int c = 0; c < p; c = c + step2) {
-				Task init2 = createSecondMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, c, (c + step2));
-				prev.add(init2);
+				Task init2 = createSecondMatrixTask(Runtime.NO_PARENT, prev1, c, (c + step2));
+				prev2.add(init2);
 			}
 
 			// second[c][d] = in.nextInt();
@@ -70,18 +72,28 @@ public class MatrixMultiplicationAeminium {
 			for (int c = 0; c < m; c = c + step3) {
 				multiplyMatrixTask(Runtime.NO_PARENT, prev, c, (c + step3));
 			}*/
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 0, 240);
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 240, 480);
+			Task init3= multiplyMatrixTask(Runtime.NO_PARENT, prev2, 0, 240);
+			prev3.add(init3);
+			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 240, 480);
+			prev3.add(init3);
 			
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 480, 720);
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 720,960);
+			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 480, 720);
+			prev3.add(init3);
+			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 720,960);
+			prev3.add(init3);
 			
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 960, 1200);
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1200,1440);
+			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 960, 1200);
+			prev3.add(init3);
 			
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1440, 1680);
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1680, 1920);
-
+			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1200,1440);
+			prev3.add(init3);
+			
+			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1440, 1680);
+			prev3.add(init3);
+			
+			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1680, 1920);
+			prev3.add(init3);
+			
 			rt.shutdown();
 
 			long finalTime = System.currentTimeMillis();
