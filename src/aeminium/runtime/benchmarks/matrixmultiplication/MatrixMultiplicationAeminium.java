@@ -19,17 +19,23 @@ public class MatrixMultiplicationAeminium {
 	public static int second[][];
 	public static int multiply[][];
 	// first matrix
-	public static int m = 480;
-	public static int n = 480;
+	public static int m;
+	public static int n;
 	// second matrix
-	public static int p = 480;
-	public static int q = 480;
+	public static int p;
+	public static int q;
 
 	public static void main(String args[]) {
 
 		long initialTime = System.currentTimeMillis();
-		
-		numberOfTasks=Integer.parseInt(args[0]);
+
+		m = Integer.parseInt(args[0]);
+		n = Integer.parseInt(args[1]);
+
+		p = Integer.parseInt(args[2]);
+		q = Integer.parseInt(args[3]);
+
+		numberOfTasks = Integer.parseInt(args[4]);
 
 		rt = Factory.getRuntime();
 		rt.init();
@@ -71,31 +77,25 @@ public class MatrixMultiplicationAeminium {
 			System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
 
 			/*
-			System.out.println("First matrices:-");
-
-			for (int c = 0; c < n; c++) {
-				for (int d = 0; d < m; d++)
-					System.out.print(first[c][d] + "\t");
-
-				System.out.print("\n");
-			}
-
-			System.out.println("Second matrices:-");
-			for (int c = 0; c < q; c++) {
-				for (int d = 0; d < p; d++)
-					System.out.print(second[c][d] + "\t");
-
-				System.out.print("\n");
-			}
-
-			System.out.println("Product of entered matrices:-");
-			for (int c = 0; c < m; c++) {
-				for (int d = 0; d < q; d++)
-					System.out.print(multiply[c][d] + "\t");
-
-				System.out.print("\n");
-			}
-			*/
+			 * System.out.println("First matrices:-");
+			 * 
+			 * for (int c = 0; c < n; c++) { for (int d = 0; d < m; d++)
+			 * System.out.print(first[c][d] + "\t");
+			 * 
+			 * System.out.print("\n"); }
+			 * 
+			 * System.out.println("Second matrices:-"); for (int c = 0; c < q;
+			 * c++) { for (int d = 0; d < p; d++) System.out.print(second[c][d]
+			 * + "\t");
+			 * 
+			 * System.out.print("\n"); }
+			 * 
+			 * System.out.println("Product of entered matrices:-"); for (int c =
+			 * 0; c < m; c++) { for (int d = 0; d < q; d++)
+			 * System.out.print(multiply[c][d] + "\t");
+			 * 
+			 * System.out.print("\n"); }
+			 */
 
 		}
 	}
