@@ -49,7 +49,7 @@ public class MatrixMultiplicationAeminium {
 
 			// System.out.println("Enter the elements of first matrix");
 			Collection<Task> prev1 = new ArrayList<Task>();
-			Collection<Task> prev2= new ArrayList<Task>();
+			Collection<Task> prev2 = new ArrayList<Task>();
 			Collection<Task> prev3 = new ArrayList<Task>();
 
 			int step1 = m / numberOfTasks;
@@ -68,32 +68,26 @@ public class MatrixMultiplicationAeminium {
 
 			// second[c][d] = in.nextInt();
 
-			/*int step3 = m / numberOfTasks;
-			for (int c = 0; c < m; c = c + step3) {
-				multiplyMatrixTask(Runtime.NO_PARENT, prev, c, (c + step3));
-			}*/
-			Task init3= multiplyMatrixTask(Runtime.NO_PARENT, prev2, 0, 240);
-			prev3.add(init3);
-			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 240, 480);
-			prev3.add(init3);
-			
-			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 480, 720);
-			prev3.add(init3);
-			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 720,960);
-			prev3.add(init3);
-			
-			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 960, 1200);
-			prev3.add(init3);
-			
-			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1200,1440);
-			prev3.add(init3);
-			
-			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1440, 1680);
-			prev3.add(init3);
-			
-			init3=multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1680, 1920);
-			prev3.add(init3);
-			
+			/*
+			 * int step3 = m / numberOfTasks; for (int c = 0; c < m; c = c +
+			 * step3) { multiplyMatrixTask(Runtime.NO_PARENT, prev, c, (c +
+			 * step3)); }
+			 */
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 0, 240);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 240, 480);
+
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 480, 720);
+
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 720, 960);
+
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 960, 1200);
+
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1200, 1440);
+
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1440, 1680);
+
+			multiplyMatrixTask(Runtime.NO_PARENT, prev2, 1680, 1920);
+
 			rt.shutdown();
 
 			long finalTime = System.currentTimeMillis();
