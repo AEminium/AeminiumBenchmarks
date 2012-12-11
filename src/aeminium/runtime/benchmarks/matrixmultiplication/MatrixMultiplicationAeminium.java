@@ -66,10 +66,14 @@ public class MatrixMultiplicationAeminium {
 
 			// second[c][d] = in.nextInt();
 
-			int step3 = m / numberOfTasks;
+			/*int step3 = m / numberOfTasks;
 			for (int c = 0; c < m; c = c + step3) {
 				multiplyMatrixTask(Runtime.NO_PARENT, prev, c, (c + step3));
-			}
+			}*/
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 0, 480);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 480,960);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 960, 1440);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1440, 1920);
 
 			rt.shutdown();
 
