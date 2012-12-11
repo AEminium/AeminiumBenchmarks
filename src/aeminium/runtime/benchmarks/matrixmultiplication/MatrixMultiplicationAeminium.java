@@ -70,10 +70,17 @@ public class MatrixMultiplicationAeminium {
 			for (int c = 0; c < m; c = c + step3) {
 				multiplyMatrixTask(Runtime.NO_PARENT, prev, c, (c + step3));
 			}*/
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 0, 480);
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 480,960);
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 960, 1440);
-			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1440, 1920);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 0, 240);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 240, 480);
+			
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 480, 720);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 720,960);
+			
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 960, 1200);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1200,1440);
+			
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1440, 1680);
+			multiplyMatrixTask(Runtime.NO_PARENT, prev, 1680, 1920);
 
 			rt.shutdown();
 
