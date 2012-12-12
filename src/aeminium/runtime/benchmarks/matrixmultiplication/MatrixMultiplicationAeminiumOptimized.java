@@ -148,10 +148,14 @@ public class MatrixMultiplicationAeminiumOptimized {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				int step3 = m / numberOfTasks;
+				/*int step3 = m / numberOfTasks;
 				for (int c = 0; c < m; c = c + step3) {
 					multiplyMatrixTask(current, Runtime.NO_DEPS, c, (c + step3));
-				}
+				}*/
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 0, 480);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 480, 960);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 960,1440);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 1440, 1920);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
