@@ -68,12 +68,6 @@ public class MatrixMultiplicationAeminiumFirstOptimization {
 
 			// second[c][d] = in.nextInt();
 
-			/*
-			 * int step3 = m / numberOfTasks; for (int c = 0; c < m; c = c +
-			 * step3) { multiplyMatrixTask(Runtime.NO_PARENT, prev, c, (c +
-			 * step3)); }
-			 */
-			
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
@@ -82,17 +76,11 @@ public class MatrixMultiplicationAeminiumFirstOptimization {
 			}
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 0, 240);
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 240, 480);
-
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 480, 720);
-
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 720, 960);
-
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 960, 1200);
-
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 1200, 1440);
-
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 1440, 1680);
-
 			multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, 1680, 1920);
 
 			rt.shutdown();
