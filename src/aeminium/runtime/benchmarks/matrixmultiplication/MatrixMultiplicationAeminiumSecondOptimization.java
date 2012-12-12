@@ -66,7 +66,7 @@ public class MatrixMultiplicationAeminiumSecondOptimization {
 			}
 
 			// second[c][d] = in.nextInt();
-			
+
 			multiplyTask(Runtime.NO_PARENT, prev2);
 
 			rt.shutdown();
@@ -148,14 +148,14 @@ public class MatrixMultiplicationAeminiumSecondOptimization {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				/*int step3 = m / numberOfTasks;
-				for (int c = 0; c < m; c = c + step3) {
-					multiplyMatrixTask(current, Runtime.NO_DEPS, c, (c + step3));
-				}*/
-				multiplyMatrixTask(current, Runtime.NO_DEPS, 0, 480);
-				multiplyMatrixTask(current, Runtime.NO_DEPS, 480, 960);
-				multiplyMatrixTask(current, Runtime.NO_DEPS, 960,1440);
-				multiplyMatrixTask(current, Runtime.NO_DEPS, 1440, 1920);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 0, 240);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 240, 480);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 480, 720);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 720, 960);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 960, 1200);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 1200, 1440);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 1440, 1680);
+				multiplyMatrixTask(current, Runtime.NO_DEPS, 1680, 1920);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
