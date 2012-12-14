@@ -54,7 +54,8 @@ public class MatrixMultiplicationAeminiumFourthOptimization {
 			int step3 = m / numberOfTasks;
 			for (int c = 0; c < m; c = c + step3) {
 				multiplyMatrixTask(Runtime.NO_PARENT, prev1, c, (c + step3), matrix);
-				//multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, c, (c + step3), matrix);
+				// multiplyMatrixTask(Runtime.NO_PARENT, Runtime.NO_DEPS, c, (c
+				// + step3), matrix);
 			}
 
 		}
@@ -95,7 +96,7 @@ public class MatrixMultiplicationAeminiumFourthOptimization {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				int value=0;
+				int value = 0;
 				for (int c = paramI; c < paramP; c++)
 					for (int d = 0; d < matrix.n; d++)
 						value = d * c;
@@ -109,7 +110,7 @@ public class MatrixMultiplicationAeminiumFourthOptimization {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				int value=0;
+				int value = 0;
 				for (int c = paramI; c < paramP; c++)
 					for (int d = 0; d < matrix.q; d++)
 						value = d * c;
@@ -123,7 +124,7 @@ public class MatrixMultiplicationAeminiumFourthOptimization {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				int value=0;
+				int value = 0;
 				int sum = 0;
 				for (int c = paramI; c < paramP; c++) {
 					for (int d = 0; d < matrix.q; d++) {
@@ -142,3 +143,27 @@ public class MatrixMultiplicationAeminiumFourthOptimization {
 
 }
 
+class Matrix {
+	public int first[][];
+	public int second[][];
+	public int multiply[][];
+	// first matrix
+	public int m;
+	public int n;
+	// second matrix
+	public int p;
+	public int q;
+
+	Matrix(int m, int n, int p, int q) {
+		this.m = m;
+		this.n = n;
+		this.p = p;
+		this.q = q;
+
+		first = new int[m][n];
+		second = new int[p][q];
+		multiply = new int[m][q];
+
+	}
+
+}
