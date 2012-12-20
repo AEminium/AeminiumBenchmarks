@@ -127,7 +127,7 @@ public class BlackScholesAeminium {
 				int position = 0;
 
 				for (int taskNumber = 0; taskNumber < numberOfTasks; taskNumber++) {
-					if (taskNumber == numberOfTasks - 1) {
+					if (taskNumber >= numberOfTasks - 1) {
 						Task init1 = call2TaskFor(current, Runtime.NO_DEPS, position, NCalc2, S, X, r, sigma, T, taskNumber);
 						prev.add(init1);
 					} else {
