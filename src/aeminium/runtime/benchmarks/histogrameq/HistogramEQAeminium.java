@@ -123,9 +123,6 @@ public class HistogramEQAeminium {
 				// Get the Lookup table for histogram equalization
 				// Get an image histogram - calculated values by R, G, B
 				// channels
-				/*Collection<Task> prev0 = new ArrayList<Task>();
-				Task init0=imageHistogramTask(current, Runtime.NO_DEPS, input);
-				prev0.add(init0);*/
 				imageHist = imageHistogram(input);
 
 				Collection<Task> prev1 = new ArrayList<Task>();
@@ -142,17 +139,6 @@ public class HistogramEQAeminium {
 
 				histogramEqualizationLUTTaskFinal(current, prev2);
 
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
-
-	private static Task imageHistogramTask(Task current, Collection<Task> prev, final BufferedImage input) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-				imageHist = imageHistogram(input);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
