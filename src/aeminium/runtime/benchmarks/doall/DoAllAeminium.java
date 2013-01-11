@@ -14,13 +14,15 @@ public class DoAllAeminium {
 	// CONFIGURATIONS
 	public static int numberOfTasks;
 	public static int n;
+	public static int taskSize;
 	public static int[] a;
 	public static int[] b;
 	public static int[] c;
 
 	public static void main(String args[]) {
 		n = Integer.parseInt(args[0]);
-		numberOfTasks = Integer.parseInt(args[1]);
+		taskSize = Integer.parseInt(args[1]);
+		numberOfTasks = Integer.parseInt(args[2]);
 
 		a = new int[n];
 		b = new int[n];
@@ -49,7 +51,8 @@ public class DoAllAeminium {
 			public void execute(Runtime rt, Task current) {
 				int i = tid * n / numberOfTasks;
 				while (i < (tid + 1) * n / numberOfTasks) {
-					c[i] = a[i] + b[i];
+					for(int s=0;s<taskSize;s++)
+						c[i] = a[i] + b[i];
 					i++;
 				}
 			}
