@@ -28,6 +28,9 @@ public class DoAllAeminium {
 		b = new int[n];
 		c = new int[n];
 		
+		a[n-1]=10;
+		b[n-1]=10;
+		
 		long initialTime = System.currentTimeMillis();
 		rt = Factory.getRuntime();
 		rt.init();
@@ -55,7 +58,9 @@ public class DoAllAeminium {
 						c[i] = a[i] + b[i];
 					i++;
 				}
+				System.out.println(c[n-1]);
 			}
+			
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
 		return task;
