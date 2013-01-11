@@ -53,6 +53,7 @@ public class DoAllAeminium {
 			@Override
 			public void execute(Runtime rt, Task current) {
 				int i = tid * n / numberOfTasks;
+				System.out.println("I: "+i+"F: "+(tid + 1) * n / numberOfTasks);
 				while (i < (tid + 1) * n / numberOfTasks) {
 					for(int s=0;s<taskSize;s++)
 						c[i] = a[i] + b[i];
