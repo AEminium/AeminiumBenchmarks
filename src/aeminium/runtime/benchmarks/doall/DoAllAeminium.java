@@ -14,7 +14,7 @@ public class DoAllAeminium {
 	// CONFIGURATIONS
 	public static int numberOfTasks;
 	public static int n;
-	public static int taskSize;
+	public static long taskSize;
 	public static int[] a;
 	public static int[] b;
 	public static int[] c;
@@ -27,10 +27,10 @@ public class DoAllAeminium {
 		a = new int[n];
 		b = new int[n];
 		c = new int[n];
-		
-		a[n-1]=10;
-		b[n-1]=10;
-		
+
+		a[n - 1] = 10;
+		b[n - 1] = 10;
+
 		long initialTime = System.currentTimeMillis();
 		rt = Factory.getRuntime();
 		rt.init();
@@ -52,16 +52,19 @@ public class DoAllAeminium {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) {
-				int i = tid * n / numberOfTasks;
-				System.out.println("I: "+i+"F: "+(tid + 1) * n / numberOfTasks);
-				while (i < (tid + 1) * n / numberOfTasks) {
-					for(int s=0;s<taskSize;s++)
+				int i = tid * (n / numberOfTasks);
+				// System.out.println("I: "+i+"F: "+(tid + 1) * n /
+				// numberOfTasks);
+				while (i < (tid + 1) * (n / numberOfTasks)) {
+					for (long s = 0; s < taskSize; s++) {
+
 						c[i] = a[i] + b[i];
+					}
 					i++;
 				}
-				System.out.println(c[n-1]);
+				// System.out.println(c[n-1]);
 			}
-			
+
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
 		return task;
