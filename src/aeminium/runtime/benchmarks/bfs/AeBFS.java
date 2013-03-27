@@ -70,7 +70,7 @@ public class AeBFS {
 
 	public static void main(String[] args) {
 		int target = 23;
-	    if (args.length > 1) {
+	    if (args.length >= 1) {
 	        target = Integer.parseInt(args[0]);
 	    }
 		
