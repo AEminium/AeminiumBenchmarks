@@ -71,10 +71,10 @@ public class AeFibonacci {
 
 		int fib = 23;
 		int threshold = 16;
-		if (args.length > 1) {
+		if (args.length >= 1) {
 			fib = Integer.parseInt(args[0]);
 		}
-		if (args.length > 2) {
+		if (args.length >= 2) {
 			threshold = Integer.parseInt(args[1]);
 		}
 

@@ -55,8 +55,13 @@ class FjFibonacci extends RecursiveAction {
 	public static void main(String[] args) {
 		long initialTime = System.currentTimeMillis();
 		
+		int fib = 47;
+		if (args.length >= 1) {
+			fib = Integer.parseInt(args[0]);
+		}
+		
 		ForkJoinPool pool = new ForkJoinPool();
-		FjFibonacci t = new FjFibonacci(44, 2);
+		FjFibonacci t = new FjFibonacci(fib, 2);
 		pool.invoke(t);
 		System.out.println("Final result = " + t.number);
 		
