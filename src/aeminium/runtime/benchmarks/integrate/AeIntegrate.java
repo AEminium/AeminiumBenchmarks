@@ -61,7 +61,7 @@ import aeminium.runtime.implementations.Factory;
 
 public class AeIntegrate {
 
-	static final double errorTolerance = 1.0e-11;
+	static double errorTolerance = 1.0e-11;
 	static double threshold = 10;
 
 	static double computeFunction(double x) {
@@ -141,6 +141,12 @@ public class AeIntegrate {
 	}
 
 	public static void main(String[] args) {
+		
+		if (args.length >= 1)
+			errorTolerance = Double.parseDouble(args[0]);
+		if (args.length >= 2)
+			threshold = Double.parseDouble(args[1]);
+		
 		final Runtime rt = Factory.getRuntime();
 		rt.init();
 
