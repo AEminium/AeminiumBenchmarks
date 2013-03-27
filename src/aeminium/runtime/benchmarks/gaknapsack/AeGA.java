@@ -19,6 +19,12 @@ public class AeGA {
 	
 	public static void main(String[] args) {
 		rt.init();
+		
+		if (args.length >= 1)
+			Knapsack.popSize = Integer.parseInt(args[0]);
+		if (args.length >= 2)
+			Knapsack.numGen = Integer.parseInt(args[1]);
+		
 		List<Task> round = new ArrayList<Task>();
 		for (int i=0; i < Knapsack.popSize; i++ ) {
 			Task init = createRandomIndiv(i);

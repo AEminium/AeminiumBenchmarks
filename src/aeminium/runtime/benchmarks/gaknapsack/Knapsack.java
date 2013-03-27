@@ -12,9 +12,9 @@ public class Knapsack {
 	public final static Item[] items = Knapsack.createItems(numberOfItems);
 	
 	// GA Settings:
-	public final static int popSize = 100;
+	public static int popSize = 100;
+	public static int numGen = 100;
 	public final static int cromSize = numberOfItems;
-	public final static int numGen = 100;
 	public final static double prob_mut = 0.2;
 	public final static double prob_rec = 0.2;
 	public static final int elitism = 10;

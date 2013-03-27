@@ -7,6 +7,12 @@ public class SeqGA {
 	public static boolean debug = true;
 	
 	public static void main(String[] args) {
+		
+		if (args.length >= 1)
+			Knapsack.popSize = Integer.parseInt(args[0]);
+		if (args.length >= 2)
+			Knapsack.numGen = Integer.parseInt(args[1]);
+		
 		Indiv[] pop = new Indiv[Knapsack.popSize];
 		Indiv[] next = new Indiv[Knapsack.popSize];
 		
