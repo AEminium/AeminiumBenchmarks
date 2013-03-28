@@ -109,7 +109,12 @@ public class AeMergeSort {
 	
 	public static void main(String ...args) {
 		
-		long[] original = generateRandomArray(10);
+		int size = 100;
+		if (args.length >= 1) {
+			size = Integer.parseInt(args[0]);
+		}
+		
+		long[] original = generateRandomArray(size);
 		AeMergeSort merger = new AeMergeSort(original);
 		
 		Runtime rt = Factory.getRuntime();

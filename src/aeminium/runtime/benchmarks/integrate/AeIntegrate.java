@@ -69,7 +69,7 @@ public class AeIntegrate {
 	}
 
 	static final double start = -2101.0;
-	static final double end = 200.0;
+    static final double end = 200.0; //1036.0;
 	/*
 	 * The number of recursive calls for integrate from start to end.
 	 * (Empirically determined)
