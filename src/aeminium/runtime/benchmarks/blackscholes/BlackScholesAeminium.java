@@ -1,11 +1,14 @@
 package aeminium.runtime.benchmarks.blackscholes;
 
 import java.util.ArrayList;
-import java.util.Collection;
+
 import aeminium.runtime.Body;
 import aeminium.runtime.DataGroup;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.helpers.loops.ForBody;
+import aeminium.runtime.helpers.loops.ForTask;
+import aeminium.runtime.helpers.loops.Range;
 import aeminium.runtime.implementations.Factory;
 
 /*************************************************************************
@@ -37,158 +40,129 @@ import aeminium.runtime.implementations.Factory;
 
 public class BlackScholesAeminium {
 	public static Runtime rt;
-	public static double callPriceValue;
-	public static double callValue;
-	public static double call2Value;
 
-	public static int NCalc2 = 10000;
-	public static double sumCalc2 = 0.0;
-	public static double[] sumCalc2Array;
-	public static DataGroup dg;
-	public static int numberOfTasks;
-
+	private static double saveCallPrice = 0.0;
+	private static double saveCall = 0.0;
+	private static double saveCall2 = 0.0;
+	
 	public static void main(String[] args) {
-		long initialTime = System.currentTimeMillis();
 
 		rt = Factory.getRuntime();
 		rt.init();
-		dg = rt.createDataGroup();
 
-		double S = Double.parseDouble(args[0]);
-		double X = Double.parseDouble(args[1]);
-		double r = Double.parseDouble(args[2]);
-		double sigma = Double.parseDouble(args[3]);
-		double T = Double.parseDouble(args[4]);
+		final double S = Double.parseDouble(args[0]);
+		final double X = Double.parseDouble(args[1]);
+		final double r = Double.parseDouble(args[2]);
+		final double sigma = Double.parseDouble(args[3]);
+		final double T = Double.parseDouble(args[4]);
+		
+		final DataGroup pCall = rt.createDataGroup();
+		
+		
+		Task callPrice = rt.createNonBlockingTask(new Body() {
 
-		numberOfTasks = Integer.parseInt(args[5]);
-		sumCalc2Array = new double[numberOfTasks];
-
-		Collection<Task> prev = new ArrayList<Task>();
-
-		Task init1 = callPriceTask(Runtime.NO_PARENT, Runtime.NO_DEPS, S, X, r, sigma, T);
-		Task init2 = callTask(Runtime.NO_PARENT, Runtime.NO_DEPS, S, X, r, sigma, T);
-		Task init3 = call2Task(Runtime.NO_PARENT, Runtime.NO_DEPS, S, X, r, sigma, T);
-		prev.add(init1);
-		prev.add(init2);
-		prev.add(init3);
-
-		print(Runtime.NO_PARENT, prev);
-
-		rt.shutdown();
-
-		long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
-	}
-
-	// Black-Scholes formula
-	private static Task callPriceTask(Task current, Collection<Task> prev, final double S, final double X, final double r, final double sigma, final double T) {
-		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
-			public void execute(Runtime rt, Task current) {
-				double d1 = (Math.log(S / X) + (r + sigma * sigma / 2) * T) / (sigma * Math.sqrt(T));
+			public void execute(Runtime rt, Task current) throws Exception {
+				double d1 = (Math.log(S/X) + (r + sigma * sigma/2) * T) / (sigma * Math.sqrt(T));
 				double d2 = d1 - sigma * Math.sqrt(T);
-				callPriceValue = S * Gaussian.Phi(d1) - X * Math.exp(-r * T) * Gaussian.Phi(d2);
+				saveCallPrice = S * Gaussian.Phi(d1) - X * Math.exp(-r * T) * Gaussian.Phi(d2);
 			}
+			
 		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
+		rt.schedule(callPrice, Runtime.NO_PARENT, Runtime.NO_DEPS);
+		
+		
+		Task call = rt.createNonBlockingTask(new Body() {
 
-	// estimate by Monte Carlo simulation
-	private static Task callTask(Task current, Collection<Task> prev, final double S, final double X, final double r, final double sigma, final double T) {
-		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
-			public void execute(Runtime rt, Task current) {
-				int N = 10000;
-				double sum = 0.0;
-				for (int i = 0; i < N; i++) {
-					double eps = StdRandom.gaussian();
-					double price = S * Math.exp(r * T - 0.5 * sigma * sigma * T + sigma * eps * Math.sqrt(T));
-					double value = Math.max(price - X, 0);
-					sum += value;
-				}
-				double mean = sum / N;
+			public void execute(final Runtime rt, final Task current) throws Exception {
+				
+				final int N = 10000;
+				Task iterations = ForTask.createFor(rt, new Range(N), new ForBody<Integer>() {
+					@Override
+					public void iterate(final Integer o) {
+						double eps = StdRandom.gaussian();
+			            double price = S * Math.exp(r*T - 0.5*sigma*sigma*T + sigma*eps*Math.sqrt(T));
+			            final double value = Math.max(price - X, 0);
+			            Task s = rt.createAtomicTask(new Body() {
 
-				callValue = Math.exp(-r * T) * mean;
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
-
-	// estimate by Monte Carlo simulation
-	private static Task call2Task(Task current, Collection<Task> prev, final double S, final double X, final double r, final double sigma, final double T) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-				Collection<Task> prev = new ArrayList<Task>();
-
-				int step = NCalc2 / numberOfTasks;
-				int position = 0;
-
-				for (int taskNumber = 0; taskNumber < numberOfTasks; taskNumber++) {
-					if (taskNumber >= numberOfTasks - 1) {
-						Task init1 = call2TaskFor(current, Runtime.NO_DEPS, position, NCalc2, S, X, r, sigma, T, taskNumber);
-						prev.add(init1);
-					} else {
-						Task init1 = call2TaskFor(current, Runtime.NO_DEPS, position, position += step, S, X, r, sigma, T, taskNumber);
-						prev.add(init1);
+							@Override
+							public void execute(Runtime rt, Task current)
+									throws Exception {
+								saveCall += value / N;
+							}
+			            }, pCall, Runtime.NO_HINTS);
+			            rt.schedule(s, current, Runtime.NO_DEPS);
+					}		
+				 });
+				rt.schedule(iterations, current, Runtime.NO_DEPS);
+				Task save = rt.createNonBlockingTask(new Body() {
+					@Override
+					public void execute(Runtime rt, Task current)
+							throws Exception {
+						saveCall = Math.exp(-r*T) * saveCall;
 					}
-				}
-				call2TaskCalc(current, prev, S, X, r, sigma, T);
-
+				}, Runtime.NO_HINTS);
+				ArrayList<Task> ts = new ArrayList<Task>();
+				ts.add(iterations);
+				rt.schedule(save, current, ts);
 			}
+			
 		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
+		rt.schedule(call, Runtime.NO_PARENT, Runtime.NO_DEPS);
+		
+		
+		Task call2 = rt.createNonBlockingTask(new Body() {
 
-	private static Task call2TaskFor(Task current, Collection<Task> prev, final int paramI, final int paramP, final double S, final double X, final double r, final double sigma, final double T,
-			final int taskNumber) {
-		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
-			public void execute(Runtime rt, Task current) {
-				sumCalc2Array[taskNumber] = 0.0;
-				for (int i = paramI; i < paramP; i++) {
-					double price = S;
-					double dt = T / 10000.0;
-					for (double t = 0; t <= T; t = t + dt) {
-						price += r * price * dt + sigma * price * Math.sqrt(dt) * StdRandom.gaussian();
+			public void execute(final Runtime rt, final Task current) throws Exception {
+				
+				final int N = 10000;
+				Task iterations = ForTask.createFor(rt, new Range(N), new ForBody<Integer>() {
+					@Override
+					public void iterate(final Integer o) {
+						double price = S;
+			            double dt = T/10000.0;
+			            for (double t = 0; t <= T; t = t + dt) {
+			                price += r*price*dt +sigma*price*Math.sqrt(dt)*StdRandom.gaussian();
+			            }
+			            final double value = Math.max(price - X, 0);
+			            Task s = rt.createAtomicTask(new Body() {
+
+							@Override
+							public void execute(Runtime rt, Task current)
+									throws Exception {
+								saveCall2 += value / N;
+							}
+			            }, pCall, Runtime.NO_HINTS);
+			            rt.schedule(s, current, Runtime.NO_DEPS);
+					}		
+				 });
+				rt.schedule(iterations, current, Runtime.NO_DEPS);
+				Task save = rt.createNonBlockingTask(new Body() {
+					@Override
+					public void execute(Runtime rt, Task current)
+							throws Exception {
+						saveCall = Math.exp(-r*T) * saveCall2;
 					}
-					double value = Math.max(price - X, 0);
-					sumCalc2Array[taskNumber] += value;
-				}
+				}, Runtime.NO_HINTS);
+				ArrayList<Task> ts = new ArrayList<Task>();
+				ts.add(iterations);
+				rt.schedule(save, current, ts);
 			}
+			
 		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
+		rt.schedule(call2, Runtime.NO_PARENT, Runtime.NO_DEPS);
+		
+		
+		rt.shutdown();
+		
+		System.out.println(saveCallPrice);
+		System.out.println(saveCall);
+		System.out.println(saveCall2);
+		
+		
+		
 	}
 
-	private static Task call2TaskCalc(Task current, Collection<Task> prev, final double S, final double X, final double r, final double sigma, final double T) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-				for (int i = 0; i < numberOfTasks; i++)
-					sumCalc2 += sumCalc2Array[i];
-
-				double mean = sumCalc2 / NCalc2;
-				call2Value = Math.exp(-r * T) * mean;
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
-
-	private static Task print(Task current, Collection<Task> prev) {
-		Task task = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) {
-				System.out.println(callPriceValue);
-				System.out.println(callValue);
-				System.out.println(call2Value);
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(task, current, prev);
-		return task;
-	}
 }

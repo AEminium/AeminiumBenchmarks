@@ -7,7 +7,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
-import aeminium.runtime.helpers.loops.Range;
+import aeminium.runtime.helpers.loops.LongRange;
 import aeminium.runtime.implementations.Factory;
 import external.MersenneTwisterFast;
 
@@ -32,7 +32,7 @@ public class AeminiumForPi {
 
 			@Override
 			public void execute(final Runtime rt, final Task current) throws Exception {
-				 Task iterations = ForTask.createFor(rt, new Range(darts), new ForBody<Long>() {
+				 Task iterations = ForTask.createFor(rt, new LongRange(darts), new ForBody<Long>() {
 					@Override
 					public void iterate(Long o) {
 						double x_coord, y_coord, r; 
