@@ -8,6 +8,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
+import aeminium.runtime.helpers.loops.LongRange;
 import aeminium.runtime.helpers.loops.Range;
 import aeminium.runtime.implementations.Factory;
 
@@ -55,6 +56,7 @@ public class BlackScholesAeminium {
 		final double r = Double.parseDouble(args[2]);
 		final double sigma = Double.parseDouble(args[3]);
 		final double T = Double.parseDouble(args[4]);
+		final long N   = Long.parseLong(args[5]);
 		
 		final DataGroup pCall = rt.createDataGroup();
 		
@@ -77,10 +79,9 @@ public class BlackScholesAeminium {
 			@Override
 			public void execute(final Runtime rt, final Task current) throws Exception {
 				
-				final int N = 10000;
-				Task iterations = ForTask.createFor(rt, new Range(N), new ForBody<Integer>() {
+				Task iterations = ForTask.createFor(rt, new LongRange(N), new ForBody<Long>() {
 					@Override
-					public void iterate(final Integer o) {
+					public void iterate(final Long o) {
 						double eps = StdRandom.gaussian();
 			            double price = S * Math.exp(r*T - 0.5*sigma*sigma*T + sigma*eps*Math.sqrt(T));
 			            final double value = Math.max(price - X, 0);
@@ -117,10 +118,9 @@ public class BlackScholesAeminium {
 			@Override
 			public void execute(final Runtime rt, final Task current) throws Exception {
 				
-				final int N = 10000;
-				Task iterations = ForTask.createFor(rt, new Range(N), new ForBody<Integer>() {
+				Task iterations = ForTask.createFor(rt, new LongRange(N), new ForBody<Long>() {
 					@Override
-					public void iterate(final Integer o) {
+					public void iterate(final Long o) {
 						double price = S;
 			            double dt = T/10000.0;
 			            for (double t = 0; t <= T; t = t + dt) {

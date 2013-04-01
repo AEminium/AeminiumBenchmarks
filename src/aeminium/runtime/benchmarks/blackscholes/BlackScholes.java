@@ -45,8 +45,7 @@ public class BlackScholes {
     }
 
     // estimate by Monte Carlo simulation
-    public static double call(double S, double X, double r, double sigma, double T) {
-        int N = 10000;
+    public static double call(double S, double X, double r, double sigma, double T, long N) {
         double sum = 0.0;
         for (int i = 0; i < N; i++) {
             double eps = StdRandom.gaussian();
@@ -60,8 +59,7 @@ public class BlackScholes {
     }
 
     // estimate by Monte Carlo simulation
-    public static double call2(double S, double X, double r, double sigma, double T) {
-        int N = 10000;
+    public static double call2(double S, double X, double r, double sigma, double T, long N) {
         double sum = 0.0;
         for (int i = 0; i < N; i++) {
             double price = S;
@@ -87,9 +85,10 @@ public class BlackScholes {
         double r     = Double.parseDouble(args[2]);
         double sigma = Double.parseDouble(args[3]);
         double T     = Double.parseDouble(args[4]);
+        long N 		 = Long.parseLong(args[5]);
         System.out.println(callPrice(S, X, r, sigma, T));
-        System.out.println(call(S, X, r, sigma, T));
-        System.out.println(call2(S, X, r, sigma, T));
+        System.out.println(call(S, X, r, sigma, T, N));
+        System.out.println(call2(S, X, r, sigma, T, N));
         
         long finalTime = System.currentTimeMillis();
 		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
