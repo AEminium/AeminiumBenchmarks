@@ -25,22 +25,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import aeminium.runtime.Body;
-import aeminium.runtime.Runtime;
-import aeminium.runtime.Task;
 
 import jsr166y.ForkJoinPool;
 
@@ -63,7 +61,37 @@ public class LogCounter {
 		*/
 		
 	}
+	
+	public static List<File> addFiles(List<File> files, File dir)
+	{
+	    if (files == null)
+	        files = new LinkedList<File>();
 
+	    if (!dir.isDirectory())
+	    {
+	    	if (dir.getAbsolutePath().endsWith(".gz")) {
+	    		files.add(dir);
+	    	}
+	        return files;
+	    }
+
+	    for (File file : dir.listFiles()) {
+	    	addFiles(files, file);
+	    }
+	    return files;
+	}
+	
+    public static File[] finder(String dirName){
+    	File dir = new File(dirName);
+    	List<File> fs = addFiles(null, dir);
+    	File[] fa = new File[fs.size()];
+    	int i = 0;
+    	for (File f : fs) {
+    		fa[i++] = f;
+    	}
+    	return fa;
+    }
+	    
 	public static void cleanFiles(String path) throws IOException,
 			InterruptedException {
 		Process p;
@@ -88,13 +116,14 @@ public class LogCounter {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				deleteFile(logfile);
 			}
-			
 		}
 		return n;
 	}
 
-	private static int countAccesses(String d)
+	static int countAccesses(String d)
 			throws FileNotFoundException, IOException { 
 		BufferedReader reader = null;
 		try {
@@ -103,7 +132,6 @@ public class LogCounter {
 			String line;
 			while (true) {
 				line = reader.readLine();
-				//System.out.println(line);
 				if (line == null) break;
 				if (line.startsWith("wiki.alcidesfonseca.com")) {
 					count++;
@@ -141,7 +169,7 @@ public class LogCounter {
 		return d;
 	}
 
-	private static String uncompressGZip(File source) throws IOException {
+	static String uncompressGZip(File source) throws IOException {
 		if (!source.getAbsolutePath().contains(".gz")) return source.getAbsolutePath();
 		
 		String dest = source.getAbsolutePath().replace(".gz", "");
@@ -212,73 +240,23 @@ public class LogCounter {
 				}
 				n += result.get();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.exit(1);
 			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.exit(1);	
 			}
 		}
-		
+		for (File logfile : files) {
+			deleteFile(logfile);
+		}
 		return n;
 	}
 
-	
-	public static int aeminiumCounter(File[] files, aeminium.runtime.Runtime rt) {
-		rt.init();
-		final ArrayList<Task> counterTasks = new ArrayList<Task>();
-		
-		for (final File logfile : files) {
-			final Task uncompress = rt.createBlockingTask(new Body() {
-		
-				@Override
-				public void execute(Runtime rt, Task current) {
-					try {
-						current.setResult(uncompressGZip(logfile));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-		
-			}, aeminium.runtime.Runtime.NO_HINTS);
-			rt.schedule(uncompress, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			
-			Task count = rt.createBlockingTask(new Body() {
-				
-				@Override
-				public void execute(Runtime rt, Task current) {
-					try {
-						current.setResult(countAccesses((String) uncompress.getResult()));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-		
-			}, aeminium.runtime.Runtime.NO_HINTS);
-			rt.schedule(count, Runtime.NO_PARENT, Arrays.asList(uncompress));
-			counterTasks.add(count);
-		}
-		
-		Task merge = rt.createBlockingTask(new Body() {
-			
-			@Override
-			public void execute(Runtime rt, Task current) {
-				int n = 0;
-				for (Task t : counterTasks) {
-					Integer r = (Integer) t.getResult();
-					if (r != null) {
-						n += r;
-					}
-				}
-				current.setResult(n);
-				
-			}
-	
-		}, aeminium.runtime.Runtime.NO_HINTS);
-		rt.schedule(merge, Runtime.NO_PARENT, counterTasks);
-		
-		rt.shutdown();
-		return (Integer) merge.getResult();
+
+	protected static void deleteFile(File logfile) {
+		String np = logfile.getAbsolutePath().replace(".gz", "");
+		new File(np).delete();
 	}
 	
 }

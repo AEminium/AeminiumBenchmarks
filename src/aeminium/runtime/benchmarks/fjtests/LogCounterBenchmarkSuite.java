@@ -30,6 +30,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
+import aeminium.runtime.benchmarks.logcounter.AeLogCounter;
 import aeminium.runtime.benchmarks.logcounter.LogCounter;
 import aeminium.runtime.implementations.Factory;
 
@@ -92,7 +93,7 @@ public class LogCounterBenchmarkSuite implements BenchmarkSuite {
 			public long run() {
 
 				long start = System.nanoTime();
-				int n = LogCounter.aeminiumCounter(files, rt);
+				int n = AeLogCounter.aeminiumCounter(files, rt);
 				long end = System.nanoTime();
 				assert (n == 700405);
 				return end - start;
