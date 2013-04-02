@@ -41,66 +41,73 @@ public class AeLCS {
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 
-		final int M = x.length();
-		final int N = y.length();
-		final int[][] opt = new int[M + 1][N + 1];
-		final Task[][] d = new Task[M][N];
-		for (int k = M - 1; k >= 0; k--) {
-			for (int l = N - 1; l >= 0; l--) {
-				final int i = k;
-				final int j = l;
-				d[i][j] = rt.createNonBlockingTask(new Body() {
-					@Override
-					public void execute(Runtime rt, Task current)
-							throws Exception {
-						if (x.charAt(i) == y.charAt(j))
-							opt[i][j] = opt[i + 1][j + 1] + 1;
-						else
-							opt[i][j] = Math.max(opt[i + 1][j], opt[i][j + 1]);
-						if (i != M - 1) {
-							d[i+1][j] = null;
-						}
-						if (j != N - 1) {
-							d[i][j+1] = null;
-						}
-						if (i % 10 == 0 && j % 10 == 0) System.gc();
-					}
-					
-				}, Runtime.NO_HINTS);
-				ArrayList<Task> deps = new ArrayList<Task>();
-				if (i != M - 1) {
-					deps.add(d[i + 1][j]);
-				}
-				if (j != N - 1) {
-					deps.add(d[i][j + 1]);
-				}
-				rt.schedule(d[i][j], Runtime.NO_PARENT, deps);
-			}
-		}
+		Task t = rt.createNonBlockingTask(new Body() {
 
-		Task merge = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
-				StringBuilder sol = new StringBuilder();
-				// recover LCS itself and print it to standard output
-				int i = 0, j = 0;
-				while (i < M && j < N) {
-					if (x.charAt(i) == y.charAt(j)) {
-						sol.append(x.charAt(i));
-						i++;
-						j++;
-					} else if (opt[i + 1][j] >= opt[i][j + 1])
-						i++;
-					else
-						j++;
+				final int M = x.length();
+				final int N = y.length();
+				final int[][] opt = new int[M + 1][N + 1];
+				final Task[][] d = new Task[M][N];
+				for (int k = M - 1; k >= 0; k--) {
+					for (int l = N - 1; l >= 0; l--) {
+						final int i = k;
+						final int j = l;
+						d[i][j] = rt.createNonBlockingTask(new Body() {
+							@Override
+							public void execute(Runtime rt, Task current)
+									throws Exception {
+								if (x.charAt(i) == y.charAt(j))
+									opt[i][j] = opt[i + 1][j + 1] + 1;
+								else
+									opt[i][j] = Math.max(opt[i + 1][j], opt[i][j + 1]);
+								if (i != M - 1) {
+									d[i+1][j] = null;
+								}
+								if (j != N - 1) {
+									d[i][j+1] = null;
+								}
+								if (i % 10 == 0 && j % 10 == 0) System.gc();
+							}
+							
+						}, Runtime.NO_HINTS);
+						ArrayList<Task> deps = new ArrayList<Task>();
+						if (i != M - 1) {
+							deps.add(d[i + 1][j]);
+						}
+						if (j != N - 1) {
+							deps.add(d[i][j + 1]);
+						}
+						rt.schedule(d[i][j], Runtime.NO_PARENT, deps);
+					}
 				}
-				solution = sol.toString();
-			}
-		}, Runtime.NO_HINTS);
-		ArrayList<Task> deps = new ArrayList<Task>();
-		deps.add(d[0][0]);
-		rt.schedule(merge, Runtime.NO_PARENT, deps);
 
+				Task merge = rt.createNonBlockingTask(new Body() {
+					@Override
+					public void execute(Runtime rt, Task current) throws Exception {
+						StringBuilder sol = new StringBuilder();
+						// recover LCS itself and print it to standard output
+						int i = 0, j = 0;
+						while (i < M && j < N) {
+							if (x.charAt(i) == y.charAt(j)) {
+								sol.append(x.charAt(i));
+								i++;
+								j++;
+							} else if (opt[i + 1][j] >= opt[i][j + 1])
+								i++;
+							else
+								j++;
+						}
+						solution = sol.toString();
+					}
+				}, Runtime.NO_HINTS);
+				ArrayList<Task> deps = new ArrayList<Task>();
+				deps.add(d[0][0]);
+				rt.schedule(merge, Runtime.NO_PARENT, deps);
+			}
+			
+		}, Runtime.NO_HINTS);
+		rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
 	}
 
