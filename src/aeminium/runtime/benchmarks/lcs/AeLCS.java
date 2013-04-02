@@ -57,7 +57,15 @@ public class AeLCS {
 							opt[i][j] = opt[i + 1][j + 1] + 1;
 						else
 							opt[i][j] = Math.max(opt[i + 1][j], opt[i][j + 1]);
+						if (i != M - 1) {
+							d[i+1][j] = null;
+						}
+						if (j != N - 1) {
+							d[i][j+1] = null;
+						}
+						if (i % 10 == 0 && j % 10 == 0) System.gc();
 					}
+					
 				}, Runtime.NO_HINTS);
 				ArrayList<Task> deps = new ArrayList<Task>();
 				if (i != M - 1) {
