@@ -26,8 +26,6 @@ import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
 import aeminium.runtime.benchmarks.lcs.AeLCS;
 import aeminium.runtime.benchmarks.lcs.FjLCS;
-import aeminium.runtime.Runtime;
-import aeminium.runtime.implementations.Factory;
 
 public class LCSBenchmarkSuite implements BenchmarkSuite {
 	
@@ -81,7 +79,6 @@ public class LCSBenchmarkSuite implements BenchmarkSuite {
 		
 		tests[2] = new Benchmark() {
 			
-			Runtime rt = Factory.getRuntime();
 			
 			@Override
 			public String getName() {
@@ -91,13 +88,11 @@ public class LCSBenchmarkSuite implements BenchmarkSuite {
 			@Override
 			public long run() {
 
-				rt.init();
-				AeLCS gen = new AeLCS(BLOCKSIZE);
+				AeLCS gen = new AeLCS();
 				
 				long start = System.nanoTime();
-				gen.compute(rt, s1, s2);
+				gen.compute(s1, s2);
 				
-				rt.shutdown();
 				long end = System.nanoTime();
 				return end-start;
 			}

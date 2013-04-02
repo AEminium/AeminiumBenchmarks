@@ -61,7 +61,7 @@ public class MatrixMultiplicationDependencesAeminium {
 
 			// second[c][d] = in.nextInt();
 
-			Task init3=multiplyTask(Runtime.NO_PARENT, prev2);
+			multiplyTask(Runtime.NO_PARENT, prev2);
 
 			rt.shutdown();
 
