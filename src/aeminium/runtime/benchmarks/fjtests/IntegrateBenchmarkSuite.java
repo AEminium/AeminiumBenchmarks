@@ -91,7 +91,7 @@ public class IntegrateBenchmarkSuite implements BenchmarkSuite {
 
 				rt.init();
 				long start = System.nanoTime();
-				Task t1 = AeIntegrate.recursiveCall(rt, Runtime.NO_PARENT, START, END, 0);
+				Task t1 = AeIntegrate.startCall(rt, START, END, 0);
 				rt.shutdown();
 				long end = System.nanoTime();
 				assert(t1.getResult() != null);
