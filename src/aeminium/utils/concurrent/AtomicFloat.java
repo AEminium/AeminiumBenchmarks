@@ -1,4 +1,4 @@
-package aeminium.utils;
+package aeminium.utils.concurrent;
 
 import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.intBitsToFloat;

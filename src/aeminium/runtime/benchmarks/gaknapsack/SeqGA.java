@@ -4,10 +4,9 @@ import java.util.Arrays;
 
 public class SeqGA {
 	
-	public static boolean debug = true;
+	public static boolean debug = false;
 	
 	public static void main(String[] args) {
-		
 		if (args.length >= 1)
 			Knapsack.popSize = Integer.parseInt(args[0]);
 		if (args.length >= 2)
@@ -28,7 +27,7 @@ public class SeqGA {
 				Knapsack.evaluate(pop[i]);
 			}
 			Arrays.sort(pop);
-			if (debug) {
+			if (debug || g == Knapsack.numGen-1) {
 				System.out.println("Best fit at " + g + ": " + pop[0].fitness);
 			}
 			
@@ -52,6 +51,5 @@ public class SeqGA {
 			pop = next;
 			next = tmp;
 		}
-		
 	}
 }

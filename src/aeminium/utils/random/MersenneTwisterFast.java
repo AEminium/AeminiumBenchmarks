@@ -1,4 +1,4 @@
-package external;
+package aeminium.utils.random;
 
 import java.io.*;
 import java.util.*;
@@ -170,7 +170,7 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
 	private static final long serialVersionUID = -8219700664442619525L;  // locked as of Version 15
 
 	// Period parameters
-	private static final int N = 100000;
+	private static final int N = 1000000;
 	private static final int M = 397;
 	private static final int MATRIX_A = 0x9908b0df;   //    private static final * constant vector a
 	private static final int UPPER_MASK = 0x80000000; // most significant w-r bits

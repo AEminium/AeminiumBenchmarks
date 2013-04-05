@@ -1,12 +1,15 @@
 package aeminium.runtime.benchmarks.gaknapsack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.ErrorHandler;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.helpers.loops.ForBody;
+import aeminium.runtime.helpers.loops.ForTask;
+import aeminium.runtime.helpers.loops.Range;
 import aeminium.runtime.implementations.Factory;
 
 public class AeGA {
@@ -14,146 +17,118 @@ public class AeGA {
 	public static Runtime rt = Factory.getRuntime();
 	static Indiv[] pop = new Indiv[Knapsack.popSize];
 	static Indiv[] next = new Indiv[Knapsack.popSize];
-	public static boolean debug = true;
+	public static boolean debug = false;
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {;
 		rt.init();
 		
-		if (args.length >= 1)
+		rt.addErrorHandler(new ErrorHandler() {
+
+			@Override
+			public void handleTaskException(Task task, Throwable t) {
+				t.printStackTrace();
+			}
+
+			@Override
+			public void handleLockingDeadlock() {}
+			@Override
+			public void handleDependencyCycle(Task task) {}
+			@Override
+			public void handleTaskDuplicatedSchedule(Task task) {}
+			@Override
+			public void handleInternalError(Error err) {}
+		});
+		
+		if (args.length >= 1) {
 			Knapsack.popSize = Integer.parseInt(args[0]);
+			pop = new Indiv[Knapsack.popSize];
+			next = new Indiv[Knapsack.popSize];
+		}
 		if (args.length >= 2)
 			Knapsack.numGen = Integer.parseInt(args[1]);
 		
-		List<Task> round = new ArrayList<Task>();
-		for (int i=0; i < Knapsack.popSize; i++ ) {
-			Task init = createRandomIndiv(i);
-			round.add(init);
-		}
-		for (int g=0; g<Knapsack.numGen; g++) {
-			round = makeRound(g, round);
-		}
-		rt.shutdown();
-	
-	}
-
-	private static List<Task> makeRound(final int g, List<Task> round) {
-		List<Task> nround = new ArrayList<Task>();
-		Task turn = rt.createNonBlockingTask(new Body() {
-
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				performRound(pop, next, g, current);
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(turn, Runtime.NO_PARENT, round);
-		nround.add(turn);
-		return nround;
 		
-	}
-
-	protected static void performRound(final Indiv[] pop, final Indiv[] next, final int g, Task current) {
-		List<Task> prev = new ArrayList<Task>();
-		for (int i=0; i < Knapsack.popSize; i++ ) {
-			prev.add(evaluateIndiv(i, current));
-		}
-		Task sort = sortArray(g, current, prev);
-		List<Task> sorts = new ArrayList<Task>();
-		sorts.add(sort);
-		
-		List<Task> recs = new ArrayList<Task>();
-		for (int i=0; i < Knapsack.popSize - Knapsack.elitism; i++ ) {
-			recs.add(recombineIndivs(i, current, sorts));
-		}
-		
-		List<Task> muts = new ArrayList<Task>();
-		for (int i=0; i < Knapsack.popSize - Knapsack.elitism; i++ ) {
-			muts.add(mutateIndivs(i, current, recs));
-		}
-		makeSwitch(current, muts);
-	}
-
-	private static void makeSwitch(Task current,
-			List<Task> prev) {
-		Task ev = rt.createNonBlockingTask(new Body() {
+		Task createRandomIndivs = ForTask.createFor(rt, new Range(Knapsack.popSize), new ForBody<Integer>() {
 			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				performSwitch();
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(ev, current, prev);
-	}
-	
-	private static void performSwitch() {
-		pop = next;
-		next = new Indiv[Knapsack.popSize];
-	}
-
-	private static Task mutateIndivs(final int i, Task current,
-			final List<Task> prev) {
-		Task ev = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				Knapsack.mutate(next[i]);
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(ev, current, prev);
-		return ev;
-	}
-
-	private static Task recombineIndivs(final int i,
-			Task current, List<Task> prev) {
-		Task ev = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
-				next[i] = Knapsack.recombine(pop[i], other);
-				current.setResult(new Integer(i));
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(ev, current, prev);
-		return ev;
-	}
-
-	private static Task sortArray(final int g, Task current, List<Task> prev) {
-		Task ev = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				Arrays.sort(pop);
-				if (debug) {
-					System.out.println("Best fit at " + g + ": " + pop[0].fitness);
-				}
-				for (int i=0; i < Knapsack.elitism; i++ ) {
-					next[Knapsack.popSize - i - 1] = pop[i];
-				}
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(ev, current, prev);
-		return ev;
-	}
-
-	private static Task evaluateIndiv(final int i, Task current) {
-		Task ev = rt.createNonBlockingTask(new Body() {
-
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				Knapsack.evaluate(pop[i]);
-			}
-		}, Runtime.NO_HINTS);
-		rt.schedule(ev, current, Runtime.NO_DEPS);
-		return ev;
-	}
-
-	private static Task createRandomIndiv(final int i) {
-		Task init = rt.createNonBlockingTask(new Body() {
-
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
+			public void iterate(Integer i) {
 				pop[i] = Knapsack.createRandomIndiv();
 			}
+		});
+		rt.schedule(createRandomIndivs, Runtime.NO_PARENT, Runtime.NO_DEPS);
+		
+		Task main = rt.createNonBlockingTask(new Body(){
+			@Override
+			public void execute(Runtime rt, Task current) throws Exception {
+				Collection<Task> previous = Runtime.NO_DEPS;
+				for (int g=0; g<Knapsack.numGen; g++) {
+					
+					Task eval = ForTask.createFor(rt, new Range(Knapsack.popSize), new ForBody<Integer>() {
+						@Override
+						public void iterate(Integer i) {
+							Knapsack.evaluate(pop[i]);
+						}
+					});
+					rt.schedule(eval, Runtime.NO_PARENT, previous);
+					
+					Task sort = rt.createNonBlockingTask(new Body() {
+
+						@Override
+						public void execute(Runtime rt, Task current)
+								throws Exception {
+							Arrays.sort(pop);
+						}
+					}, Runtime.NO_HINTS);
+					rt.schedule(sort, Runtime.NO_PARENT, Arrays.asList(eval));
+					
+					Task elitism = ForTask.createFor(rt, new Range(Knapsack.elitism), new ForBody<Integer>() {
+						@Override
+						public void iterate(Integer i) {
+							next[Knapsack.popSize - i - 1] = pop[i];
+						}
+					});
+					rt.schedule(elitism, Runtime.NO_PARENT, Arrays.asList(sort));
+					
+					Task recombine = ForTask.createFor(rt, new Range(Knapsack.popSize - Knapsack.elitism), new ForBody<Integer>() {
+						@Override
+						public void iterate(Integer i) {
+							Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
+							next[i] = Knapsack.recombine(pop[i], other);
+						}
+					});
+					rt.schedule(recombine, Runtime.NO_PARENT, Arrays.asList(elitism));
+					
+					Task mutation = ForTask.createFor(rt, new Range(Knapsack.popSize - Knapsack.elitism), new ForBody<Integer>() {
+						@Override
+						public void iterate(Integer i) {
+							Knapsack.mutate(next[i]);
+						}
+					});
+					rt.schedule(mutation, current, Arrays.asList(recombine));
+					
+					final int iter = g;
+					Task switchThem = rt.createNonBlockingTask(new Body() {
+
+						@Override
+						public void execute(Runtime rt, Task current)
+								throws Exception {
+							if (debug || iter == Knapsack.numGen-1) {
+								System.out.println("Best fit at " + iter + ": " + pop[0].fitness);
+							}
+							Indiv[] tmp = pop;
+							pop = next;
+							next = tmp;
+						}
+					}, Runtime.NO_HINTS);
+					rt.schedule(switchThem, Runtime.NO_PARENT, Arrays.asList(mutation));
+					
+					previous = Arrays.asList(switchThem);
+					
+				}
+			}
 		}, Runtime.NO_HINTS);
-		rt.schedule(init, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		return init;
+		rt.schedule(main, Runtime.NO_PARENT, Arrays.asList(createRandomIndivs));
+		
+		rt.shutdown();
 	}
-	
 }

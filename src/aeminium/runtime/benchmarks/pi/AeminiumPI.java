@@ -7,7 +7,7 @@ import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
-import external.MersenneTwisterFast;
+import aeminium.utils.random.MersenneTwisterFast;
 
 public class AeminiumPI {
 

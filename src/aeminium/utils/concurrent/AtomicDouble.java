@@ -1,4 +1,4 @@
-package aeminium.utils;
+package aeminium.utils.concurrent;
 
 
 import static java.lang.Double.doubleToLongBits;

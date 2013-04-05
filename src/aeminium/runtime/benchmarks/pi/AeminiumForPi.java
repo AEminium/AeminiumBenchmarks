@@ -9,7 +9,7 @@ import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.LongRange;
 import aeminium.runtime.implementations.Factory;
-import external.MersenneTwisterFast;
+import aeminium.utils.random.MersenneTwisterFast;
 
 public class AeminiumForPi {
 	

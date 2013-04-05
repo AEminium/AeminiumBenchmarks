@@ -1,18 +1,18 @@
 package aeminium.runtime.benchmarks.gaknapsack;
 
-import external.MersenneTwisterFast;
+import aeminium.utils.random.MersenneTwisterFast;
 
 // Describes the KnapSack Problem
 public class Knapsack {
-	public static int SIZE_LIMIT = 87;
+	public static int SIZE_LIMIT = 10000;
 
-	public final static int numberOfItems = 500;
+	public final static int numberOfItems = 10000;
 	
 	public final static MersenneTwisterFast rand = new MersenneTwisterFast(1L);
 	public final static Item[] items = Knapsack.createItems(numberOfItems);
 	
 	// GA Settings:
-	public static int popSize = 100;
+	public static int popSize = 5000;
 	public static int numGen = 100;
 	public final static int cromSize = numberOfItems;
 	public final static double prob_mut = 0.2;
