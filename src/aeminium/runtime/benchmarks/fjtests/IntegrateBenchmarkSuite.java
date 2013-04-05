@@ -19,15 +19,16 @@
 
 package aeminium.runtime.benchmarks.fjtests;
 
-import jsr166y.ForkJoinPool;
+import java.util.concurrent.ForkJoinPool;
+
+import aeminium.runtime.Runtime;
+import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
 import aeminium.runtime.benchmarks.integrate.AeIntegrate;
 import aeminium.runtime.benchmarks.integrate.FjIntegrate.FQuad;
 import aeminium.runtime.benchmarks.integrate.FjIntegrate.SQuad;
-import aeminium.runtime.Runtime;
-import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 
 public class IntegrateBenchmarkSuite implements BenchmarkSuite {

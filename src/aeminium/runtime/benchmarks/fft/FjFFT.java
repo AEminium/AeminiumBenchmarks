@@ -19,7 +19,8 @@
 
 package aeminium.runtime.benchmarks.fft;
 
-import jsr166y.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
 
 
 public class FjFFT extends RecursiveAction { 

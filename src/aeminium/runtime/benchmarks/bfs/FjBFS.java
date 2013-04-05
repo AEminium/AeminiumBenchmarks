@@ -23,10 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
-
-
-
-import jsr166y.RecursiveAction;
+import java.util.concurrent.RecursiveAction;
 
 public class FjBFS extends RecursiveAction {
 

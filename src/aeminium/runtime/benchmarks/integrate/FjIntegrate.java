@@ -18,7 +18,8 @@
  */
 
 package aeminium.runtime.benchmarks.integrate;
-import jsr166y.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
 
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -236,7 +237,7 @@ public final class FjIntegrate {
             q.fork();
             ar = recEval(c, r, fc, fr, ar);
             if (!q.tryUnfork()) {
-                q.quietlyHelpJoin();
+            	q.quietlyJoin();
                 return ar + q.area;
             }
             return ar + recEval(l, c, fl, fc, al);
@@ -286,7 +287,7 @@ public final class FjIntegrate {
                  (q = new DQuad(l, c, al)).fork();
              ar = recEval(c, r, fc, fr, ar);
              if (q != null && !q.tryUnfork()) {
-                 q.quietlyHelpJoin();
+                 q.quietlyJoin();
                  return ar + q.area;
              }
         	 return ar + recEval(l, c, fl, fc, al);
