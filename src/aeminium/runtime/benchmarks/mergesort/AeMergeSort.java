@@ -20,109 +20,157 @@
 package aeminium.runtime.benchmarks.mergesort;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.ErrorHandler;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 
 public class AeMergeSort {
-	final long[] array;
-	final long[] tmp;
-	int threshold;
+
+	long[] array;
+	final int threshold;
 	
-	public AeMergeSort(long[] array) {
-		this(array, array.length/(java.lang.Runtime.getRuntime().availableProcessors() + 1));
+	public AeMergeSort(long[] original) {
+		this(original, 10);
 	}
 	
-	public AeMergeSort(long[] array, int threshold) {
-		this.array = array;
-		this.tmp = new long[array.length];
+	public AeMergeSort(long[] original, int threshold) {
+		this.array = original;
 		this.threshold = threshold;
-		if (this.threshold < 4) {
-		    this.threshold = 4;
-		} 
+	}
+	
+	public class MergeSortBody implements Body {
+		public long[] array;
+		
+		public MergeSortBody(long[] original) {
+			this.array = original;
+		}
+		
+		@Override
+		public void execute(Runtime rt, Task current) throws Exception {
+			if (array.length <= 1)
+				return;
+			if (array.length <= threshold) {
+				Arrays.sort(array);
+				return;
+			}
+			List<long[]> partitionedArray = partitionArray();
+			final MergeSortBody left = new MergeSortBody(partitionedArray.get(0));
+			Task leftT = rt.createNonBlockingTask(left, Runtime.NO_HINTS);
+			rt.schedule(leftT, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			
+			final MergeSortBody right = new MergeSortBody(partitionedArray.get(1));
+			Task rightT = rt.createNonBlockingTask(right, Runtime.NO_HINTS);
+			rt.schedule(rightT, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			
+			leftT.getResult();
+			rightT.getResult();
+			
+			long[] mergedArray = new long[right.array.length + left.array.length];
+			mergeArrays(left.array, right.array, mergedArray);
+			array = mergedArray;
+		}
+		
+		private List<long[]> partitionArray() {
+			int mid = array.length / 2;
+			long[] partition1 = Arrays.copyOfRange(array, 0, mid);
+			long[] partition2 = Arrays.copyOfRange(array, mid,array.length);
+			return Arrays.asList(partition1, partition2);
+		}
+
+		private void mergeArrays(long[] array1, long[] array2, long[] mergedArray) {
+			int i = 0, j = 0, k = 0;
+			while ((i < array1.length) && (j < array2.length)) {
+				if (array1[i] < array2[j]) {
+					mergedArray[k] = array1[i++];
+				} else {
+					mergedArray[k] = array2[j++];
+				}
+				k++;
+			}
+
+			if (i == array1.length) {
+				for (int a = j; a < array2.length; a++) {
+					mergedArray[k++] = array2[a];
+				}
+			} else {
+				for (int a = i; a < array1.length; a++) {
+					mergedArray[k++] = array1[a];
+				}
+			}
+		}
+
 	}
 	
 	public void doSort(Runtime rt) {
-		Task main = createSorter(rt, 0, array.length);
-		rt.schedule(main, Runtime.NO_PARENT, Runtime.NO_DEPS);
-	}
-	
-	
-	public Task createSorter(Runtime rt, final int lo, final int hi) {
-		Task main = rt.createNonBlockingTask(new Body() {
-
-			@Override
-			public void execute(Runtime rt, Task current) {
-				if ( hi-lo < threshold) {
-					Arrays.sort(array, lo, hi);
-				} else {
-					int mid = (lo+hi) >>> 1;
-					Task t1 = createSorter(rt, lo, mid);
-					rt.schedule(t1, current, Runtime.NO_DEPS);
-					Task t2 = createSorter(rt, mid+1, hi);
-					rt.schedule(t2, current, Runtime.NO_DEPS);
-					
-					Task t3 = createMerger(rt, lo, mid, hi);
-					rt.schedule(t3, current, Arrays.asList(t1, t2));
-				}
-				
-			}
-			
-		}, Runtime.NO_HINTS);
-		return main;
-	}
-	
-	
-	private Task createMerger(Runtime rt, final int lo, final int mid, final int hi) {
-		Task merger = rt.createNonBlockingTask(new Body() {
-
-			@Override
-			public void execute(Runtime rt, Task current) {
-				if ( array[mid] <= array[mid+1] ) {
-					return;
-				}
-				System.arraycopy(array, lo, tmp, lo, mid-lo+1);
-				
-				int i = lo, k=lo;
-				int j = mid+1;
-				
-				while (k < j && j <= hi) {
-					if (tmp[i] <= array[j]) {
-						array[k++] = tmp[i++];
-					}  else {
-						array[k++] = array[j++];
-					}
-				}
-				System.arraycopy(tmp, i, array, k, j-k);
-				
-			}
-			
-		}, Runtime.NO_HINTS);
-		return merger;
+		final MergeSortBody sorter = new MergeSortBody(array);
+		Task sorterT = rt.createNonBlockingTask(sorter, Runtime.NO_HINTS);
+		rt.schedule(sorterT, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
+		Task saverT = rt.createNonBlockingTask(new Body() {
+			@Override
+			public void execute(Runtime rt, Task current) throws Exception {
+				array = sorter.array;
+			}
+		},Runtime.NO_HINTS);
+		rt.schedule(saverT, Runtime.NO_PARENT, Arrays.asList(sorterT));
 	}
+	
 	
 	/* Auxiliary Stuff for standalone running */
 	
 	public static void main(String ...args) {
 		
-		int size = 100;
+		int size = 10000000;
 		if (args.length >= 1) {
 			size = Integer.parseInt(args[0]);
 		}
 		
 		long[] original = generateRandomArray(size);
-		AeMergeSort merger = new AeMergeSort(original);
+		AeMergeSort merger = new AeMergeSort(original, 100);
 		
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new ErrorHandler() {
+
+			@Override
+			public void handleTaskException(Task task, Throwable t) {
+				t.printStackTrace();
+			}
+
+			@Override
+			public void handleLockingDeadlock() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void handleDependencyCycle(Task task) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void handleTaskDuplicatedSchedule(Task task) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void handleInternalError(Error err) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		rt.init();
 		merger.doSort(rt);
 		rt.shutdown();
 		System.out.println("Sorted: " + checkArray(merger.array));
-		System.out.println("Array: " + Arrays.toString(merger.array));
+		//System.out.println("Array: " + Arrays.toString(merger.array));
 	}
 	
 	public static boolean checkArray(long[] c) {

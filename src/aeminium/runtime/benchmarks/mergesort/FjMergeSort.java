@@ -1,136 +1,121 @@
-/**
- * Copyright (c) 2010-11 The AEminium Project (see AUTHORS file)
- * 
- * This file is part of Plaid Programming Language.
- *
- * Plaid Programming Language is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- *  Plaid Programming Language is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Plaid Programming Language.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package aeminium.runtime.benchmarks.mergesort;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
-
-import jsr166y.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
 @SuppressWarnings("serial")
-public class FjMergeSort extends RecursiveAction {
+public class FjMergeSort extends RecursiveTask<long[]> {
 
-	final long[] array;
-	final long[] tmp;
-	final int lo;
-	final int hi;
-	final int threshold;
+	long[] arrayToDivide;
+	int threshold;
 
-	public FjMergeSort(long[] array) {
-		this(array, new long[array.length],0, array.length, array.length/(Runtime.getRuntime().availableProcessors())+1);
-	}
-	
-	public FjMergeSort(long[] array, int threshold) {
-		this(array, new long[array.length],0, array.length, threshold);
-	}
-	
-	public FjMergeSort(long[] array, long[] tmp, int lo, int hi, int thre) {
-		this.array = array;
-		this.tmp = tmp;
-		this.lo = lo;
-		this.hi = hi;
-		this.threshold = thre;
+	public FjMergeSort(long[] arrayToDivide, int threshold) {
+		this.arrayToDivide = arrayToDivide;
+		this.threshold = threshold;
 	}
 
-	@Override
-	protected void compute() {
-		if (hi - lo < threshold)
-			quickSort(array, lo, hi);
-		else {
-			int mid = (lo + hi) >>> 1;
-			RecursiveAction m1 = new FjMergeSort(array, tmp, lo, mid, threshold);
-			RecursiveAction m2 = new FjMergeSort(array, tmp, mid+1, hi, threshold);
-
-			invokeAll(m1, m2);
-			merge(array, lo, mid, hi);
-		}
-
-	}
-
-	private void merge(long[] whole, int lo, int mid, int hi) {
-		// Code adapted from: http://blog.quibb.org/2010/03/jsr-166-the-java-forkjoin-framework/
-		
-		if ( whole[mid] <= whole[mid+1] ) {
-			return;
-		}
-		System.arraycopy(whole, lo, tmp, lo, mid-lo+1);
-		
-		int i = lo, k=lo;
-		int j = mid+1;
-		
-		while (k < j && j < hi) {
-			if (tmp[i] <= whole[j]) {
-				whole[k++] = tmp[i++];
-			}  else {
-				whole[k++] = whole[j++];
-			}
-		}
-		System.arraycopy(tmp, i, whole, k, j-k);
-		
-		
-	}
-
-	public void sequentialSort() {
-		sequentialSort(0, array.length);
-	}
-	
-	public void sequentialSort(int lo, int hi) {
-		if (hi - lo < threshold)
-			quickSort(array, lo, hi);
-		else {
-			int mid = (lo + hi) >>> 1;
-			sequentialSort(lo, mid);
-			sequentialSort(mid+1, hi);
-			merge(array, lo, mid, hi);
-		}
-	}
-	
-	public void quickSort(long[] array2, int lo2, int hi2) {
-		Arrays.sort(array2, lo2, hi2);
-	}
-	
 	public static void main(String[] args) {
 		ForkJoinPool pool = new ForkJoinPool();
-		long[] original = generateRandomArray(100000);
-		FjMergeSort t = new FjMergeSort(original);
+		long[] original = generateRandomArray(100);
+		FjMergeSort t = new FjMergeSort(original, 10);
 		pool.invoke(t);
-		System.out.println("Sorted: " + checkArray(t.array));
-		System.out.println("Array:" + Arrays.toString(t.array));
+		System.out.println("Sorted: " + checkArray(t.join()));
 	}
-	
+
 	public static boolean checkArray(long[] c) {
 		boolean st = true;
-		for (int i=0; i<c.length-1; i++) {
-			st = st && (c[i] <= c[i+1]);
+		for (int i = 0; i < c.length - 1; i++) {
+			st = st && (c[i] <= c[i + 1]);
+			if (c[i] > c[i + 1])
+				System.out.println("i=" + i + ", c[i]=" + c[i] + " c[i+1]="
+						+ c[i + 1]);
 		}
 		return st;
 	}
-	
+
 	public static long[] generateRandomArray(int size) {
 		Random r = new Random();
 		r.setSeed(1234567890);
 		long[] ar = new long[size];
-		for (int i=0; i<size; i++) {
-			ar[i] = r.nextLong();
+		for (int i = 0; i < size; i++) {
+			ar[i] = r.nextLong() % 100;
 		}
 		return ar;
 	}
 
+	@Override
+	protected long[] compute() {
+		/*
+		 * We divide the array till it has only 1 element. We can also custom
+		 * define this value to say some 5 elements. In which case the return
+		 * would be Arrays.sort(arrayToDivide) instead.
+		 */
+
+		if (arrayToDivide.length < threshold) {
+			sequentialSort();
+			return arrayToDivide;
+		}
+
+		if (arrayToDivide.length > 1) {
+
+			List<long[]> partitionedArray = partitionArray();
+
+			FjMergeSort task1 = new FjMergeSort(partitionedArray.get(0),
+					threshold);
+			FjMergeSort task2 = new FjMergeSort(partitionedArray.get(1),
+					threshold);
+			invokeAll(task1, task2);
+
+			// Wait for results from both the tasks
+			long[] array1 = task1.join();
+			long[] array2 = task2.join();
+
+			// Initialize a merged array
+			long[] mergedArray = new long[array1.length + array2.length];
+
+			mergeArrays(task1.join(), task2.join(), mergedArray);
+			return mergedArray;
+		}
+		return arrayToDivide;
+	}
+
+	private List<long[]> partitionArray() {
+
+		int mid = arrayToDivide.length / 2;
+		long[] partition1 = Arrays.copyOfRange(arrayToDivide, 0, mid);
+
+		long[] partition2 = Arrays.copyOfRange(arrayToDivide, mid,
+				arrayToDivide.length);
+		return Arrays.asList(partition1, partition2);
+
+	}
+
+	private void mergeArrays(long[] array1, long[] array2, long[] mergedArray) {
+		int i = 0, j = 0, k = 0;
+		while ((i < array1.length) && (j < array2.length)) {
+			if (array1[i] < array2[j]) {
+				mergedArray[k] = array1[i++];
+			} else {
+				mergedArray[k] = array2[j++];
+			}
+			k++;
+		}
+
+		if (i == array1.length) {
+			for (int a = j; a < array2.length; a++) {
+				mergedArray[k++] = array2[a];
+			}
+		} else {
+			for (int a = i; a < array1.length; a++) {
+				mergedArray[k++] = array1[a];
+			}
+		}
+	}
+
+	public void sequentialSort() {
+		Arrays.sort(arrayToDivide);
+	}
 }

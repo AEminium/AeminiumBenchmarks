@@ -19,13 +19,14 @@
 
 package aeminium.runtime.benchmarks.fjtests;
 
-import jsr166y.ForkJoinPool;
+import java.util.concurrent.ForkJoinPool;
+
+import aeminium.runtime.Runtime;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
 import aeminium.runtime.benchmarks.mergesort.AeMergeSort;
 import aeminium.runtime.benchmarks.mergesort.FjMergeSort;
-import aeminium.runtime.Runtime;
 import aeminium.runtime.implementations.Factory;
 
 public class MergeSortBenchmarkSuite implements BenchmarkSuite {
