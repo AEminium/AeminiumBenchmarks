@@ -28,35 +28,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class LogCounter {
+public class SeqLogCounter {
 	
 	public static void main(String[] args) throws Exception {
-		//TODO
-		/*
-		long start, end;
-		
-		cleanFiles(path);
-		System.out.println("AE :::::::::");
-		aeminium.runtime.Runtime rt = Factory.getRuntime();
-		
-		
-		start = System.nanoTime();
-		System.out.println("n=" + aeminiumCounter(path, rt));
-		end = System.nanoTime();
-		System.out.println(String.format("%d", (end-start)));
-		*/
-		
+		File[] fs = SeqLogCounter.finder(args[0]);
+		int r = sequentialCounter(fs);
+		System.out.println(r + " visits");
 	}
 	
 	public static List<File> addFiles(List<File> files, File dir)
@@ -189,67 +171,6 @@ public class LogCounter {
 		}
 		return dest;
 	}
-	
-	
-	static class FJCounter implements Callable<Integer> {
-
-		File f;
-
-		public FJCounter(File f) {
-			this.f = f;
-		}
-		
-		@Override
-		public Integer call() {
-			int result = 0;
-			String d;
-			try {
-				d = uncompressGZip(f);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return 0;
-			}
-			
-			try {
-				result = countAccesses(d);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return result;
-		}
-	}
-	
-	public static int forkjoinCounter(File[] files, ForkJoinPool pool) {
-		int n = 0;
-		Collection<FJCounter> futures = new ArrayList<FJCounter>();
-		
-		for (File logfile : files) {
-			futures.add(new FJCounter(logfile));
-		}
-		List<Future<Integer>> results = pool.invokeAll(futures);
-		
-		for (Future<Integer> result : results) {
-			try {
-				if (result.get() == null) {
-					System.out.println("null!");
-				}
-				n += result.get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				System.exit(1);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-				System.exit(1);	
-			}
-		}
-		for (File logfile : files) {
-			deleteFile(logfile);
-		}
-		return n;
-	}
-
 
 	protected static void deleteFile(File logfile) {
 		String np = logfile.getAbsolutePath().replace(".gz", "");
