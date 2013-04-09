@@ -129,7 +129,7 @@ public class AeLCS {
 		System.out.println(gen.solution);
 	}
 
-	private static String readFile(String string) {
+	public static String readFile(String string) {
 		FileInputStream stream;
 		try {
 			stream = new FileInputStream(new File(string));
