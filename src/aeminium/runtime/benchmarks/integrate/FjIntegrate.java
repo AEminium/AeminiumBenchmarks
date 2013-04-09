@@ -71,23 +71,21 @@ import java.util.concurrent.RecursiveAction;
  */
 public final class FjIntegrate {
 
-    static final double errorTolerance = 1.0e-12;
-    /** for time conversion */
+	static final double errorTolerance = 1.0e-12;
+	static final int threshold = 100;
+	static double start = -2101.0;
+    static double end = 1036.0;
     static final long NPS = (1000L * 1000 * 1000);
-
+	
     static final int SERIAL = -1;
     static final int DYNAMIC = 0;
     static final int FORK = 1;
     
-    static final int threshold = 10;
-
     // the function to integrate
     static double computeFunction(double x)  {
         return (x * x + 1.0) * x;
     }
-
-    static final double start = -2101.0;
-    static final double end = 1036.0;
+    
     /*
      * The number of recursive calls for
      * integrate from start to end.
@@ -120,32 +118,17 @@ public final class FjIntegrate {
      * Usage: Integrate [procs=N] [reps=N] forkPolicy=serial|dynamic|fork
     */
     public static void main(String[] args) throws Exception {
+    	
         final int procs = intArg(args, "procs",
                                  Runtime.getRuntime().availableProcessors());
-        final int forkPolicy = policyArg(args, "forkPolicy", DYNAMIC);
 
+        
+        long tstart = System.nanoTime();
         ForkJoinPool g = new ForkJoinPool(procs);
-        System.out.println("Integrating from " + start + " to " + end +
-                           " forkPolicy = " + forkPolicy);
-        long lastTime = System.nanoTime();
-
-        for (int reps = intArg(args, "reps", 10); reps > 0; reps--) {
-            double a;
-            if (forkPolicy == SERIAL)
-                a = SQuad.computeArea(g, start, end);
-            else if (forkPolicy == FORK)
-                a = FQuad.computeArea(g, start, end);
-            else
-                a = DQuad.computeArea(g, start, end);
-            long now = System.nanoTime();
-            double s = (double) (now - lastTime) / NPS;
-            lastTime = now;
-            System.out.printf("Calls/sec: %12d", (long) (calls / s));
-            System.out.printf(" Time: %7.3f", s);
-            System.out.printf(" Area: %12.1f", a);
-            System.out.println();
-        }
-        System.out.println(g);
+		double a = DQuad.computeArea(g, start, end);
+		System.out.println("Integral: " + a);		
+		long tend = System.nanoTime();
+		System.out.println((double)(tend - tstart)/NPS);
         g.shutdown();
     }
 
