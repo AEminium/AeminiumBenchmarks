@@ -11,7 +11,7 @@ import aeminium.runtime.helpers.loops.LongRange;
 import aeminium.runtime.implementations.Factory;
 import aeminium.utils.random.MersenneTwisterFast;
 
-public class AeminiumForPi {
+public class AeForPi {
 	
 	
 	public static void main(String[] args) {

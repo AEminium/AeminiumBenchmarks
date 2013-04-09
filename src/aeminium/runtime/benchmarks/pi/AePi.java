@@ -9,7 +9,7 @@ import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 import aeminium.utils.random.MersenneTwisterFast;
 
-public class AeminiumPI {
+public class AePi {
 
 	public static class PiBody implements Body {
 		private long darts = 0;
@@ -84,7 +84,7 @@ public class AeminiumPI {
 			final List<Task> workers = new ArrayList<Task>();
 			final List<PiBody> workerBodies = new ArrayList<PiBody>();
 			for (int i=0; i<threshold; i++) {
-				PiBody body = new AeminiumPI.PiBody(darts/threshold);
+				PiBody body = new AePi.PiBody(darts/threshold);
 				Task worker = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 				workers.add(worker);
 				workerBodies.add(body);
@@ -98,7 +98,7 @@ public class AeminiumPI {
 	
 
 	public static Body createPiBody(final Runtime rt, final int n) {
-		return new AeminiumPI.PiBody(n);
+		return new AePi.PiBody(n);
 	}
 	
 	public static MainBody createController(final Runtime rt, final int threshold, final long darts) {
@@ -117,7 +117,7 @@ public class AeminiumPI {
 	    
 		Runtime rt = Factory.getRuntime();
 		rt.init();
-		MainBody body = AeminiumPI.createController(rt, threshold, darts);
+		MainBody body = AePi.createController(rt, threshold, darts);
 		Task controller = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(controller, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		

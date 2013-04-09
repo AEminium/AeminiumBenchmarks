@@ -5,8 +5,8 @@ import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.Benchmark;
 import aeminium.runtime.benchmarks.BenchmarkExecutor;
 import aeminium.runtime.benchmarks.BenchmarkSuite;
-import aeminium.runtime.benchmarks.pi.AeminiumPI;
-import aeminium.runtime.benchmarks.pi.AeminiumPI.MainBody;
+import aeminium.runtime.benchmarks.pi.AePi;
+import aeminium.runtime.benchmarks.pi.AePi.MainBody;
 import aeminium.runtime.implementations.Factory;
 
 public class PiBenchmarkSuite implements BenchmarkSuite {
@@ -37,7 +37,7 @@ public class PiBenchmarkSuite implements BenchmarkSuite {
 				rt.init();
 				
 				long start = System.nanoTime();
-				MainBody body = AeminiumPI.createController(rt, THRESHOLD, PARAMETER);
+				MainBody body = AePi.createController(rt, THRESHOLD, PARAMETER);
 				Task controller = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 				rt.schedule(controller, Runtime.NO_PARENT, Runtime.NO_DEPS);
 				
