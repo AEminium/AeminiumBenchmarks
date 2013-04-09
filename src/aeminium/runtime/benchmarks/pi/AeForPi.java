@@ -34,7 +34,7 @@ public class AeForPi {
 			public void execute(final Runtime rt, final Task current) throws Exception {
 				 Task iterations = ForTask.createFor(rt, new LongRange(darts), new ForBody<Long>() {
 					@Override
-					public void iterate(Long o) {
+					public void iterate(Long o, Runtime rt, Task current) {
 						double x_coord, y_coord, r; 
 						/* generate random numbers for x and y coordinates */
 						r = random.nextDouble();

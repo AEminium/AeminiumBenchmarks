@@ -80,7 +80,7 @@ public class AeBlackScholes {
 				
 				Task iterations = ForTask.createFor(rt, new LongRange(N), new ForBody<Long>() {
 					@Override
-					public void iterate(final Long o) {
+					public void iterate(final Long o, Runtime rt, Task current) {
 						double eps = StdRandom.gaussian();
 			            double price = S * Math.exp(r*T - 0.5*sigma*sigma*T + sigma*eps*Math.sqrt(T));
 			            final double value = Math.max(price - X, 0);
@@ -119,7 +119,7 @@ public class AeBlackScholes {
 				
 				Task iterations = ForTask.createFor(rt, new LongRange(N), new ForBody<Long>() {
 					@Override
-					public void iterate(final Long o) {
+					public void iterate(final Long o, Runtime rt, Task current) {
 						double price = S;
 			            double dt = T/10000.0;
 			            for (double t = 0; t <= T; t = t + dt) {

@@ -29,7 +29,7 @@ public class AeDoAll {
 		
 		Task as = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
 			@Override
-			public void iterate(Integer i) {
+			public void iterate(Integer i, Runtime rt, Task current) {
 				a[i] = Math.sqrt(i);
 			}
 		});
@@ -37,7 +37,7 @@ public class AeDoAll {
 		
 		Task bs = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
 			@Override
-			public void iterate(Integer i) {
+			public void iterate(Integer i, Runtime rt, Task current) {
 				b[i] = Math.sin(i);
 			}
 		});
@@ -46,7 +46,7 @@ public class AeDoAll {
 		
 		Task cs = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
 			@Override
-			public void iterate(Integer i) {
+			public void iterate(Integer i, Runtime rt, Task current) {
 				c[i] = a[i] / b[i];
 			}
 		});

@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import aeminium.runtime.Body;
-import aeminium.runtime.ErrorHandler;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.Range;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeGA {
 	
@@ -23,22 +23,7 @@ public class AeGA {
 	public static void main(String[] args) {;
 		rt.init();
 		
-		rt.addErrorHandler(new ErrorHandler() {
-
-			@Override
-			public void handleTaskException(Task task, Throwable t) {
-				t.printStackTrace();
-			}
-
-			@Override
-			public void handleLockingDeadlock() {}
-			@Override
-			public void handleDependencyCycle(Task task) {}
-			@Override
-			public void handleTaskDuplicatedSchedule(Task task) {}
-			@Override
-			public void handleInternalError(Error err) {}
-		});
+		rt.addErrorHandler(new PrintErrorHandler());
 		
 		if (args.length >= 1) {
 			Knapsack.popSize = Integer.parseInt(args[0]);
@@ -51,7 +36,7 @@ public class AeGA {
 		
 		Task createRandomIndivs = ForTask.createFor(rt, new Range(Knapsack.popSize), new ForBody<Integer>() {
 			@Override
-			public void iterate(Integer i) {
+			public void iterate(Integer i, Runtime rt, Task current) {
 				pop[i] = Knapsack.createRandomIndiv();
 			}
 		});
@@ -65,7 +50,7 @@ public class AeGA {
 					
 					Task eval = ForTask.createFor(rt, new Range(Knapsack.popSize), new ForBody<Integer>() {
 						@Override
-						public void iterate(Integer i) {
+						public void iterate(Integer i, Runtime rt, Task current) {
 							Knapsack.evaluate(pop[i]);
 						}
 					});
@@ -83,7 +68,7 @@ public class AeGA {
 					
 					Task elitism = ForTask.createFor(rt, new Range(Knapsack.elitism), new ForBody<Integer>() {
 						@Override
-						public void iterate(Integer i) {
+						public void iterate(Integer i, Runtime rt, Task current) {
 							next[Knapsack.popSize - i - 1] = pop[i];
 						}
 					});
@@ -91,7 +76,7 @@ public class AeGA {
 					
 					Task recombine = ForTask.createFor(rt, new Range(Knapsack.popSize - Knapsack.elitism), new ForBody<Integer>() {
 						@Override
-						public void iterate(Integer i) {
+						public void iterate(Integer i, Runtime rt, Task current) {
 							Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
 							next[i] = Knapsack.recombine(pop[i], other);
 						}
@@ -100,7 +85,7 @@ public class AeGA {
 					
 					Task mutation = ForTask.createFor(rt, new Range(Knapsack.popSize - Knapsack.elitism), new ForBody<Integer>() {
 						@Override
-						public void iterate(Integer i) {
+						public void iterate(Integer i, Runtime rt, Task current) {
 							Knapsack.mutate(next[i]);
 						}
 					});
