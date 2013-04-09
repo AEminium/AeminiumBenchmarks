@@ -35,7 +35,7 @@ package aeminium.runtime.benchmarks.blackscholes;
  *************************************************************************/
 
 
-public class BlackScholes {
+public class SeqBlackScholes {
 
     // Black-Scholes formula
     public static double callPrice(double S, double X, double r, double sigma, double T) {

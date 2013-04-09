@@ -38,7 +38,7 @@ import aeminium.runtime.implementations.Factory;
  * 
  *************************************************************************/
 
-public class BlackScholesAeminium {
+public class AeBlackScholes {
 	public static Runtime rt;
 
 	private static double saveCallPrice = 0.0;
@@ -46,7 +46,7 @@ public class BlackScholesAeminium {
 	private static double saveCall2 = 0.0;
 	
 	public static void main(String[] args) {
-
+		long initialTime = System.currentTimeMillis();
 		rt = Factory.getRuntime();
 		rt.init();
 
@@ -160,8 +160,8 @@ public class BlackScholesAeminium {
 		System.out.println(saveCall);
 		System.out.println(saveCall2);
 		
-		
-		
+		long finalTime = System.currentTimeMillis();
+		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
 	}
 
 }
