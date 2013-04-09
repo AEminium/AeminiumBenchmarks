@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
  *
  */
  
-public class HistogramEQ {
+public class SeqHistogramEQ {
  
     private static BufferedImage original, equalized;
  
@@ -25,15 +25,15 @@ public class HistogramEQ {
         String output_f = args[1];
         original = ImageIO.read(original_f);
         equalized = histogramEqualization(original);
-        writeImage(output_f);
+        writeImage(output_f, equalized);
  
         long finalTime = System.currentTimeMillis();
 		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
     }
  
-    private static void writeImage(String output) throws IOException {
+    static void writeImage(String output, BufferedImage eq) throws IOException {
         File file = new File(output+".jpg");
-        ImageIO.write(equalized, "jpg", file);
+        ImageIO.write(eq, "jpg", file);
     }
  
     private static BufferedImage histogramEqualization(BufferedImage original) {
@@ -166,7 +166,7 @@ public class HistogramEQ {
     }
  
     // Convert R, G, B, Alpha to standard 8 bit
-    private static int colorToRGB(int alpha, int red, int green, int blue) {
+    static int colorToRGB(int alpha, int red, int green, int blue) {
  
         int newPixel = 0;
         newPixel += alpha; newPixel = newPixel << 8;

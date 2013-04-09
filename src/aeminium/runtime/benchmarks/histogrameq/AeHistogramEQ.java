@@ -21,7 +21,7 @@ import aeminium.runtime.implementations.Factory;
  * 
  */
 
-public class HistogramEQAeminium {
+public class AeHistogramEQ {
 
 	private static BufferedImage original, equalized;
 	public static Runtime rt;
@@ -63,7 +63,7 @@ public class HistogramEQAeminium {
 						blue = histLUT.get(2)[blue];
 
 						// Return back to original format
-						newPixel = colorToRGB(alpha, red, green, blue);
+						newPixel = SeqHistogramEQ.colorToRGB(alpha, red, green, blue);
 
 						// Write pixels into image
 						histogramEQ.setRGB(i, j, newPixel);
@@ -81,7 +81,7 @@ public class HistogramEQAeminium {
 			@Override
 			public void execute(Runtime rt, Task current) throws IOException {
 				equalized = histogramEQ;
-				writeImage(output_f);
+				SeqHistogramEQ.writeImage(output_f, equalized);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
@@ -123,7 +123,7 @@ public class HistogramEQAeminium {
 				// Get the Lookup table for histogram equalization
 				// Get an image histogram - calculated values by R, G, B
 				// channels
-				imageHist = imageHistogram(input);
+				imageHist = SeqHistogramEQ.imageHistogram(input);
 
 				Collection<Task> prev1 = new ArrayList<Task>();
 				Task init1 = fillLookupTableTask(current, Runtime.NO_DEPS, input);
@@ -273,66 +273,6 @@ public class HistogramEQAeminium {
 
 		long finalTime = System.currentTimeMillis();
 		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
-	}
-
-	private static void writeImage(String output) throws IOException {
-		File file = new File(output + ".jpg");
-		ImageIO.write(equalized, "jpg", file);
-	}
-
-	// Return an ArrayList containing histogram values for separate R, G, B
-	// channels
-	public static ArrayList<int[]> imageHistogram(BufferedImage input) {
-
-		int[] rhistogram = new int[256];
-		int[] ghistogram = new int[256];
-		int[] bhistogram = new int[256];
-
-		for (int i = 0; i < rhistogram.length; i++)
-			rhistogram[i] = 0;
-		for (int i = 0; i < ghistogram.length; i++)
-			ghistogram[i] = 0;
-		for (int i = 0; i < bhistogram.length; i++)
-			bhistogram[i] = 0;
-
-		for (int i = 0; i < input.getWidth(); i++) {
-			for (int j = 0; j < input.getHeight(); j++) {
-
-				int red = new Color(input.getRGB(i, j)).getRed();
-				int green = new Color(input.getRGB(i, j)).getGreen();
-				int blue = new Color(input.getRGB(i, j)).getBlue();
-
-				// Increase the values of colors
-				rhistogram[red]++;
-				ghistogram[green]++;
-				bhistogram[blue]++;
-
-			}
-		}
-
-		ArrayList<int[]> hist = new ArrayList<int[]>();
-		hist.add(rhistogram);
-		hist.add(ghistogram);
-		hist.add(bhistogram);
-
-		return hist;
-
-	}
-
-	// Convert R, G, B, Alpha to standard 8 bit
-	private static int colorToRGB(int alpha, int red, int green, int blue) {
-
-		int newPixel = 0;
-		newPixel += alpha;
-		newPixel = newPixel << 8;
-		newPixel += red;
-		newPixel = newPixel << 8;
-		newPixel += green;
-		newPixel = newPixel << 8;
-		newPixel += blue;
-
-		return newPixel;
-
 	}
 
 }
