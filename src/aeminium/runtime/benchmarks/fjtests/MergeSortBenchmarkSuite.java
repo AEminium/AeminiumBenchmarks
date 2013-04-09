@@ -47,7 +47,7 @@ public class MergeSortBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				long[] arrayToSort = FjMergeSort.generateRandomArray(sizeOfTests);
+				long[] arrayToSort = AeMergeSort.generateRandomArray(sizeOfTests);
 				FjMergeSort task = new FjMergeSort(arrayToSort, threshold);
 				
 				long start = System.nanoTime();
@@ -68,7 +68,7 @@ public class MergeSortBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				long[] arrayToSort = FjMergeSort.generateRandomArray(sizeOfTests);
+				long[] arrayToSort = AeMergeSort.generateRandomArray(sizeOfTests);
 				
 				FjMergeSort task = new FjMergeSort(arrayToSort, threshold);
 				
@@ -91,7 +91,7 @@ public class MergeSortBenchmarkSuite implements BenchmarkSuite {
 			
 			@Override
 			public long run() {
-				long[] arrayToSort = FjMergeSort.generateRandomArray(sizeOfTests);
+				long[] arrayToSort = AeMergeSort.generateRandomArray(sizeOfTests);
 				
 				AeMergeSort merger = new AeMergeSort(arrayToSort, threshold);
 				rt.init();

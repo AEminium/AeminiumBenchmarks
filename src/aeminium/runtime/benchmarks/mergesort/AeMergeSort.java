@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Random;
 
 import aeminium.runtime.Body;
-import aeminium.runtime.ErrorHandler;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
@@ -126,51 +125,24 @@ public class AeMergeSort {
 	public static void main(String ...args) {
 		
 		int size = 10000000;
+		int threshold = 100;
 		if (args.length >= 1) {
 			size = Integer.parseInt(args[0]);
 		}
+		if (args.length >= 2) {
+			threshold = Integer.parseInt(args[1]);
+		}
 		
 		long[] original = generateRandomArray(size);
-		AeMergeSort merger = new AeMergeSort(original, 100);
+		AeMergeSort merger = new AeMergeSort(original, threshold);
 		
 		Runtime rt = Factory.getRuntime();
-		rt.addErrorHandler(new ErrorHandler() {
-
-			@Override
-			public void handleTaskException(Task task, Throwable t) {
-				t.printStackTrace();
-			}
-
-			@Override
-			public void handleLockingDeadlock() {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void handleDependencyCycle(Task task) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void handleTaskDuplicatedSchedule(Task task) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void handleInternalError(Error err) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
 		rt.init();
 		merger.doSort(rt);
 		rt.shutdown();
-		System.out.println("Sorted: " + checkArray(merger.array));
-		//System.out.println("Array: " + Arrays.toString(merger.array));
+		if (args.length >= 3) {
+			System.out.println("Sorted: " + checkArray(merger.array));
+		}
 	}
 	
 	public static boolean checkArray(long[] c) {

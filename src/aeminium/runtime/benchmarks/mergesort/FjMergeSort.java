@@ -2,7 +2,6 @@ package aeminium.runtime.benchmarks.mergesort;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
@@ -18,32 +17,22 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 	}
 
 	public static void main(String[] args) {
+		int size = 10000000;
+		int threshold = 100;
+		if (args.length >= 1) {
+			size = Integer.parseInt(args[0]);
+		}
+		if (args.length >= 2) {
+			threshold = Integer.parseInt(args[1]);
+		}
+		long[] original = AeMergeSort.generateRandomArray(size);
+		
 		ForkJoinPool pool = new ForkJoinPool();
-		long[] original = generateRandomArray(100);
-		FjMergeSort t = new FjMergeSort(original, 10);
+		FjMergeSort t = new FjMergeSort(original, threshold);
 		pool.invoke(t);
-		System.out.println("Sorted: " + checkArray(t.join()));
-	}
-
-	public static boolean checkArray(long[] c) {
-		boolean st = true;
-		for (int i = 0; i < c.length - 1; i++) {
-			st = st && (c[i] <= c[i + 1]);
-			if (c[i] > c[i + 1])
-				System.out.println("i=" + i + ", c[i]=" + c[i] + " c[i+1]="
-						+ c[i + 1]);
+		if (args.length >= 3) {
+			System.out.println("Sorted: " + AeMergeSort.checkArray(t.join()));
 		}
-		return st;
-	}
-
-	public static long[] generateRandomArray(int size) {
-		Random r = new Random();
-		r.setSeed(1234567890);
-		long[] ar = new long[size];
-		for (int i = 0; i < size; i++) {
-			ar[i] = r.nextLong() % 100;
-		}
-		return ar;
 	}
 
 	@Override
