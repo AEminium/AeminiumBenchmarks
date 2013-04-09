@@ -101,25 +101,14 @@ public class FjBFS extends RecursiveAction {
 	}
 
 	public static void main(String[] args) {
-		int target = 1;
+		int target = 23;
 
-		Random r = new Random(1234567890);
-		Graph g = Graph.randomIntGraph(23, 2, r);
-		System.out.println("Created Graph");
-		FjBFS searcher = new FjBFS(target, g, 21);
+		FjBFS searcher = new FjBFS(target, Graph.randomIntGraph(target, 2, new Random(1234567890)), 21);
 		long start = System.nanoTime();
-		int f = searcher.seqCount();
+		int f = searcher.parCount();
 		long end = System.nanoTime();
 		System.out.println("Found " + f + " occurrences of " + target
 				+ " and took " + (end - start) + " nanoseconds.");
-		
-		
-		start = System.nanoTime();
-		f = searcher.parCount();
-		end = System.nanoTime();
-		System.out.println("Found " + f + " occurrences of " + target
-				+ " and took " + (end - start) + " nanoseconds.");
-
 	}
 
 }
