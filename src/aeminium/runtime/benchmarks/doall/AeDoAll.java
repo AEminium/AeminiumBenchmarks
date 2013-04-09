@@ -25,7 +25,7 @@ public class AeDoAll {
 		a = new double[size];
 		b = new double[size];
 		c = new double[size];
-		
+		rt.init();
 		
 		Task as = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
 			@Override
@@ -51,5 +51,6 @@ public class AeDoAll {
 			}
 		});
 		rt.schedule(cs, Runtime.NO_PARENT, Arrays.asList(as, bs));
+		rt.shutdown();
 	}
 }
