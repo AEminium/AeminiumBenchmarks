@@ -7,10 +7,21 @@ public class SeqDoAll {
 		if (args.length > 0)
 			size = Integer.parseInt(args[0]);
 
+		double[] a = new double[size];
+		double[] b = new double[size];
 		double[] c = new double[size];
 		
 		for (int i = 0; i < size; i++) {
-			c[i] = Math.sqrt(i) / Math.sin(i);
+			a[i] = Math.sqrt(i);
 		}
+		
+		for (int i = 0; i < size; i++) {
+			b[i] = Math.sin(i);
+		}
+		
+		for (int i = 0; i < size; i++) {
+			c[i] = a[i] / b[i];
+		}
+		
 	}
 }
