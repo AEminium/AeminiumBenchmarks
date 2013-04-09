@@ -25,6 +25,13 @@ import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Factory;
 
 public class AeFibonacci {
+	
+	public static long seqFib(long n) {
+		if (n <= 2)
+			return 1;
+		else
+			return (seqFib(n - 1) + seqFib(n - 2));
+	}
 
 	public static class FibBody implements Body {
 		public volatile long value;
@@ -33,13 +40,6 @@ public class AeFibonacci {
 		public FibBody(long n, int threshold) {
 			this.value = n;
 			this.threshold = threshold;
-		}
-
-		public long seqFib(long n) {
-			if (n <= 2)
-				return 1;
-			else
-				return (seqFib(n - 1) + seqFib(n - 2));
 		}
 
 		@Override
@@ -69,7 +69,7 @@ public class AeFibonacci {
 	public static void main(String[] args) {
 		long initialTime = System.currentTimeMillis();
 
-		int fib = 23;
+		int fib = 46;
 		int threshold = 16;
 		if (args.length >= 1) {
 			fib = Integer.parseInt(args[0]);
