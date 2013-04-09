@@ -94,18 +94,16 @@ public class AeFFT {
 	public static void main(String[] args) {
 		Complex[] input = createRandomComplexArray(524288);
 		
-		
-		
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		FFTBody body = createFFTBody(rt, input, 1024);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
-		
-		show(body.result, "Result");
-		show(sequentialFFT(input), "Result Linear");
-		
+		if (args.length == 0) {
+			show(body.result, "Result");
+			show(sequentialFFT(input), "Result Linear");
+		}
 	}
 	
 	public static Complex[] createRandomComplexArray(int n) {

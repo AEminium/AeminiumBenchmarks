@@ -75,7 +75,9 @@ public class FjFFT extends RecursiveAction {
 		ForkJoinPool pool = new ForkJoinPool();
 		FjFFT t = new FjFFT(input, 1024);
 		pool.invoke(t);
-		AeFFT.show(t.result, "Result");
+		if (args.length == 0) {
+			AeFFT.show(t.result, "Result");
+		}
 	}
 	
 }
