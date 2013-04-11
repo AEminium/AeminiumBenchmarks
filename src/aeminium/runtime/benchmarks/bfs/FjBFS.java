@@ -40,20 +40,7 @@ public class FjBFS extends RecursiveAction {
 	}
 
 	public int seqCount() {
-		return seqCount(target, graph);
-	}
-	
-	public static int seqCount(int target, Graph graph) {
-		int t;
-		if (target == graph.value)
-			t = 1;
-		else
-			t = 0;
-
-		for (int i = 0; i < graph.children.length; i++) {
-			t += seqCount(target, graph.children[i]);
-		}
-		return t;
+		return SeqBFS.seqCount(target, graph);
 	}
 	
 	public int parCount() {
@@ -101,11 +88,11 @@ public class FjBFS extends RecursiveAction {
 	}
 
 	public static void main(String[] args) {
-		int target = 23;
-		int depth = 23;
+		int target = Graph.DEFAULT_TARGET;
+		int depth = Graph.DEFAULT_DEPTH;
 		if (args.length > 0) depth = Integer.parseInt(args[0]);
 		
-		FjBFS searcher = new FjBFS(target, Graph.randomIntGraph(depth, 2, new Random(1L)), 21);
+		FjBFS searcher = new FjBFS(target, Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L)), Graph.DEFAULT_DEPTH - 8);
 		long start = System.nanoTime();
 		int f = searcher.parCount();
 		long end = System.nanoTime();

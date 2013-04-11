@@ -35,26 +35,24 @@ public class AeBFS {
 
 	public static class SearchBody implements Body {
 		public volatile int value;
-		private int threshold;
 		private Graph graph;
 		
-		public SearchBody(int target, Graph graph, int threshold) {
+		public SearchBody(int target, Graph graph) {
 			this.value = target;
-			this.threshold = threshold;
 			this.graph = graph;
 		}
 		
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (FjBFS.probe(graph, threshold)) {
-				value = FjBFS.seqCount(value, graph);
+			if (!rt.parallelize()) {
+				value = SeqBFS.seqCount(value, graph);
 			} else {
 				final AtomicInteger found = new AtomicInteger((value == graph.value) ? 1 : 0);
 				
 				Task seek = ForTask.createFor(rt, new Range(graph.children.length), new ForBody<Integer>() {
 					@Override
 					public void iterate(Integer i, Runtime rt, Task current) {
-						SearchBody b = new SearchBody(value, graph.children[i], threshold);
+						SearchBody b = new SearchBody(value, graph.children[i]);
 						Task bt = rt.createNonBlockingTask(b, Runtime.NO_HINTS);
 						rt.schedule(bt, current, Runtime.NO_DEPS);
 						bt.getResult();
@@ -79,18 +77,18 @@ public class AeBFS {
 		}
 	}
 
-	public static SearchBody createSearchBody(final Runtime rt, final int target, Graph graph, int threshold) {
-		return new AeBFS.SearchBody(target, graph, threshold);
+	public static SearchBody createSearchBody(final Runtime rt, final int target, Graph graph) {
+		return new AeBFS.SearchBody(target, graph);
 	}
 
 	public static void main(String[] args) {
-		int target = 23;
-		int depth = 23;
+		int target = Graph.DEFAULT_TARGET;
+		int depth = Graph.DEFAULT_DEPTH;
 		if (args.length > 0) depth = Integer.parseInt(args[0]);
 		
 		Runtime rt = Factory.getRuntime();
 		rt.init();
-		SearchBody body = createSearchBody(rt, 1, Graph.randomIntGraph(depth, 2, new Random(1L)), 21);
+		SearchBody body = createSearchBody(rt, 1, Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L)));
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		
 		long start = System.nanoTime();
