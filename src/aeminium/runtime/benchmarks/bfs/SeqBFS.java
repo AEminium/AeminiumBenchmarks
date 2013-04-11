@@ -5,8 +5,10 @@ import java.util.Random;
 public class SeqBFS {
 	public static void main(String[] args) {
 		int target = 23;
-
-		FjBFS searcher = new FjBFS(target, Graph.randomIntGraph(target, 2, new Random(1234567890)), 21);
+		int depth = 23;
+		if (args.length > 0) depth = Integer.parseInt(args[0]);
+		
+		FjBFS searcher = new FjBFS(target, Graph.randomIntGraph(depth, 2, new Random(1234567890)), 21);
 		long start = System.nanoTime();
 		int f = searcher.seqCount();
 		long end = System.nanoTime();
