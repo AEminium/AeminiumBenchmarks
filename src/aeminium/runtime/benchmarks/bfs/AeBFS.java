@@ -75,7 +75,7 @@ public class AeBFS {
 		
 		Runtime rt = Factory.getRuntime();
 		rt.init();
-		SearchBody body = createSearchBody(rt, 1, Graph.randomIntGraph(depth, 2, new Random(1234567890)), 21);
+		SearchBody body = createSearchBody(rt, 1, Graph.randomIntGraph(depth, 2, new Random(1L)), 21);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		
 		long start = System.nanoTime();
