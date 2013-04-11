@@ -19,11 +19,16 @@
 
 package aeminium.runtime.benchmarks.bfs;
 
+import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.helpers.loops.ForBody;
+import aeminium.runtime.helpers.loops.ForTask;
+import aeminium.runtime.helpers.loops.Range;
 import aeminium.runtime.implementations.Factory;
 
 public class AeBFS {
@@ -44,20 +49,30 @@ public class AeBFS {
 			if (FjBFS.probe(graph, threshold)) {
 				value = FjBFS.seqCount(value, graph);
 			} else {
-				int found;
-				if (value == graph.value) found = 1; else found = 0;
-				Task[] tasks = new Task[graph.children.length];
-				SearchBody[] bodies = new SearchBody[graph.children.length];
-				for(int i=0;i<graph.children.length;i++){
-					bodies[i] = new SearchBody(value, graph.children[i], threshold);
-					tasks[i] = rt.createNonBlockingTask(bodies[i], Runtime.NO_HINTS);
-					rt.schedule(tasks[i], current, Runtime.NO_DEPS);
-				}
-				for (int i=0; i<tasks.length;i++) {
-					tasks[i].getResult();
-					found += bodies[i].value;
-				}
-				value = found;
+				final AtomicInteger found = new AtomicInteger((value == graph.value) ? 1 : 0);
+				
+				Task seek = ForTask.createFor(rt, new Range(graph.children.length), new ForBody<Integer>() {
+					@Override
+					public void iterate(Integer i, Runtime rt, Task current) {
+						SearchBody b = new SearchBody(value, graph.children[i], threshold);
+						Task bt = rt.createNonBlockingTask(b, Runtime.NO_HINTS);
+						rt.schedule(bt, current, Runtime.NO_DEPS);
+						bt.getResult();
+						found.addAndGet(b.value);
+					}
+				});
+				rt.schedule(seek, current, Runtime.NO_DEPS);
+				
+				Task merge = rt.createNonBlockingTask(new Body() {
+
+					@Override
+					public void execute(Runtime rt, Task current)
+							throws Exception {
+						value = found.get();
+					}
+					
+				}, Runtime.NO_HINTS);
+				rt.schedule(merge, current, Arrays.asList(seek));
 			}
 			
 			
