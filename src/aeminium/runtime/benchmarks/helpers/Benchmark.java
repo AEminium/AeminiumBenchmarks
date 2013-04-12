@@ -24,7 +24,10 @@ public class Benchmark {
 			}
 		}
 		if (nargs.size() > 0) {
-			args = (String[]) nargs.toArray();
+			args = new String[nargs.size()];
+			for (int i=0; i < nargs.size(); i++) {
+				args[i] = nargs.get(i);
+			}
 		} else {
 			args = new String[0];
 		}
