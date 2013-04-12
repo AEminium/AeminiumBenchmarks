@@ -2,14 +2,20 @@ package aeminium.runtime.benchmarks.pi;
 
 import java.util.Random;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 public class SeqPi {
+	
+	public static final int DEFAULT_DART_SIZE = 100000000;
+	
 	public static void main(String[] args) {
-	    long dartsc = 100000000;
+		Benchmark be = new Benchmark(args);
+	    long dartsc = DEFAULT_DART_SIZE;
 	    if (args.length > 1) {
 	        dartsc = Integer.parseInt(args[0]);
 	    }
+	    be.start();
 	    Random random = new Random();
-	    
 	    double x_coord, y_coord, r;
 	    long score = 0;
 	    for (long n = 1; n <= dartsc; n++)
@@ -24,8 +30,10 @@ public class SeqPi {
 			if ((x_coord*x_coord + y_coord*y_coord) <= 1.0)
 				score++;
 		}
-	    
 	    double d = 4.0 * (double)score/(double)dartsc;
-	    System.out.println("PI = " + d);
+	    be.end();
+	    if (be.verbose) {
+	    	System.out.println("PI = " + d);
+	    }
 	}
 }

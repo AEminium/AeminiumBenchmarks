@@ -2,11 +2,10 @@ package aeminium.runtime.benchmarks.kdtree;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Random;
+
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class SeqKDTree {
-	
-	static final long NPS = (1000L * 1000 * 1000);
 	
 	// 2D k-d tree
 	private SeqKDTree childA, childB;
@@ -61,14 +60,15 @@ public class SeqKDTree {
 	}
 	
 	public static void main(String[] args) {
-		long initialTime = System.nanoTime();
-		int size = 1000000;
+		Benchmark be = new Benchmark(args);
+		int size = Point.DEFAULT_SIZE;
 		if (args.length > 0)
 			size = Integer.parseInt(args[0]);
 		
-		Point[] points = generatePoints(size);
+		Point[] points = Point.generatePoints(size);
 		Point[] closest = new Point[size];
 		
+		be.start();
 		SeqKDTree tree = new SeqKDTree(points, 0);
 		
 		for (int i = 0; i < points.length; i++) { 
@@ -76,21 +76,12 @@ public class SeqKDTree {
 		}
 		
 		Point markPoint = new Point(10, 100);
-		System.out.println("Closest:" + tree.findClosest(markPoint));
-		long finalTime = System.nanoTime();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / NPS);
-		
-	}
-	
-	public static Point[] generatePoints(int size) {
-		Point[] points = new Point[size];
-		Random r = new Random(1L);
-
-		for (int i = 0; i < size; i++) {
-			points[i] = new Point(r.nextInt() % 1000, r.nextInt() % 1000);
+		Point closestP = tree.findClosest(markPoint); 
+		be.end();
+		if (be.verbose) {
+			System.out.println("Closest:" + closestP);
 		}
-
-		return points;
+		
 	}
 	
 }

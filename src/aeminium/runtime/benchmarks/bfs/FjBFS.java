@@ -25,6 +25,8 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RecursiveAction;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 public class FjBFS extends RecursiveAction {
 
 	private static final long serialVersionUID = 1L;
@@ -88,16 +90,20 @@ public class FjBFS extends RecursiveAction {
 	}
 
 	public static void main(String[] args) {
+		Benchmark b = new Benchmark(args);
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
 		if (args.length > 0) depth = Integer.parseInt(args[0]);
 		
-		FjBFS searcher = new FjBFS(target, Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L)), Graph.DEFAULT_DEPTH - 8);
-		long start = System.nanoTime();
+		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
+		
+		b.start();
+		FjBFS searcher = new FjBFS(target, g, Graph.DEFAULT_DEPTH - 8);
 		int f = searcher.parCount();
-		long end = System.nanoTime();
-		System.out.println("Found " + f + " occurrences of " + target
-				+ " and took " + (end - start) + " nanoseconds.");
+		b.end();
+		if (b.verbose) {
+			System.out.println("Found " + f + " occurrences of " + target);
+		}
 	}
 
 }

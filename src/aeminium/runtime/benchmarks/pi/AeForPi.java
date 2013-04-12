@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.LongRange;
@@ -15,12 +16,14 @@ public class AeForPi {
 	
 	
 	public static void main(String[] args) {
-	    long dartsc = 100000000;
+		Benchmark be = new Benchmark(args);
+	    long dartsc = SeqPi.DEFAULT_DART_SIZE;
 	    if (args.length > 1) {
 	        dartsc = Integer.parseInt(args[0]);
 	    }
 	    final long darts = dartsc;
 	    
+	    be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 
@@ -55,9 +58,11 @@ public class AeForPi {
 		Task controller = rt.createNonBlockingTask(compute, Runtime.NO_HINTS);
 		rt.schedule(controller, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
-		
 		rt.shutdown();
-		
-		System.out.println("PI = " + 4.0 * (double)score.get()/(double)darts);
+		double pi = 4.0 * (double)score.get()/(double)darts;
+		be.end();
+		if (be.verbose) {
+			System.out.println("PI = " + pi);
+		}
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 import aeminium.utils.random.MersenneTwisterFast;
 
@@ -106,24 +107,25 @@ public class AePi {
 	}
 
 	public static void main(String[] args) {
-	    long darts = 100000000;
-	    int threshold = 16;
+		Benchmark be = new Benchmark(args);
+	    long darts = SeqPi.DEFAULT_DART_SIZE;
+	    int threshold = 64;
 	    if (args.length > 1) {
 	        darts = Integer.parseInt(args[0]);
 	    }
 	    if (args.length > 2) {
 	        threshold = Integer.parseInt(args[1]);
 	    }
-	    
+	    be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		MainBody body = AePi.createController(rt, threshold, darts);
 		Task controller = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(controller, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
-		
 		rt.shutdown();
-		
-		System.out.println("PI = " + body.value);
+		be.end();
+		if (be.verbose) {
+			System.out.println("PI = " + body.value);
+		}
 	}
 }

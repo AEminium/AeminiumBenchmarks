@@ -22,16 +22,12 @@ package aeminium.runtime.benchmarks.fibonacci;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 
 public class AeFibonacci {
 	
-	public static long seqFib(long n) {
-		if (n <= 2)
-			return 1;
-		else
-			return (seqFib(n - 1) + seqFib(n - 2));
-	}
+	
 
 	public static class FibBody implements Body {
 		public volatile long value;
@@ -43,7 +39,7 @@ public class AeFibonacci {
 		@Override
 		public void execute(Runtime rt, Task current) {
 			if (!rt.parallelize()) {
-				value = seqFib(value);
+				value = SeqFibonacci.seqFib(value);
 			} else {
 				FibBody b1 = new FibBody(value - 1);
 				Task t1 = rt.createNonBlockingTask(b1, Runtime.NO_HINTS);
@@ -65,23 +61,23 @@ public class AeFibonacci {
 	}
 
 	public static void main(String[] args) {
-		long initialTime = System.currentTimeMillis();
+		Benchmark be = new Benchmark(args);
 
-		int fib = 46;
+		int fib = Fibonacci.DEFAULT_SIZE;
 		if (args.length >= 1) {
 			fib = Integer.parseInt(args[0]);
 		}
-
+		
+		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		FibBody body = new AeFibonacci.FibBody(fib);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
-
-		System.out.println("F(" + fib + ") = " + body.value);
-
-		long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
+		be.end();
+		if (be.verbose) {
+			System.out.println("F(" + fib + ") = " + body.value);
+		}
 	}
 }

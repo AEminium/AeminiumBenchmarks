@@ -21,25 +21,19 @@ package aeminium.runtime.benchmarks.mergesort;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 
 public class AeMergeSort {
 
 	long[] array;
-	final int threshold;
 	
 	public AeMergeSort(long[] original) {
-		this(original, 10);
-	}
-	
-	public AeMergeSort(long[] original, int threshold) {
 		this.array = original;
-		this.threshold = threshold;
 	}
 	
 	public class MergeSortBody implements Body {
@@ -53,7 +47,7 @@ public class AeMergeSort {
 		public void execute(Runtime rt, Task current) throws Exception {
 			if (array.length <= 1)
 				return;
-			if (array.length <= threshold) {
+			if (!rt.parallelize()) {
 				Arrays.sort(array);
 				return;
 			}
@@ -120,47 +114,26 @@ public class AeMergeSort {
 	}
 	
 	
-	/* Auxiliary Stuff for standalone running */
-	
-	public static void main(String ...args) {
-		
-		int size = 10000000;
-		int threshold = 100;
+public static void main(String[] args) {
+		Benchmark be = new Benchmark(args);
+		int size = MergeSort.DEFAULT_SIZE;
 		if (args.length >= 1) {
 			size = Integer.parseInt(args[0]);
 		}
-		if (args.length >= 2) {
-			threshold = Integer.parseInt(args[1]);
-		}
-		
-		long[] original = generateRandomArray(size);
-		AeMergeSort merger = new AeMergeSort(original, threshold);
-		
+
+		long[] original =  MergeSort.generateRandomArray(size);
+		be.start();
+		AeMergeSort merger = new AeMergeSort(original);
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		merger.doSort(rt);
 		rt.shutdown();
-		if (args.length >= 3) {
-			System.out.println("Sorted: " + checkArray(merger.array));
+		be.end();
+		if (be.verbose) {
+			System.out.println("Sorted: " +  MergeSort.checkArray(merger.array));
 		}
 	}
 	
-	public static boolean checkArray(long[] c) {
-		boolean st = true;
-		for (int i=0; i<c.length-1; i++) {
-			st = st && (c[i] <= c[i+1]);
-		}
-		return st;
-	}
 	
-	public static long[] generateRandomArray(int size) {
-		Random r = new Random();
-		r.setSeed(1234567890);
-		long[] ar = new long[size];
-		for (int i=0; i<size; i++) {
-			ar[i] = r.nextLong();
-		}
-		return ar;
-	}
 	
 }

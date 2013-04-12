@@ -5,7 +5,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
+
+import aeminium.runtime.benchmarks.helpers.Benchmark;
  
 /**
  * Image histogram equalization
@@ -19,22 +22,20 @@ public class SeqHistogramEQ {
     private static BufferedImage original, equalized;
  
     public static void main(String[] args) throws IOException {
-    	long initialTime = System.currentTimeMillis();
+    	Benchmark be = new Benchmark(args);
     	
         File original_f = new File(args[0]);
         String output_f = args[1];
         original = ImageIO.read(original_f);
+        
+        be.start();
         equalized = histogramEqualization(original);
-        writeImage(output_f, equalized);
- 
-        long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
+        be.end();
+        if (be.verbose) {
+        	Histogram.writeImage(output_f, equalized);
+        }
     }
- 
-    static void writeImage(String output, BufferedImage eq) throws IOException {
-        File file = new File(output+".jpg");
-        ImageIO.write(eq, "jpg", file);
-    }
+
  
     private static BufferedImage histogramEqualization(BufferedImage original) {
  
@@ -64,7 +65,7 @@ public class SeqHistogramEQ {
                 blue = histLUT.get(2)[blue];
  
                 // Return back to original format
-                newPixel = colorToRGB(alpha, red, green, blue);
+                newPixel = Histogram.colorToRGB(alpha, red, green, blue);
  
                 // Write pixels into image
                 histogramEQ.setRGB(i, j, newPixel);
@@ -165,17 +166,6 @@ public class SeqHistogramEQ {
  
     }
  
-    // Convert R, G, B, Alpha to standard 8 bit
-    static int colorToRGB(int alpha, int red, int green, int blue) {
- 
-        int newPixel = 0;
-        newPixel += alpha; newPixel = newPixel << 8;
-        newPixel += red; newPixel = newPixel << 8;
-        newPixel += green; newPixel = newPixel << 8;
-        newPixel += blue;
- 
-        return newPixel;
- 
-    }
+
  
 }

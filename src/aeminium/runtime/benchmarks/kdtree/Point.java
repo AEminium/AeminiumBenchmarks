@@ -1,8 +1,10 @@
 package aeminium.runtime.benchmarks.kdtree;
 
 import java.util.Comparator;
+import java.util.Random;
 
 class Point {
+	public static final int DEFAULT_SIZE = 1000000;
 	public static final Point INFINITY = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
 	public double[] coord; // coord[0] = x, coord[1] = y
@@ -43,5 +45,16 @@ class Point {
 		public int compare(Point a, Point b) {
 			return (int) (a.coord[d] - b.coord[d]);
 		}
+	}
+	
+	public static Point[] generatePoints(int size) {
+		Point[] points = new Point[size];
+		Random r = new Random(1L);
+
+		for (int i = 0; i < size; i++) {
+			points[i] = new Point(r.nextInt() % 1000, r.nextInt() % 1000);
+		}
+
+		return points;
 	}
 }

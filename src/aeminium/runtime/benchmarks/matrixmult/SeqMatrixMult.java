@@ -1,34 +1,28 @@
 package aeminium.runtime.benchmarks.matrixmult;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 class SeqMatrixMult {
 	
 	static int first[][];
 	static int second[][];
 	static int result[][];
 	
-	public static int[][] createMatrix(int m, int n) {
-		int[][] t = new int[m][n];
-		for (int c=0;c<m;c++)
-			for (int d=0;d<n;d++)
-				t[c][d] = d * c;
-		return t;
-	}
-	
 	public static void main(String args[]) {
-		long initialTime = System.currentTimeMillis();
-		
-		int m = 1000;
+		Benchmark be = new Benchmark(args);
+		int m = Matrix.DEFAULT_M;
 		if (args.length > 0) m = Integer.parseInt(args[0]);
-		int n = 1000;
+		int n = Matrix.DEFAULT_N;
 		if (args.length > 1) n = Integer.parseInt(args[1]);
 		int p = n;
-		int q = 1000;
+		int q = Matrix.DEFAULT_Q;
 		if (args.length > 2) q = Integer.parseInt(args[2]);
 		
-		first = createMatrix(m,n);
-		second = createMatrix(p,q);
+		first = Matrix.createMatrix(m,n);
+		second = Matrix.createMatrix(p,q);
 		result = new int[m][q];
 
+		be.start();
 		for (int c = 0; c < m; c++) {
 			for (int d = 0; d < q; d++) {
 				int sum = 0;
@@ -38,8 +32,9 @@ class SeqMatrixMult {
 				result[c][d] = sum;
 			}
 		}
+		be.end();
 
-		if (args.length > 3) {
+		if (be.verbose) {
 			System.out.println("Product of entered matrices:-");
 			for (int c = 0; c < m; c++) {
 				for (int d = 0; d < q; d++)
@@ -47,8 +42,5 @@ class SeqMatrixMult {
 				System.out.print("\n");
 			}
 		}
-		
-		long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
 	}
 }

@@ -8,14 +8,20 @@ import java.util.Arrays;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 
 public class AeLogCounter {
 	public static void main(String[] args) throws Exception {
+		Benchmark be = new Benchmark(args);
+		File[] fs = LogCounter.finder(args[0]);
+		be.start();
 		Runtime rt = Factory.getRuntime();
-		File[] fs = SeqLogCounter.finder(args[0]);
 		int r = aeminiumCounter(fs, rt);
-		System.out.println(r + " visits");
+		be.end();
+		if (be.verbose) {
+			System.out.println(r + " visits");
+		}
 	}
 	
 	public static int aeminiumCounter(File[] files, aeminium.runtime.Runtime rt) {
@@ -28,7 +34,7 @@ public class AeLogCounter {
 				@Override
 				public void execute(Runtime rt, Task current) {
 					try {
-						current.setResult(SeqLogCounter.uncompressGZip(logfile));
+						current.setResult(LogCounter.uncompressGZip(logfile));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -42,8 +48,8 @@ public class AeLogCounter {
 				@Override
 				public void execute(Runtime rt, Task current) {
 					try {
-						current.setResult(SeqLogCounter.countAccesses((String) uncompress.getResult()));
-						SeqLogCounter.deleteFile(logfile);
+						current.setResult(LogCounter.countAccesses((String) uncompress.getResult()));
+						LogCounter.deleteFile(logfile);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

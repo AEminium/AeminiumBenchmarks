@@ -4,46 +4,29 @@ import aeminium.runtime.Body;
 import aeminium.runtime.NonBlockingTask;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 
 public class AeIntegrate {
 
-	static final double errorTolerance = 1.0e-12;
-	static final int threshold = 100;
-	static double start = -2101.0;
-	static double end = 1036.0;
-	static final long NPS = (1000L * 1000 * 1000);
-
-	static double computeFunction(double x) {
-		return (x * x + 1.0) * x;
-	}
-
-	static final double recEval(double l, double r, double fl, double fr,
-			double a) {
-		double h = (r - l) * 0.5;
-		double c = l + h;
-		double fc = (c * c + 1.0) * c;
-		double hh = h * 0.5;
-		double al = (fl + fc) * hh;
-		double ar = (fr + fc) * hh;
-		double alr = al + ar;
-		if (Math.abs(alr - a) <= errorTolerance)
-			return alr;
-		else
-			return recEval(c, r, fc, fr, ar) + recEval(l, c, fl, fc, al);
-	}
+	public static double integral;
 
 	public static void main(String[] args) {
-		long tstart = System.nanoTime();
-		Runtime rt = Factory.getRuntime();
+        Benchmark be = new Benchmark(args);
+        
+        be.start();
+        Runtime rt = Factory.getRuntime();
 		rt.init();
 
-		Task main = startCall(rt, start, end, 0);
+		Task main = startCall(rt, Integrate.start, Integrate.end, 0);
 		rt.schedule(main, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
 		rt.shutdown();
-		long tend = System.nanoTime();
-		System.out.println((double) (tend - tstart) / NPS);
+		be.end();
+		if (be.verbose) {
+			System.out.println("Integral: " + integral);
+		}
+	
 	}
 
 	public static NonBlockingTask startCall(Runtime rt, final double start,
@@ -52,16 +35,15 @@ public class AeIntegrate {
 
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
-				double fstart = computeFunction(start);
-				double fend = computeFunction(end);
+				double fstart = Integrate.computeFunction(start);
+				double fend = Integrate.computeFunction(end);
 				IntegralBody intBody = new IntegralBody(start, end, fstart,
 						fend, a);
 				Task intTask = rt.createNonBlockingTask(intBody,
 						Runtime.NO_HINTS);
 				rt.schedule(intTask, current, Runtime.NO_DEPS);
 				intTask.getResult();
-				double integral = intBody.ret;
-				System.out.println("Integral: " + integral);
+				integral = intBody.ret;
 			}
 
 		}, Runtime.NO_HINTS);
@@ -93,13 +75,13 @@ public class AeIntegrate {
 			double al = (fl + fc) * hh;
 			double ar = (fr + fc) * hh;
 			double alr = al + ar;
-			if (Math.abs(alr - area) <= errorTolerance) {
+			if (Math.abs(alr - area) <= Integrate.errorTolerance) {
 				ret = alr;
 				return;
 			}
-			if (Math.abs(alr - area) <= threshold || !rt.parallelize()) {
+			if (!rt.parallelize()) {
 				try {
-					ret = recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r,
+					ret = SeqIntegrate.recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r,
 							area);
 				} catch (StackOverflowError e) {
 					e.printStackTrace();

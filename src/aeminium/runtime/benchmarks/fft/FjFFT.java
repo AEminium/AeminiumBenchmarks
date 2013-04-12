@@ -22,6 +22,8 @@ package aeminium.runtime.benchmarks.fft;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 
 public class FjFFT extends RecursiveAction { 
 	/**
@@ -47,7 +49,7 @@ public class FjFFT extends RecursiveAction {
 	protected void compute() {
 		if (n == 1) return;
 		if (n <= threshold) {
-			result = AeFFT.sequentialFFT(result);
+			result = SeqFFT.sequentialFFT(result);
 			return;
 		}
 		
@@ -70,15 +72,17 @@ public class FjFFT extends RecursiveAction {
 	}
 	
 	public static void main(String[] args) {
-		int size = 524288;
+		Benchmark be = new Benchmark(args);
+		int size = FFT.DEFAULT_SIZE;
 		if (args.length > 0) size = Integer.parseInt(args[0]);
-		Complex[] input = AeFFT.createRandomComplexArray(size);
-		
+		Complex[] input = FFT.createRandomComplexArray(size);
+		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
 		FjFFT t = new FjFFT(input, 1024);
 		pool.invoke(t);
-		if (args.length <= 1) {
-			AeFFT.show(t.result, "Result");
+		be.end();
+		if (be.verbose) {
+			FFT.show(t.result, "Result");
 		}
 	}
 	

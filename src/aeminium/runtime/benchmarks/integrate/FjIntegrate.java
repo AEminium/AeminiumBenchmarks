@@ -21,6 +21,8 @@ package aeminium.runtime.benchmarks.integrate;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -71,65 +73,18 @@ import java.util.concurrent.RecursiveAction;
  */
 public final class FjIntegrate {
 
-	static final double errorTolerance = 1.0e-12;
-	static final int threshold = 100;
-	static double start = -2101.0;
-    static double end = 1036.0;
-    static final long NPS = (1000L * 1000 * 1000);
-	
-    static final int SERIAL = -1;
-    static final int DYNAMIC = 0;
-    static final int FORK = 1;
-    
-    // the function to integrate
-    static double computeFunction(double x)  {
-        return (x * x + 1.0) * x;
-    }
-    
-    /*
-     * The number of recursive calls for
-     * integrate from start to end.
-     * (Empirically determined)
-     */
-    static final int calls = 263479047;
-
-    static String keywordValue(String[] args, String keyword) {
-        for (String arg : args)
-            if (arg.startsWith(keyword))
-                return arg.substring(keyword.length() + 1);
-        return null;
-    }
-
-    static int intArg(String[] args, String keyword, int defaultValue) {
-        String val = keywordValue(args, keyword);
-        return (val == null) ? defaultValue : Integer.parseInt(val);
-    }
-
-    static int policyArg(String[] args, String keyword, int defaultPolicy) {
-        String val = keywordValue(args, keyword);
-        if (val == null) return defaultPolicy;
-        if (val.equals("dynamic")) return DYNAMIC;
-        if (val.equals("serial")) return SERIAL;
-        if (val.equals("fork")) return FORK;
-        throw new Error();
-    }
-
-    /**
-     * Usage: Integrate [procs=N] [reps=N] forkPolicy=serial|dynamic|fork
-    */
-    public static void main(String[] args) throws Exception {
-    	
-        final int procs = intArg(args, "procs",
-                                 Runtime.getRuntime().availableProcessors());
-
+    public static void main(String[] args) throws Exception {     
+        Benchmark be = new Benchmark(args);
+        int procs = Runtime.getRuntime().availableProcessors();
         
-        long tstart = System.nanoTime();
+        be.start();
         ForkJoinPool g = new ForkJoinPool(procs);
-		double a = DQuad.computeArea(g, start, end);
-		System.out.println("Integral: " + a);		
-		long tend = System.nanoTime();
-		System.out.println((double)(tend - tstart)/NPS);
-        g.shutdown();
+		double a = DQuad.computeArea(g, Integrate.start, Integrate.end);
+		g.shutdown();
+		be.end();
+		if (be.verbose) {
+			System.out.println("Integral: " + a);
+		}
     }
 
 
@@ -167,7 +122,7 @@ public final class FjIntegrate {
             double al = (fl + fc) * hh;
             double ar = (fr + fc) * hh;
             double alr = al + ar;
-            if (Math.abs(alr - a) <= errorTolerance)
+            if (Math.abs(alr - a) <= Integrate.errorTolerance)
                 return alr;
             else
                 return recEval(c, r, fc, fr, ar) + recEval(l, c, fl, fc, al);
@@ -210,9 +165,9 @@ public final class FjIntegrate {
             double al = (fl + fc) * hh;
             double ar = (fr + fc) * hh;
             double alr = al + ar;
-            if (Math.abs(alr - a) <= errorTolerance)
+            if (Math.abs(alr - a) <= Integrate.errorTolerance)
                 return alr;
-            if (Math.abs(alr - a) <= threshold) {
+            if (Math.abs(alr - a) <= Integrate.threshold) {
 				// Threshold for task
 				return SQuad.recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, a);
 			}
@@ -263,7 +218,7 @@ public final class FjIntegrate {
              double al = (fl + fc) * hh;
              double ar = (fr + fc) * hh;
              double alr = al + ar;
-             if (Math.abs(alr - a) <= errorTolerance)
+             if (Math.abs(alr - a) <= Integrate.errorTolerance)
                  return alr;
              DQuad q = null;
              if (getSurplusQueuedTaskCount() <= 3)

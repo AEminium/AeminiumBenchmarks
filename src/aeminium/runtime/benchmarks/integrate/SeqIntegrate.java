@@ -1,20 +1,33 @@
 package aeminium.runtime.benchmarks.integrate;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 
 public class SeqIntegrate {
 	
-	static final double errorTolerance = 1.0e-12;
-	static final int threshold = 100;
-	static double start = -2101.0;
-    static double end = 1036.0;
-    static final long NPS = (1000L * 1000 * 1000);
-	
     public static void main(String[] args) throws Exception {
+        Benchmark be = new Benchmark(args);
         
-        long tstart = System.nanoTime();
-		double a = AeIntegrate.recEval(start, end, AeIntegrate.computeFunction(start), AeIntegrate.computeFunction(end), 0);
-		System.out.println("Integral: " + a);
-		long tend = System.nanoTime();
-		System.out.println((double)(tend - tstart)/NPS);
+        be.start();
+		double a = recEval(Integrate.start, Integrate.end, Integrate.computeFunction(Integrate.start), Integrate.computeFunction(Integrate.end), 0);
+		be.end();
+		if (be.verbose) {
+			System.out.println("Integral: " + a);
+		}
     }
+    
+    static final double recEval(double l, double r, double fl, double fr,
+			double a) {
+		double h = (r - l) * 0.5;
+		double c = l + h;
+		double fc = (c * c + 1.0) * c;
+		double hh = h * 0.5;
+		double al = (fl + fc) * hh;
+		double ar = (fr + fc) * hh;
+		double alr = al + ar;
+		if (Math.abs(alr - a) <= Integrate.errorTolerance)
+			return alr;
+		else
+			return recEval(c, r, fc, fr, ar) + recEval(l, c, fl, fc, al);
+	}
 }

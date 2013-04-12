@@ -2,19 +2,23 @@ package aeminium.runtime.benchmarks.bfs;
 
 import java.util.Random;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 public class SeqBFS {
 	public static void main(String[] args) {
+		Benchmark b = new Benchmark(args);
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
 		if (args.length > 0) depth = Integer.parseInt(args[0]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		
-		long start = System.nanoTime();
+		b.start();
 		int f = seqCount(target, g);
-		long end = System.nanoTime();
-		System.out.println("Found " + f + " occurrences of " + target
-				+ " and took " + (end - start) + " nanoseconds.");
+		b.end();
+		if (b.verbose) {
+			System.out.println("Found " + f + " occurrences of " + target);
+		}
 	}
 	
 	public static int seqCount(int target, Graph graph) {

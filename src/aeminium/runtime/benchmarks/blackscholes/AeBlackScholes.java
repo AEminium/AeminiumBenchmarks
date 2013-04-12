@@ -6,6 +6,7 @@ import aeminium.runtime.Body;
 import aeminium.runtime.DataGroup;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.LongRange;
@@ -46,7 +47,9 @@ public class AeBlackScholes {
 	private static double saveCall2 = 0.0;
 	
 	public static void main(String[] args) {
-		long initialTime = System.currentTimeMillis();
+		Benchmark b = new Benchmark(args);
+    	b.start();
+    	
 		rt = Factory.getRuntime();
 		rt.init();
 
@@ -156,12 +159,12 @@ public class AeBlackScholes {
 		
 		rt.shutdown();
 		
-		System.out.println(saveCallPrice);
-		System.out.println(saveCall);
-		System.out.println(saveCall2);
-		
-		long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
+        b.end();
+        if (b.verbose) {
+    		System.out.println(saveCallPrice);
+    		System.out.println(saveCall);
+    		System.out.println(saveCall2);
+        }
 	}
 
 }

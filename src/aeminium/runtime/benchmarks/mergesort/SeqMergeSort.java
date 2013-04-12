@@ -1,5 +1,7 @@
 package aeminium.runtime.benchmarks.mergesort;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 
 public class SeqMergeSort {
 	private long[] numbers;
@@ -8,16 +10,18 @@ public class SeqMergeSort {
 	private int number;
 
 	public static void main(String[] args) {
-		int size = 10000000;
+		Benchmark be = new Benchmark(args);
+		int size = MergeSort.DEFAULT_SIZE;
 		if (args.length >= 1) {
 			size = Integer.parseInt(args[0]);
 		}
-		long[] original = AeMergeSort.generateRandomArray(size);
-
+		long[] original = MergeSort.generateRandomArray(size);
+		be.start();
 		SeqMergeSort sorter = new SeqMergeSort();
 	    sorter.sort(original);
-		if (args.length >= 2) {
-			System.out.println("Sorted: " + AeMergeSort.checkArray(original));
+	    be.end();
+		if (be.verbose) {
+			System.out.println("Sorted: " + MergeSort.checkArray(original));
 		}
 	}
 	

@@ -1,5 +1,7 @@
 package aeminium.runtime.benchmarks.blackscholes;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 
 /*************************************************************************
  *  Compilation:  javac BlackScholes.java MyMath.java
@@ -78,19 +80,23 @@ public class SeqBlackScholes {
 
 
     public static void main(String[] args) {
-    	long initialTime = System.currentTimeMillis();
-    	
+    	Benchmark b = new Benchmark(args);
+    	b.start();
         double S     = Double.parseDouble(args[0]);
         double X     = Double.parseDouble(args[1]);
         double r     = Double.parseDouble(args[2]);
         double sigma = Double.parseDouble(args[3]);
         double T     = Double.parseDouble(args[4]);
         long N 		 = Long.parseLong(args[5]);
-        System.out.println(callPrice(S, X, r, sigma, T));
-        System.out.println(call(S, X, r, sigma, T, N));
-        System.out.println(call2(S, X, r, sigma, T, N));
         
-        long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
+        double cP = callPrice(S, X, r, sigma, T);
+        double ca = call(S, X, r, sigma, T, N);
+        double c2 = call2(S, X, r, sigma, T, N);
+        b.end();
+        if (b.verbose) {
+        	System.out.println(cP);
+        	System.out.println(ca);
+        	System.out.println(c2);
+        }
     }
 }

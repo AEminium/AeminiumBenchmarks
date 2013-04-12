@@ -11,14 +11,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 public class FjLogCounter {
 	
 	public static void main(String[] args) throws Exception {
-		File[] fs = SeqLogCounter.finder(args[0]);
-		
+		Benchmark be = new Benchmark(args);
+		File[] fs = LogCounter.finder(args[0]);
+		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
 		int r = forkjoinCounter(fs, pool);
-		System.out.println(r + " visits");
+		be.end();
+		if (be.verbose) {
+			System.out.println(r + " visits");
+		}
 	}
 	
 	static class FJCounter implements Callable<Integer> {
@@ -34,14 +40,14 @@ public class FjLogCounter {
 			int result = 0;
 			String d;
 			try {
-				d = SeqLogCounter.uncompressGZip(f);
+				d = LogCounter.uncompressGZip(f);
 			} catch (IOException e) {
 				e.printStackTrace();
 				return 0;
 			}
 			
 			try {
-				result = SeqLogCounter.countAccesses(d);
+				result = LogCounter.countAccesses(d);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -75,7 +81,7 @@ public class FjLogCounter {
 			}
 		}
 		for (File logfile : files) {
-			SeqLogCounter.deleteFile(logfile);
+			LogCounter.deleteFile(logfile);
 		}
 		return n;
 	}

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.Range;
@@ -14,7 +15,7 @@ import aeminium.utils.error.PrintErrorHandler;
 
 public class AeKDTree {
 	
-	
+	static Point result;
 	static AeKDTree root;
 	
 	// 2D k-d tree
@@ -112,14 +113,15 @@ public class AeKDTree {
 	}
 	
 	public static void main(String[] args) {
-		long initialTime = System.nanoTime();
-		int size = 1000000;
+		Benchmark be = new Benchmark(args);
+		int size = Point.DEFAULT_SIZE;
 		if (args.length > 0)
 			size = Integer.parseInt(args[0]);
 		
-		final Point[] points = SeqKDTree.generatePoints(size);
+		final Point[] points = Point.generatePoints(size);
 		final Point[] closest = new Point[size];
 		
+		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		rt.addErrorHandler(new PrintErrorHandler());
@@ -146,15 +148,16 @@ public class AeKDTree {
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
 				Point markPoint = new Point(10, 100);
-				System.out.println("Closest:" + root.findClosest(markPoint));
+				result = root.findClosest(markPoint);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(findPoint, Runtime.NO_PARENT, Arrays.asList(findClosest));
 		
-		
 		rt.shutdown();
-		long finalTime = System.nanoTime();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / SeqKDTree.NPS);
+		be.end();
+		if (be.verbose) {
+			System.out.println("Closest:" + result);
+		}
 		
 	}
 }

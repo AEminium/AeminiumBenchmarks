@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 
 /**
@@ -63,7 +64,7 @@ public class AeHistogramEQ {
 						blue = histLUT.get(2)[blue];
 
 						// Return back to original format
-						newPixel = SeqHistogramEQ.colorToRGB(alpha, red, green, blue);
+						newPixel = Histogram.colorToRGB(alpha, red, green, blue);
 
 						// Write pixels into image
 						histogramEQ.setRGB(i, j, newPixel);
@@ -81,14 +82,14 @@ public class AeHistogramEQ {
 			@Override
 			public void execute(Runtime rt, Task current) throws IOException {
 				equalized = histogramEQ;
-				SeqHistogramEQ.writeImage(output_f, equalized);
+				Histogram.writeImage(output_f, equalized);
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
 		return task;
 	}
 
-	private static Task histogramEqualizationTask(Task current, Collection<Task> prev) {
+	private static Task histogramEqualizationTask(Task current, Collection<Task> prev, final boolean write) {
 		Task task = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) throws IOException {
@@ -108,8 +109,9 @@ public class AeHistogramEQ {
 
 
 				}
-
-				writeImageTask(current, prev);
+				if (write) {
+					writeImageTask(current, prev);
+				}
 			}
 		}, Runtime.NO_HINTS);
 		rt.schedule(task, current, prev);
@@ -252,27 +254,27 @@ public class AeHistogramEQ {
 	}
 
 	public static void main(String[] args) throws IOException {
-		long initialTime = System.currentTimeMillis();
-
-		original_f = new File(args[0]);
-		output_f = args[1];
-		numberOfHistogramEqualizationTaskFor=Integer.parseInt(args[2]);
-
-		rt = Factory.getRuntime();
+		Benchmark be = new Benchmark(args);
+    	
+        File original_f = new File(args[0]);
+        String output_f = args[1];
+        numberOfHistogramEqualizationTaskFor=Integer.parseInt(args[2]);
+        original = ImageIO.read(original_f);
+        
+        be.start();
+        rt = Factory.getRuntime();
 		rt.init();
-
-		original = ImageIO.read(original_f);
-
 		Collection<Task> prev = new ArrayList<Task>();
 		Task init0 = histogramEqualizationLUTTask(Runtime.NO_PARENT, Runtime.NO_DEPS, original);
 		prev.add(init0);
 
-		histogramEqualizationTask(Runtime.NO_PARENT, prev);
+		histogramEqualizationTask(Runtime.NO_PARENT, prev, be.verbose);
 
 		rt.shutdown();
-
-		long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
+        be.end();
+        if (be.verbose) {
+        	Histogram.writeImage(output_f, equalized);
+        }
 	}
 
 }

@@ -22,6 +22,8 @@ package aeminium.runtime.benchmarks.fibonacci;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 @SuppressWarnings("serial")
 public
 
@@ -54,25 +56,25 @@ class FjFibonacci extends RecursiveAction {
 	}
 	
 	public static void main(String[] args) {
-		long initialTime = System.currentTimeMillis();
+		
+		Benchmark be = new Benchmark(args);
 
-		int fib = 46;
+		int fib = Fibonacci.DEFAULT_SIZE;
+		if (args.length >= 1) {
+			fib = Integer.parseInt(args[0]);
+		}
 		int threshold = 16;
 		if (args.length >= 1) {
 			fib = Integer.parseInt(args[0]);
 		}
-		if (args.length >= 2) {
-			threshold = Integer.parseInt(args[1]);
-		}
-
+		
+		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
 		FjFibonacci t = new FjFibonacci(fib, threshold);
 		pool.invoke(t);
-
-		System.out.println("F(" + fib + ") = " + t.number);
-
-		long finalTime = System.currentTimeMillis();
-		System.out.println("Time cost = " + (finalTime - initialTime) * 1.0 / 1000);
-
+		be.end();
+		if (be.verbose) {
+			System.out.println("F(" + fib + ") = " + t.number);
+		}
 	}
 }
