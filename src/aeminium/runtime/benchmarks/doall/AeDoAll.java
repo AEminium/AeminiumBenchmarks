@@ -17,11 +17,11 @@ public class AeDoAll {
 	static double[] c;
 	
 	public static void main(String[] args) {
-		int size = 1000000;
-		if (args.length > 0)
-			size = Integer.parseInt(args[0]);
-
 		Benchmark be = new Benchmark(args);
+		int size = SeqDoAll.DEFAULT_SIZE;
+		if (be.args.length > 0)
+			size = Integer.parseInt(be.args[0]);
+
 		be.start();
 		Runtime rt = Factory.getRuntime();
 		

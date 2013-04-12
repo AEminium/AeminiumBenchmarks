@@ -68,23 +68,23 @@ public class AeBFS {
 	}
 
 	public static void main(String[] args) {
-		Benchmark b = new Benchmark(args);
+		Benchmark be = new Benchmark(args);
 		
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
-		if (args.length > 0) depth = Integer.parseInt(args[0]);
+		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		
-		b.start();
+		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		SearchBody body = createSearchBody(rt, 1, g);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
-		b.end();
-		if (b.verbose) {
+		be.end();
+		if (be.verbose) {
 			System.out.println("Found " + body.value + " occurrences of " + target);
 		}
 	}

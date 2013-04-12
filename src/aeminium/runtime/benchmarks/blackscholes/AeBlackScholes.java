@@ -47,18 +47,18 @@ public class AeBlackScholes {
 	private static double saveCall2 = 0.0;
 	
 	public static void main(String[] args) {
-		Benchmark b = new Benchmark(args);
-    	b.start();
+		Benchmark be = new Benchmark(args);
+    	be.start();
     	
 		rt = Factory.getRuntime();
 		rt.init();
 
-		final double S = Double.parseDouble(args[0]);
-		final double X = Double.parseDouble(args[1]);
-		final double r = Double.parseDouble(args[2]);
-		final double sigma = Double.parseDouble(args[3]);
-		final double T = Double.parseDouble(args[4]);
-		final long N   = Long.parseLong(args[5]);
+		final double S = Double.parseDouble(be.args[0]);
+		final double X = Double.parseDouble(be.args[1]);
+		final double r = Double.parseDouble(be.args[2]);
+		final double sigma = Double.parseDouble(be.args[3]);
+		final double T = Double.parseDouble(be.args[4]);
+		final long N   = Long.parseLong(be.args[5]);
 		
 		final DataGroup pCall = rt.createDataGroup();
 		
@@ -159,8 +159,8 @@ public class AeBlackScholes {
 		
 		rt.shutdown();
 		
-        b.end();
-        if (b.verbose) {
+        be.end();
+        if (be.verbose) {
     		System.out.println(saveCallPrice);
     		System.out.println(saveCall);
     		System.out.println(saveCall2);

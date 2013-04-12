@@ -14,7 +14,7 @@ import aeminium.runtime.implementations.Factory;
 public class AeLogCounter {
 	public static void main(String[] args) throws Exception {
 		Benchmark be = new Benchmark(args);
-		File[] fs = LogCounter.finder(args[0]);
+		File[] fs = LogCounter.finder(be.args[0]);
 		be.start();
 		Runtime rt = Factory.getRuntime();
 		int r = aeminiumCounter(fs, rt);

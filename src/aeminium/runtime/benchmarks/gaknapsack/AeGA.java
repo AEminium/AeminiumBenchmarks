@@ -6,6 +6,7 @@ import java.util.Collection;
 import aeminium.runtime.Body;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.Range;
@@ -14,25 +15,25 @@ import aeminium.utils.error.PrintErrorHandler;
 
 public class AeGA {
 	
-	public static Runtime rt = Factory.getRuntime();
 	static Indiv[] pop = new Indiv[Knapsack.popSize];
 	static Indiv[] next = new Indiv[Knapsack.popSize];
-	public static boolean debug = false;
 	
 	
-	public static void main(String[] args) {;
+	public static void main(String[] args) {
+		final Benchmark be = new Benchmark(args);
+		Runtime rt = Factory.getRuntime();
 		rt.init();
 		
 		rt.addErrorHandler(new PrintErrorHandler());
 		
-		if (args.length >= 1) {
-			Knapsack.popSize = Integer.parseInt(args[0]);
+		if (be.args.length >= 1) {
+			Knapsack.popSize = Integer.parseInt(be.args[0]);
 			pop = new Indiv[Knapsack.popSize];
 			next = new Indiv[Knapsack.popSize];
 		}
-		if (args.length >= 2)
-			Knapsack.numGen = Integer.parseInt(args[1]);
-		
+		if (be.args.length >= 2)
+			Knapsack.numGen = Integer.parseInt(be.args[1]);
+		be.start();
 		
 		Task createRandomIndivs = ForTask.createFor(rt, new Range(Knapsack.popSize), new ForBody<Integer>() {
 			@Override
@@ -97,7 +98,7 @@ public class AeGA {
 						@Override
 						public void execute(Runtime rt, Task current)
 								throws Exception {
-							if (debug || iter == Knapsack.numGen-1) {
+							if (be.verbose) {
 								System.out.println("Best fit at " + iter + ": " + pop[0].fitness);
 							}
 							Indiv[] tmp = pop;
@@ -115,5 +116,6 @@ public class AeGA {
 		rt.schedule(main, Runtime.NO_PARENT, Arrays.asList(createRandomIndivs));
 		
 		rt.shutdown();
+		be.end();
 	}
 }

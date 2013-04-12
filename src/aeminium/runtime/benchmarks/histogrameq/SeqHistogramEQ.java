@@ -24,8 +24,8 @@ public class SeqHistogramEQ {
     public static void main(String[] args) throws IOException {
     	Benchmark be = new Benchmark(args);
     	
-        File original_f = new File(args[0]);
-        String output_f = args[1];
+        File original_f = new File(be.args[0]);
+        String output_f = be.args[1];
         original = ImageIO.read(original_f);
         
         be.start();

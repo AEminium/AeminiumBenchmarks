@@ -17,14 +17,13 @@ public class AeMatrixMult {
 	public static void main(String args[]) {
 		Benchmark be = new Benchmark(args);
 		
-		
 		int m1 = Matrix.DEFAULT_M;
-		if (args.length > 0) m1 = Integer.parseInt(args[0]);
+		if (be.args.length > 0) m1 = Integer.parseInt(be.args[0]);
 		int n1 = Matrix.DEFAULT_N;
-		if (args.length > 1) n1 = Integer.parseInt(args[1]);
+		if (be.args.length > 1) n1 = Integer.parseInt(be.args[1]);
 		final int p = n1;
 		int q1 = Matrix.DEFAULT_Q;
-		if (args.length > 2) q1 = Integer.parseInt(args[2]);
+		if (be.args.length > 2) q1 = Integer.parseInt(be.args[2]);
 		final int m = m1;
 		final int n = n1;
 		final int q = q1;

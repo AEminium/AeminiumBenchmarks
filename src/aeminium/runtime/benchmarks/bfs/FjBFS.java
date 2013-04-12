@@ -90,18 +90,18 @@ public class FjBFS extends RecursiveAction {
 	}
 
 	public static void main(String[] args) {
-		Benchmark b = new Benchmark(args);
+		Benchmark be = new Benchmark(args);
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
-		if (args.length > 0) depth = Integer.parseInt(args[0]);
+		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		
-		b.start();
+		be.start();
 		FjBFS searcher = new FjBFS(target, g, Graph.DEFAULT_DEPTH - 8);
 		int f = searcher.parCount();
-		b.end();
-		if (b.verbose) {
+		be.end();
+		if (be.verbose) {
 			System.out.println("Found " + f + " occurrences of " + target);
 		}
 	}

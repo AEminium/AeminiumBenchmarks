@@ -3,12 +3,13 @@ package aeminium.runtime.benchmarks.doall;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class SeqDoAll {
+	public static final int DEFAULT_SIZE = 1000000;
 	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
-		int size = 1000000;
-		if (args.length > 0)
-			size = Integer.parseInt(args[0]);
+		int size = DEFAULT_SIZE;
+		if (be.args.length > 0)
+			size = Integer.parseInt(be.args[0]);
 
 		double[] a = new double[size];
 		double[] b = new double[size];

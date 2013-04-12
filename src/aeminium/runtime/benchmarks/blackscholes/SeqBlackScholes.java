@@ -80,20 +80,20 @@ public class SeqBlackScholes {
 
 
     public static void main(String[] args) {
-    	Benchmark b = new Benchmark(args);
-    	b.start();
-        double S     = Double.parseDouble(args[0]);
-        double X     = Double.parseDouble(args[1]);
-        double r     = Double.parseDouble(args[2]);
-        double sigma = Double.parseDouble(args[3]);
-        double T     = Double.parseDouble(args[4]);
-        long N 		 = Long.parseLong(args[5]);
+    	Benchmark be = new Benchmark(args);
+    	be.start();
+        double S     = Double.parseDouble(be.args[0]);
+        double X     = Double.parseDouble(be.args[1]);
+        double r     = Double.parseDouble(be.args[2]);
+        double sigma = Double.parseDouble(be.args[3]);
+        double T     = Double.parseDouble(be.args[4]);
+        long N 		 = Long.parseLong(be.args[5]);
         
         double cP = callPrice(S, X, r, sigma, T);
         double ca = call(S, X, r, sigma, T, N);
         double c2 = call2(S, X, r, sigma, T, N);
-        b.end();
-        if (b.verbose) {
+        be.end();
+        if (be.verbose) {
         	System.out.println(cP);
         	System.out.println(ca);
         	System.out.println(c2);

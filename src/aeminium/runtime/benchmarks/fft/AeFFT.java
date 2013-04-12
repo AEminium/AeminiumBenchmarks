@@ -93,7 +93,7 @@ public class AeFFT {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = FFT.DEFAULT_SIZE;
-		if (args.length > 0) size = Integer.parseInt(args[0]);
+		if (be.args.length > 0) size = Integer.parseInt(be.args[0]);
 		Complex[] input = FFT.createRandomComplexArray(size, new Random(1L));
 		
 		be.start();

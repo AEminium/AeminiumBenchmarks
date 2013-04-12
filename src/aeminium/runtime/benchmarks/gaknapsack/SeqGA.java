@@ -2,19 +2,20 @@ package aeminium.runtime.benchmarks.gaknapsack;
 
 import java.util.Arrays;
 
+import aeminium.runtime.benchmarks.helpers.Benchmark;
+
 public class SeqGA {
 	
-	public static boolean debug = false;
-	
 	public static void main(String[] args) {
-		if (args.length >= 1)
-			Knapsack.popSize = Integer.parseInt(args[0]);
-		if (args.length >= 2)
-			Knapsack.numGen = Integer.parseInt(args[1]);
+		Benchmark be = new Benchmark(args);
+		if (be.args.length >= 1)
+			Knapsack.popSize = Integer.parseInt(be.args[0]);
+		if (be.args.length >= 2)
+			Knapsack.numGen = Integer.parseInt(be.args[1]);
 		
 		Indiv[] pop = new Indiv[Knapsack.popSize];
 		Indiv[] next = new Indiv[Knapsack.popSize];
-		
+		be.start();
 		// Initialize Population Randomly
 		for (int i=0; i < Knapsack.popSize; i++ ) {
 			pop[i] = Knapsack.createRandomIndiv();
@@ -27,7 +28,7 @@ public class SeqGA {
 				Knapsack.evaluate(pop[i]);
 			}
 			Arrays.sort(pop);
-			if (debug || g == Knapsack.numGen-1) {
+			if (be.verbose) {
 				System.out.println("Best fit at " + g + ": " + pop[0].fitness);
 			}
 			
@@ -51,5 +52,6 @@ public class SeqGA {
 			pop = next;
 			next = tmp;
 		}
+		be.end();
 	}
 }

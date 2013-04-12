@@ -1,18 +1,32 @@
 package aeminium.runtime.benchmarks.helpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Benchmark {
-	static final long NPS = (1000L * 1000 * 1000);
-	
-	long start;
-	long end;
-	
+	public String[] args;
 	public boolean verbose = true;
 	
-	public Benchmark(String[] args){
-		for (String a : args) {
+	private long start;
+	private long end;
+	
+	private static final long NPS = (1000L * 1000 * 1000);
+	
+	
+	
+	public Benchmark(String[] old){
+		List<String> nargs = new ArrayList<String>();
+		for (String a : old) {
 			if (a.equals("--quiet") || a.equals("-q")) {
 				verbose = false;
+			} else {
+				nargs.add(a);
 			}
+		}
+		if (nargs.size() > 0) {
+			args = (String[]) nargs.toArray();
+		} else {
+			args = new String[0];
 		}
 	}
 	

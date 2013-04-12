@@ -17,7 +17,7 @@ public class FjLogCounter {
 	
 	public static void main(String[] args) throws Exception {
 		Benchmark be = new Benchmark(args);
-		File[] fs = LogCounter.finder(args[0]);
+		File[] fs = LogCounter.finder(be.args[0]);
 		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
 		int r = forkjoinCounter(fs, pool);

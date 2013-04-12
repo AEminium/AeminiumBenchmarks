@@ -115,8 +115,8 @@ public class AeKDTree {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = Point.DEFAULT_SIZE;
-		if (args.length > 0)
-			size = Integer.parseInt(args[0]);
+		if (be.args.length > 0)
+			size = Integer.parseInt(be.args[0]);
 		
 		final Point[] points = Point.generatePoints(size);
 		final Point[] closest = new Point[size];

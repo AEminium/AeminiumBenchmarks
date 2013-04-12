@@ -11,12 +11,12 @@ class SeqMatrixMult {
 	public static void main(String args[]) {
 		Benchmark be = new Benchmark(args);
 		int m = Matrix.DEFAULT_M;
-		if (args.length > 0) m = Integer.parseInt(args[0]);
+		if (be.args.length > 0) m = Integer.parseInt(be.args[0]);
 		int n = Matrix.DEFAULT_N;
-		if (args.length > 1) n = Integer.parseInt(args[1]);
+		if (be.args.length > 1) n = Integer.parseInt(be.args[1]);
 		int p = n;
 		int q = Matrix.DEFAULT_Q;
-		if (args.length > 2) q = Integer.parseInt(args[2]);
+		if (be.args.length > 2) q = Integer.parseInt(be.args[2]);
 		
 		first = Matrix.createMatrix(m,n);
 		second = Matrix.createMatrix(p,q);

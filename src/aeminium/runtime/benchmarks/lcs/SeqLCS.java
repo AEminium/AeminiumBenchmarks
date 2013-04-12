@@ -8,11 +8,11 @@ public class SeqLCS {
 		
 		String s1 = LCS.s1;
 		String s2 = LCS.s1;
-		if (args.length > 0) {
-			s1 = LCS.readFile(args[0]);
+		if (be.args.length > 0) {
+			s1 = LCS.readFile(be.args[0]);
 		}
-		if (args.length > 1) {
-			s2 = LCS.readFile(args[1]);
+		if (be.args.length > 1) {
+			s2 = LCS.readFile(be.args[1]);
 		}
 		be.start();
 		String common = seqCompute(s1, s2);

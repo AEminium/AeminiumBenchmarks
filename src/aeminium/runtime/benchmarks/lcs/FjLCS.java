@@ -105,11 +105,11 @@ public class FjLCS {
 		
 		String s1 = LCS.s1;
 		String s2 = LCS.s1;
-		if (args.length > 0) {
-			s1 = LCS.readFile(args[0]);
+		if (be.args.length > 0) {
+			s1 = LCS.readFile(be.args[0]);
 		}
-		if (args.length > 1) {
-			s2 = LCS.readFile(args[1]);
+		if (be.args.length > 1) {
+			s2 = LCS.readFile(be.args[1]);
 		}
 		be.start();
 		FjLCS longest = new FjLCS(5);

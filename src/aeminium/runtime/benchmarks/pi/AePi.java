@@ -110,11 +110,11 @@ public class AePi {
 		Benchmark be = new Benchmark(args);
 	    long darts = SeqPi.DEFAULT_DART_SIZE;
 	    int threshold = 64;
-	    if (args.length > 1) {
-	        darts = Integer.parseInt(args[0]);
+	    if (be.args.length > 1) {
+	        darts = Integer.parseInt(be.args[0]);
 	    }
-	    if (args.length > 2) {
-	        threshold = Integer.parseInt(args[1]);
+	    if (be.args.length > 2) {
+	        threshold = Integer.parseInt(be.args[1]);
 	    }
 	    be.start();
 		Runtime rt = Factory.getRuntime();

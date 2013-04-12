@@ -11,8 +11,8 @@ public class SeqPi {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 	    long dartsc = DEFAULT_DART_SIZE;
-	    if (args.length > 1) {
-	        dartsc = Integer.parseInt(args[0]);
+	    if (be.args.length > 1) {
+	        dartsc = Integer.parseInt(be.args[0]);
 	    }
 	    be.start();
 	    Random random = new Random();

@@ -256,9 +256,9 @@ public class AeHistogramEQ {
 	public static void main(String[] args) throws IOException {
 		Benchmark be = new Benchmark(args);
     	
-        File original_f = new File(args[0]);
-        String output_f = args[1];
-        numberOfHistogramEqualizationTaskFor=Integer.parseInt(args[2]);
+        File original_f = new File(be.args[0]);
+        String output_f = be.args[1];
+        numberOfHistogramEqualizationTaskFor=Integer.parseInt(be.args[2]);
         original = ImageIO.read(original_f);
         
         be.start();

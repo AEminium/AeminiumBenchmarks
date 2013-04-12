@@ -8,8 +8,8 @@ public class SeqFibonacci {
 		Benchmark be = new Benchmark(args);
 
 		int fib = Fibonacci.DEFAULT_SIZE;
-		if (args.length >= 1) {
-			fib = Integer.parseInt(args[0]);
+		if (be.args.length >= 1) {
+			fib = Integer.parseInt(be.args[0]);
 		}
 		
 		be.start();

@@ -29,7 +29,7 @@ public class SeqLogCounter {
 	
 	public static void main(String[] args) throws Exception {
 		Benchmark be = new Benchmark(args);
-		File[] fs = LogCounter.finder(args[0]);
+		File[] fs = LogCounter.finder(be.args[0]);
 		be.start();
 		int r = sequentialCounter(fs);
 		be.end();
