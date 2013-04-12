@@ -27,7 +27,7 @@ public class AeForPi {
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 
-		final MersenneTwisterFast random = new MersenneTwisterFast();
+		final MersenneTwisterFast random = new MersenneTwisterFast(1L);
 		
 		final AtomicInteger score = new AtomicInteger(0);
 		

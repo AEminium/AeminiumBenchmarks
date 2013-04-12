@@ -15,7 +15,7 @@ public class SeqPi {
 	        dartsc = Integer.parseInt(be.args[0]);
 	    }
 	    be.start();
-	    Random random = new Random();
+	    Random random = new Random(1L);
 	    double x_coord, y_coord, r;
 	    long score = 0;
 	    for (long n = 1; n <= dartsc; n++)

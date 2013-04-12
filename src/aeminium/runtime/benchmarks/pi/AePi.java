@@ -25,7 +25,7 @@ public class AePi {
 		public void execute(Runtime rt, Task current) throws Exception
 		{
 			double x_coord, y_coord, r; 
-			MersenneTwisterFast random = new MersenneTwisterFast();
+			MersenneTwisterFast random = new MersenneTwisterFast(1L);
 
 			/* "throw darts at board" */
 			for (long n = 1; n <= darts; n++)
