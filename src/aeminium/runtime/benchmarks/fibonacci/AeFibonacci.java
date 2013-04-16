@@ -64,11 +64,7 @@ public class AeFibonacci {
 			}
 		}
 	}
-
-	public static Body createFibBody(final Runtime rt, final int n, int threshold) {
-		return new AeFibonacci.FibBody(n, threshold);
-	}
-
+	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 
