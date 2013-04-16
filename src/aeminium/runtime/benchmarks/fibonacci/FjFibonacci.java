@@ -63,7 +63,7 @@ class FjFibonacci extends RecursiveAction {
 		if (be.args.length >= 1) {
 			fib = Integer.parseInt(be.args[0]);
 		}
-		int threshold = 16;
+		int threshold = Fibonacci.DEFAULT_THRESHOLD;
 		if (be.args.length >= 1) {
 			fib = Integer.parseInt(be.args[0]);
 		}

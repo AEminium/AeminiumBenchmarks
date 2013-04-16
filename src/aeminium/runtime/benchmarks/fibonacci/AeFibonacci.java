@@ -31,21 +31,30 @@ public class AeFibonacci {
 
 	public static class FibBody implements Body {
 		public volatile long value;
+		private int threshold;
 
-		public FibBody(long n) {
+		public FibBody(long n, int threshold) {
 			this.value = n;
+			this.threshold = threshold;
+		}
+
+		public long seqFib(long n) {
+			if (n <= 2)
+				return 1;
+			else
+				return (seqFib(n - 1) + seqFib(n - 2));
 		}
 
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (!rt.parallelize()) {
-				value = SeqFibonacci.seqFib(value);
+			if (value <= threshold) {
+				value = seqFib(value);
 			} else {
-				FibBody b1 = new FibBody(value - 1);
+				FibBody b1 = new FibBody(value - 1, threshold);
 				Task t1 = rt.createNonBlockingTask(b1, Runtime.NO_HINTS);
 				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
-				FibBody b2 = new FibBody(value - 2);
+				FibBody b2 = new FibBody(value - 2, threshold);
 				Task t2 = rt.createNonBlockingTask(b2, Runtime.NO_HINTS);
 				rt.schedule(t2, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
@@ -56,8 +65,8 @@ public class AeFibonacci {
 		}
 	}
 
-	public static Body createFibBody(final Runtime rt, final int n) {
-		return new AeFibonacci.FibBody(n);
+	public static Body createFibBody(final Runtime rt, final int n, int threshold) {
+		return new AeFibonacci.FibBody(n, threshold);
 	}
 
 	public static void main(String[] args) {
@@ -67,11 +76,15 @@ public class AeFibonacci {
 		if (be.args.length >= 1) {
 			fib = Integer.parseInt(be.args[0]);
 		}
+		int threshold = Fibonacci.DEFAULT_THRESHOLD;
+		if (be.args.length >= 1) {
+			fib = Integer.parseInt(be.args[0]);
+		}
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
-		FibBody body = new AeFibonacci.FibBody(fib);
+		FibBody body = new AeFibonacci.FibBody(fib, threshold);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
