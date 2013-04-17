@@ -31,6 +31,7 @@ public class AeMatrixMult {
 		second = Matrix.createMatrix(p,q);
 		result = new int[m][q];
 		
+		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
 		
