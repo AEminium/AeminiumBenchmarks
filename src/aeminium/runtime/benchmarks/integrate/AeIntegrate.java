@@ -10,6 +10,7 @@ import aeminium.runtime.implementations.Factory;
 public class AeIntegrate {
 
 	public static double integral;
+	public static double threshold;
 
 	public static void main(String[] args) {
         Benchmark be = new Benchmark(args);
@@ -79,7 +80,7 @@ public class AeIntegrate {
 				ret = alr;
 				return;
 			}
-			if (!rt.parallelize()) {
+			if (Math.abs(alr - area) <= Integrate.threshold) {
 				try {
 					ret = SeqIntegrate.recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r,
 							area);

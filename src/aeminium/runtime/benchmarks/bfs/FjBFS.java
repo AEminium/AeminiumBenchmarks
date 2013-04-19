@@ -53,7 +53,7 @@ public class FjBFS extends RecursiveAction {
 	@Override
 	protected void compute() {
 
-		if (probe(graph, threshold)) {
+		if (Graph.probe(graph, threshold)) {
 			found = seqCount();
 		} else {
 			if (target == graph.value) found = 1; else found = 0;
@@ -78,27 +78,19 @@ public class FjBFS extends RecursiveAction {
 		
 		
 	}
-	
-	public static boolean probe(Graph graph, int threshold) {
-		Graph tmp = graph;
-		while(tmp.children.length > 0) {
-			if (threshold-- < 0) return false;
-			tmp = tmp.children[0];
-		}
-		return true;
-		
-	}
 
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
 		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
+		int threshold = Graph.DEFAULT_DEPTH - 8;
+		if (be.args.length > 1) depth = Integer.parseInt(be.args[1]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		
 		be.start();
-		FjBFS searcher = new FjBFS(target, g, Graph.DEFAULT_DEPTH - 8);
+		FjBFS searcher = new FjBFS(target, g, threshold);
 		int f = searcher.parCount();
 		be.end();
 		if (be.verbose) {

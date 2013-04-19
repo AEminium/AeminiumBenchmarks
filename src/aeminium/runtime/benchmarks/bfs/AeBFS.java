@@ -34,23 +34,25 @@ public class AeBFS {
 		private Graph graph;
 		private SearchBody[] bodies;
 		private Task[] tasks;
+		private int threshold;
 		
-		public SearchBody(int target, Graph graph) {
+		public SearchBody(int target, Graph graph, int threshold) {
 			this.value = target;
 			this.graph = graph;
 			this.bodies = new SearchBody[graph.children.length];
 			this.tasks = new Task[graph.children.length];
+			this.threshold = threshold;
 		}
 		
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (!rt.parallelize()) {
+			if (Graph.probe(graph, threshold)) {
 				value = SeqBFS.seqCount(value, graph);
 			} else {
 				value = ((value == graph.value) ? 1 : 0);
 				
 				for (int i = 0; i < graph.children.length; i++) {
-					bodies[i] = new SearchBody(value, graph.children[i]);
+					bodies[i] = new SearchBody(value, graph.children[i], threshold);
 					tasks[i] = rt.createNonBlockingTask(bodies[i], Runtime.NO_HINTS);
 					rt.schedule(tasks[i], current, Runtime.NO_DEPS);
 				}
@@ -63,23 +65,21 @@ public class AeBFS {
 		}
 	}
 
-	public static SearchBody createSearchBody(final Runtime rt, final int target, Graph graph) {
-		return new AeBFS.SearchBody(target, graph);
-	}
-
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
 		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
+		int threshold = Graph.DEFAULT_DEPTH - 8;
+		if (be.args.length > 1) depth = Integer.parseInt(be.args[1]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.init();
-		SearchBody body = createSearchBody(rt, 1, g);
+		SearchBody body = new AeBFS.SearchBody(1, g, threshold);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
