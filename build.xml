@@ -76,29 +76,4 @@
 
 		<fail message="test failed" if="test.failure" />
 	  </target>
-	
-	<target name="benchmark" depends="jar">
-		<property name="class" value="aeminium.runtime.benchmarks.fjtests.aeminium.AeminiumFibonacci" />
-		<property name="p" value="-l" />
-		<java fork="true" classname="aeminium.runtime.benchmarks.fjtests.${class}">
-			<jvmarg value="-Xms512m" />
-			<jvmarg value="-Xmx1536m" />
-			<arg value="${p}" />
-			<classpath>	 
-				<path refid="classpath"/>  
-				<path location="${dist.dir}/${ant.project.name}.jar"/>  
-			</classpath>
-		</java>
-	</target>
-	
-	<target name="all" depends="jar">
-		<java fork="true" classname="aeminium.runtime.benchmarks.fjtests.MakeSureEverythingRuns">
-			<jvmarg value="-Xms512m" />
-			<jvmarg value="-Xmx1536m" />
-			<classpath>	 
-				<path refid="classpath"/>  
-				<path location="${dist.dir}/${ant.project.name}.jar"/>  
-			</classpath>
-		</java>
-	</target>
 </project>	
