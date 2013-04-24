@@ -8,6 +8,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 import aeminium.utils.random.MersenneTwisterFast;
 
 public class AePi {
@@ -118,6 +119,7 @@ public class AePi {
 	    }
 	    be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		MainBody body = AePi.createController(rt, threshold, darts);
 		Task controller = rt.createNonBlockingTask(body, Runtime.NO_HINTS);

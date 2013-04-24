@@ -123,8 +123,8 @@ public class AeKDTree {
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
-		rt.init();
 		rt.addErrorHandler(new PrintErrorHandler());
+		rt.init();
 		
 		Task createTree = rt.createNonBlockingTask(new Body() {
 			@Override

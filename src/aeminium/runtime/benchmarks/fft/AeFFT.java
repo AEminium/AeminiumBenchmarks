@@ -30,6 +30,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeFFT {
 
@@ -98,6 +99,7 @@ public class AeFFT {
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		FFTBody body = createFFTBody(rt, input);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);

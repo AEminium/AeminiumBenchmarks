@@ -6,6 +6,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeIntegrate {
 
@@ -17,6 +18,7 @@ public class AeIntegrate {
         
         be.start();
         Runtime rt = Factory.getRuntime();
+        rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 
 		Task main = startCall(rt, Integrate.start, Integrate.end, 0);

@@ -27,6 +27,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeMergeSort {
 
@@ -125,6 +126,7 @@ public static void main(String[] args) {
 		be.start();
 		AeMergeSort merger = new AeMergeSort(original);
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		merger.doSort(rt);
 		rt.shutdown();

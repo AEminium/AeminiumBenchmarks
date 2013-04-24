@@ -9,6 +9,7 @@ import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.Range;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeDoAll {
 	
@@ -24,6 +25,7 @@ public class AeDoAll {
 
 		be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		
 		a = new double[size];
 		b = new double[size];

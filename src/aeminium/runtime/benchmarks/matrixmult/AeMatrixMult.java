@@ -7,6 +7,7 @@ import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.Range;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeMatrixMult {
 
@@ -33,6 +34,7 @@ public class AeMatrixMult {
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		
 		Task outerFor = ForTask.createFor(rt, new Range(m), new ForBody<Integer>() {

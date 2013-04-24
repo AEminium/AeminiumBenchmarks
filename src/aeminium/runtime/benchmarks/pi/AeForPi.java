@@ -10,6 +10,7 @@ import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.LongRange;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 import aeminium.utils.random.MersenneTwisterFast;
 
 public class AeForPi {
@@ -25,6 +26,7 @@ public class AeForPi {
 	    
 	    be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 
 		final MersenneTwisterFast random = new MersenneTwisterFast(1L);

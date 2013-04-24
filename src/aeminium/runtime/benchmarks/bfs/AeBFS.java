@@ -26,6 +26,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeBFS {
 
@@ -78,6 +79,7 @@ public class AeBFS {
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		SearchBody body = new AeBFS.SearchBody(1, g, threshold);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);

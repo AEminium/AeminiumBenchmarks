@@ -24,6 +24,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeFibonacci {
 	
@@ -79,6 +80,7 @@ public class AeFibonacci {
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		FibBody body = new AeFibonacci.FibBody(fib, threshold);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);

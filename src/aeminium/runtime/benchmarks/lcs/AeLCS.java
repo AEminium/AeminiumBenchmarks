@@ -26,6 +26,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeLCS {
 
@@ -33,6 +34,7 @@ public class AeLCS {
 
 	public void compute(final String x, final String y) {
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 
 		Task t = rt.createNonBlockingTask(new Body() {

@@ -22,6 +22,7 @@ public class AeGA {
 	public static void main(String[] args) {
 		final Benchmark be = new Benchmark(args);
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		
 		rt.addErrorHandler(new PrintErrorHandler());

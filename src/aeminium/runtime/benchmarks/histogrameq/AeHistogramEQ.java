@@ -14,6 +14,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 /**
  * Image histogram equalization
@@ -263,6 +264,7 @@ public class AeHistogramEQ {
         
         be.start();
         rt = Factory.getRuntime();
+        rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		Collection<Task> prev = new ArrayList<Task>();
 		Task init0 = histogramEqualizationLUTTask(Runtime.NO_PARENT, Runtime.NO_DEPS, original);

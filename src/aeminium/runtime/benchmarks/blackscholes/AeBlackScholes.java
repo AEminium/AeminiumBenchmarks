@@ -11,6 +11,7 @@ import aeminium.runtime.helpers.loops.ForBody;
 import aeminium.runtime.helpers.loops.ForTask;
 import aeminium.runtime.helpers.loops.LongRange;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 /*************************************************************************
  * Compilation: javac BlackScholes.java MyMath.java Execution: java BlackScholes
@@ -51,6 +52,7 @@ public class AeBlackScholes {
     	be.start();
     	
 		rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 
 		final double S = Double.parseDouble(be.args[0]);

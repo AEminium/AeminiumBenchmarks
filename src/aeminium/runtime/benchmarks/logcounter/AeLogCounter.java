@@ -10,6 +10,7 @@ import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
+import aeminium.utils.error.PrintErrorHandler;
 
 public class AeLogCounter {
 	public static void main(String[] args) throws Exception {
@@ -17,6 +18,8 @@ public class AeLogCounter {
 		File[] fs = LogCounter.finder(be.args[0]);
 		be.start();
 		Runtime rt = Factory.getRuntime();
+		rt.addErrorHandler(new PrintErrorHandler());
+		rt.init();
 		int r = aeminiumCounter(fs, rt);
 		be.end();
 		if (be.verbose) {
@@ -25,7 +28,6 @@ public class AeLogCounter {
 	}
 	
 	public static int aeminiumCounter(File[] files, aeminium.runtime.Runtime rt) {
-		rt.init();
 		final ArrayList<Task> counterTasks = new ArrayList<Task>();
 		
 		for (final File logfile : files) {
