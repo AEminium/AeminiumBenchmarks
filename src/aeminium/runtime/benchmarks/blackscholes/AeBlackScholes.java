@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import aeminium.runtime.Body;
 import aeminium.runtime.DataGroup;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -74,7 +75,7 @@ public class AeBlackScholes {
 				saveCallPrice = S * Gaussian.Phi(d1) - X * Math.exp(-r * T) * Gaussian.Phi(d2);
 			}
 			
-		}, Runtime.NO_HINTS);
+		}, Hints.NO_CHILDREN);
 		rt.schedule(callPrice, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		
@@ -96,7 +97,7 @@ public class AeBlackScholes {
 									throws Exception {
 								saveCall += value / N;
 							}
-			            }, pCall, Runtime.NO_HINTS);
+			            }, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 			            rt.schedule(s, current, Runtime.NO_DEPS);
 					}		
 				 });
@@ -107,13 +108,13 @@ public class AeBlackScholes {
 							throws Exception {
 						saveCall = Math.exp(-r*T) * saveCall;
 					}
-				}, Runtime.NO_HINTS);
+				}, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 				ArrayList<Task> ts = new ArrayList<Task>();
 				ts.add(iterations);
 				rt.schedule(save, current, ts);
 			}
 			
-		}, Runtime.NO_HINTS);
+		}, (short) (Hints.LOOPS | Hints.NO_DEPENDENTS));
 		rt.schedule(call, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		
@@ -138,7 +139,7 @@ public class AeBlackScholes {
 									throws Exception {
 								saveCall2 += value / N;
 							}
-			            }, pCall, Runtime.NO_HINTS);
+			            }, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 			            rt.schedule(s, current, Runtime.NO_DEPS);
 					}		
 				 });
@@ -149,13 +150,13 @@ public class AeBlackScholes {
 							throws Exception {
 						saveCall = Math.exp(-r*T) * saveCall2;
 					}
-				}, Runtime.NO_HINTS);
+				}, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 				ArrayList<Task> ts = new ArrayList<Task>();
 				ts.add(iterations);
 				rt.schedule(save, current, ts);
 			}
 			
-		}, Runtime.NO_HINTS);
+		}, (short) (Hints.LOOPS | Hints.NO_DEPENDENTS));
 		rt.schedule(call2, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		

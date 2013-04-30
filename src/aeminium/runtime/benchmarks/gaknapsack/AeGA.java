@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -63,7 +64,7 @@ public class AeGA {
 								throws Exception {
 							Arrays.sort(pop);
 						}
-					}, Runtime.NO_HINTS);
+					}, (short)(Hints.LARGE | Hints.NO_CHILDREN));
 					rt.schedule(sort, Runtime.NO_PARENT, Arrays.asList(eval));
 					
 					Task elitism = ForTask.createFor(rt, new Range(Knapsack.elitism), new ForBody<Integer>() {
@@ -104,14 +105,14 @@ public class AeGA {
 							pop = next;
 							next = tmp;
 						}
-					}, Runtime.NO_HINTS);
+					}, (short)(Hints.SMALL | Hints.NO_CHILDREN));
 					rt.schedule(switchThem, Runtime.NO_PARENT, Arrays.asList(mutation));
 					
 					previous = Arrays.asList(switchThem);
 					
 				}
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LOOPS | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 		rt.schedule(main, Runtime.NO_PARENT, Arrays.asList(createRandomIndivs));
 		
 		rt.shutdown();

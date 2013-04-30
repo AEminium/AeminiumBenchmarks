@@ -10,6 +10,7 @@ import java.util.Collection;
 import javax.imageio.ImageIO;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -73,7 +74,7 @@ public class AeHistogramEQ {
 					}
 				}
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LARGE | Hints.NO_CHILDREN| Hints.LOOPS));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -85,7 +86,7 @@ public class AeHistogramEQ {
 				equalized = histogramEQ;
 				Histogram.writeImage(output_f, equalized);
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LARGE | Hints.NO_CHILDREN));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -114,7 +115,7 @@ public class AeHistogramEQ {
 					writeImageTask(current, prev);
 				}
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LOOPS));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -143,7 +144,7 @@ public class AeHistogramEQ {
 				histogramEqualizationLUTTaskFinal(current, prev2);
 
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LARGE));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -167,7 +168,7 @@ public class AeHistogramEQ {
 				// Calculate the scale factor
 				scale_factor = (float) (255.0 / (input.getWidth() * input.getHeight()));
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LARGE | Hints.LOOPS));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -185,7 +186,7 @@ public class AeHistogramEQ {
 
 				histLUT = imageLUT;
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.SMALL | Hints.NO_CHILDREN));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -206,7 +207,7 @@ public class AeHistogramEQ {
 				}
 
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LOOPS | Hints.LARGE | Hints.NO_CHILDREN));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -228,7 +229,7 @@ public class AeHistogramEQ {
 				}
 
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LARGE | Hints.LOOPS | Hints.NO_CHILDREN));
 		rt.schedule(task, current, prev);
 		return task;
 	}
@@ -249,7 +250,7 @@ public class AeHistogramEQ {
 				}
 
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LARGE | Hints.LOOPS | Hints.NO_CHILDREN));
 		rt.schedule(task, current, prev);
 		return task;
 	}

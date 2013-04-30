@@ -26,6 +26,7 @@ package aeminium.runtime.benchmarks.fft;
 import java.util.Random;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -66,11 +67,11 @@ public class AeFFT {
 			}
 			
 			FFTBody b1 = new FFTBody(even);
-			Task t1 = rt.createNonBlockingTask(b1, Runtime.NO_HINTS);
+			Task t1 = rt.createNonBlockingTask(b1, Hints.RECURSION);
 			rt.schedule(t1, current, Runtime.NO_DEPS);
 			
 			FFTBody b2 = new FFTBody(odd);
-			Task t2 = rt.createNonBlockingTask(b2, Runtime.NO_HINTS);
+			Task t2 = rt.createNonBlockingTask(b2, Hints.RECURSION);
 			rt.schedule(t2, current, Runtime.NO_DEPS);
 			
 			t1.getResult();
@@ -102,7 +103,7 @@ public class AeFFT {
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		FFTBody body = createFFTBody(rt, input);
-		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
+		Task t1 = rt.createNonBlockingTask(body, Hints.RECURSION);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
 		be.end();

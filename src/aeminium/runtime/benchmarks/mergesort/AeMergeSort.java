@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -102,7 +103,7 @@ public class AeMergeSort {
 	
 	public void doSort(Runtime rt) {
 		final MergeSortBody sorter = new MergeSortBody(array);
-		Task sorterT = rt.createNonBlockingTask(sorter, Runtime.NO_HINTS);
+		Task sorterT = rt.createNonBlockingTask(sorter, (short)(Hints.RECURSION));
 		rt.schedule(sorterT, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		Task saverT = rt.createNonBlockingTask(new Body() {
@@ -110,7 +111,7 @@ public class AeMergeSort {
 			public void execute(Runtime rt, Task current) throws Exception {
 				array = sorter.array;
 			}
-		},Runtime.NO_HINTS);
+		},(short)(Hints.SMALL | Hints.NO_CHILDREN));
 		rt.schedule(saverT, Runtime.NO_PARENT, Arrays.asList(sorterT));
 	}
 	

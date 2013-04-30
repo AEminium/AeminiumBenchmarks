@@ -20,6 +20,7 @@
 package aeminium.runtime.benchmarks.fibonacci;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -52,11 +53,11 @@ public class AeFibonacci {
 				value = seqFib(value);
 			} else {
 				FibBody b1 = new FibBody(value - 1, threshold);
-				Task t1 = rt.createNonBlockingTask(b1, Runtime.NO_HINTS);
+				Task t1 = rt.createNonBlockingTask(b1, Hints.RECURSION);
 				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
 				FibBody b2 = new FibBody(value - 2, threshold);
-				Task t2 = rt.createNonBlockingTask(b2, Runtime.NO_HINTS);
+				Task t2 = rt.createNonBlockingTask(b2, Hints.RECURSION);
 				rt.schedule(t2, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
 				t1.getResult();

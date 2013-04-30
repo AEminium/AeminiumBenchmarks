@@ -22,6 +22,7 @@ package aeminium.runtime.benchmarks.bfs;
 import java.util.Random;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -54,7 +55,7 @@ public class AeBFS {
 				
 				for (int i = 0; i < graph.children.length; i++) {
 					bodies[i] = new SearchBody(value, graph.children[i], threshold);
-					tasks[i] = rt.createNonBlockingTask(bodies[i], Runtime.NO_HINTS);
+					tasks[i] = rt.createNonBlockingTask(bodies[i], Hints.RECURSION);
 					rt.schedule(tasks[i], current, Runtime.NO_DEPS);
 				}
 				

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -42,7 +43,7 @@ public class AeLogCounter {
 					}
 				}
 		
-			}, aeminium.runtime.Runtime.NO_HINTS);
+			}, (short)(Hints.LARGE | Hints.NO_CHILDREN));
 			rt.schedule(uncompress, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			
 			Task count = rt.createBlockingTask(new Body() {
@@ -57,7 +58,7 @@ public class AeLogCounter {
 					}
 				}
 		
-			}, aeminium.runtime.Runtime.NO_HINTS);
+			}, (short)(Hints.LARGE | Hints.NO_CHILDREN));
 			rt.schedule(count, Runtime.NO_PARENT, Arrays.asList(uncompress));
 			
 			counterTasks.add(count);
@@ -78,7 +79,7 @@ public class AeLogCounter {
 				
 			}
 	
-		}, aeminium.runtime.Runtime.NO_HINTS);
+		}, (short)(Hints.LOOPS | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 		rt.schedule(merge, Runtime.NO_PARENT, counterTasks);
 		
 		rt.shutdown();

@@ -1,6 +1,7 @@
 package aeminium.runtime.benchmarks.integrate;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.NonBlockingTask;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
@@ -94,11 +95,11 @@ public class AeIntegrate {
 
 			IntegralBody leftBody = new IntegralBody(l, c, fl, fc, al);
 			Task leftSide = rt
-					.createNonBlockingTask(leftBody, Runtime.NO_HINTS);
+					.createNonBlockingTask(leftBody, (short)(Hints.RECURSION));
 			rt.schedule(leftSide, current, Runtime.NO_DEPS);
 			IntegralBody rightBody = new IntegralBody(c, r, fc, fl, ar);
 			Task rightSide = rt.createNonBlockingTask(rightBody,
-					Runtime.NO_HINTS);
+					(short)(Hints.RECURSION));
 			rt.schedule(rightSide, current, Runtime.NO_DEPS);
 
 			leftSide.getResult();

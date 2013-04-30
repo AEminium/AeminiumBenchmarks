@@ -22,6 +22,7 @@ package aeminium.runtime.benchmarks.lcs;
 import java.util.ArrayList;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -66,7 +67,7 @@ public class AeLCS {
 								if (i % 10 == 0 && j % 10 == 0) System.gc();
 							}
 							
-						}, Runtime.NO_HINTS);
+						}, (short)(Hints.SMALL | Hints.NO_CHILDREN));
 						ArrayList<Task> deps = new ArrayList<Task>();
 						if (i != M - 1) {
 							deps.add(d[i + 1][j]);
@@ -96,7 +97,7 @@ public class AeLCS {
 						}
 						solution = sol.toString();
 					}
-				}, Runtime.NO_HINTS);
+				}, (short)(Hints.LOOPS | Hints.NO_CHILDREN));
 				ArrayList<Task> deps = new ArrayList<Task>();
 				deps.add(d[0][0]);
 				rt.schedule(merge, Runtime.NO_PARENT, deps);

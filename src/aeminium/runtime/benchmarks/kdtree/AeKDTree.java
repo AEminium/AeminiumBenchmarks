@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -69,7 +70,7 @@ public class AeKDTree {
 					childA = new AeKDTree(ps, depth + 1);
 					childA.createSubTrees(ps,  depth + 1, rt, current);
 				}
-			}, Runtime.NO_HINTS);
+			}, (short)(Hints.RECURSION));
 			rt.schedule(tA, parent, Runtime.NO_DEPS);
 		}
 		if (median + 1 < points.length) {
@@ -80,7 +81,7 @@ public class AeKDTree {
 					childB = new AeKDTree(ps, depth + 1);
 					childB.createSubTrees(ps,  depth + 1, rt, current);
 				}
-			}, Runtime.NO_HINTS);
+			}, (short)(Hints.RECURSION));
 			rt.schedule(tB, parent, Runtime.NO_DEPS);
 		}
 	}
@@ -132,7 +133,7 @@ public class AeKDTree {
 				root = new AeKDTree(points, 0);
 				root.createSubTrees(points, 0, rt, current);
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.RECURSION));
 		rt.schedule(createTree, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		Task findClosest = ForTask.createFor(rt, new Range(points.length), new ForBody<Integer>(){
@@ -150,7 +151,7 @@ public class AeKDTree {
 				Point markPoint = new Point(10, 100);
 				result = root.findClosest(markPoint);
 			}
-		}, Runtime.NO_HINTS);
+		}, (short)(Hints.LARGE | Hints.NO_CHILDREN));
 		rt.schedule(findPoint, Runtime.NO_PARENT, Arrays.asList(findClosest));
 		
 		rt.shutdown();

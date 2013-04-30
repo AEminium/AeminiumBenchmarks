@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -87,13 +88,13 @@ public class AePi {
 			final List<PiBody> workerBodies = new ArrayList<PiBody>();
 			for (int i=0; i<threshold; i++) {
 				PiBody body = new AePi.PiBody(darts/threshold);
-				Task worker = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
+				Task worker = rt.createNonBlockingTask(body, (short)(Hints.LARGE | Hints.LOOPS | Hints.NO_CHILDREN));
 				workers.add(worker);
 				workerBodies.add(body);
 				rt.schedule(worker, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			}
 			
-			Task merger = rt.createNonBlockingTask(new PiMerger(workerBodies, darts, this), Runtime.NO_HINTS);
+			Task merger = rt.createNonBlockingTask(new PiMerger(workerBodies, darts, this), (short)(Hints.SMALL | Hints.LOOPS | Hints.NO_CHILDREN));
 			rt.schedule(merger, Runtime.NO_PARENT, workers);
 		}
 	};
@@ -122,7 +123,7 @@ public class AePi {
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 		MainBody body = AePi.createController(rt, threshold, darts);
-		Task controller = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
+		Task controller = rt.createNonBlockingTask(body, (short)(Hints.LOOPS));
 		rt.schedule(controller, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
 		be.end();

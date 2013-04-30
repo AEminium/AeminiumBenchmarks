@@ -3,6 +3,7 @@ package aeminium.runtime.benchmarks.pi;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import aeminium.runtime.Body;
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -57,7 +58,7 @@ public class AeForPi {
 			}
 		};
 		
-		Task controller = rt.createNonBlockingTask(compute, Runtime.NO_HINTS);
+		Task controller = rt.createNonBlockingTask(compute, (short)(Hints.LARGE | Hints.LOOPS | Hints.NO_CHILDREN));
 		rt.schedule(controller, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		rt.shutdown();
