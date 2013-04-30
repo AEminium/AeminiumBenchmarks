@@ -24,9 +24,7 @@ public class AeGA {
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
-		
-		rt.addErrorHandler(new PrintErrorHandler());
-		
+				
 		if (be.args.length >= 1) {
 			Knapsack.popSize = Integer.parseInt(be.args[0]);
 			pop = new Indiv[Knapsack.popSize];
