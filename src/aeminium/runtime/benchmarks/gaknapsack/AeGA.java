@@ -72,7 +72,7 @@ public class AeGA {
 						public void iterate(Integer i, Runtime rt, Task current) {
 							next[Knapsack.popSize - i - 1] = pop[i];
 						}
-					});
+					}, Hints.NO_CHILDREN);
 					rt.schedule(elitism, Runtime.NO_PARENT, Arrays.asList(sort));
 					
 					Task recombine = ForTask.createFor(rt, new Range(Knapsack.popSize - Knapsack.elitism), new ForBody<Integer>() {
@@ -81,7 +81,7 @@ public class AeGA {
 							Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
 							next[i] = Knapsack.recombine(pop[i], other);
 						}
-					});
+					}, Hints.NO_CHILDREN);
 					rt.schedule(recombine, Runtime.NO_PARENT, Arrays.asList(elitism));
 					
 					Task mutation = ForTask.createFor(rt, new Range(Knapsack.popSize - Knapsack.elitism), new ForBody<Integer>() {
@@ -89,7 +89,7 @@ public class AeGA {
 						public void iterate(Integer i, Runtime rt, Task current) {
 							Knapsack.mutate(next[i]);
 						}
-					});
+					}, Hints.NO_CHILDREN);
 					rt.schedule(mutation, current, Arrays.asList(recombine));
 					
 					final int iter = g;
