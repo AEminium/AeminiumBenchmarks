@@ -1,5 +1,6 @@
 package aeminium.runtime.benchmarks.matrixmult;
 
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -51,7 +52,7 @@ public class AeMatrixMult {
 						}
 						result[c][d] = sum;
 					}
-				});
+				}, (short)(Hints.NO_CHILDREN | Hints.LOOPS | Hints.LARGE));
 				rt.schedule(innerFor, current, Runtime.NO_DEPS);
 				
 			}
