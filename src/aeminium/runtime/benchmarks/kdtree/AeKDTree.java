@@ -141,7 +141,7 @@ public class AeKDTree {
 			public void iterate(Integer i, Runtime rt, Task current) {
 				closest[i] = root.findClosest(points[i]);
 			}
-		});
+		}, Hints.LARGE);
 		rt.schedule(findClosest, Runtime.NO_PARENT, Arrays.asList(createTree));
 		
 		
