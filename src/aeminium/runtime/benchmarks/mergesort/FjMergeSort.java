@@ -21,7 +21,7 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = MergeSort.DEFAULT_SIZE;
-		int threshold = 100;
+		int threshold = MergeSort.DEFAULT_THRESHOLD;
 		if (be.args.length >= 1) {
 			size = Integer.parseInt(be.args[0]);
 		}

@@ -32,9 +32,11 @@ import aeminium.utils.error.PrintErrorHandler;
 public class AeMergeSort {
 
 	long[] array;
+	int threshold;
 	
-	public AeMergeSort(long[] original) {
+	public AeMergeSort(long[] original, int threshold) {
 		this.array = original;
+		this.threshold = threshold;
 	}
 	
 	public class MergeSortBody implements Body {
@@ -48,7 +50,7 @@ public class AeMergeSort {
 		public void execute(Runtime rt, Task current) throws Exception {
 			if (array.length <= 1)
 				return;
-			if (!rt.parallelize()) {
+			if (array.length < threshold) {
 				Arrays.sort(array);
 				return;
 			}
@@ -118,13 +120,17 @@ public class AeMergeSort {
 public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = MergeSort.DEFAULT_SIZE;
+		int threshold = MergeSort.DEFAULT_THRESHOLD;
 		if (be.args.length >= 1) {
 			size = Integer.parseInt(be.args[0]);
+		}
+		if (be.args.length >= 2) {
+			threshold = Integer.parseInt(be.args[1]);
 		}
 
 		long[] original =  MergeSort.generateRandomArray(size);
 		be.start();
-		AeMergeSort merger = new AeMergeSort(original);
+		AeMergeSort merger = new AeMergeSort(original, threshold);
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
