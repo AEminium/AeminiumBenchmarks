@@ -5,6 +5,7 @@ import java.util.Random;
 public class FFT {
 	
 	public static int DEFAULT_SIZE = 524288;
+	public static int DEFAULT_THRESHOLD = 1024;
 	
 	public static Complex[] createRandomComplexArray(int n) {
 		Complex[] x = new Complex[n];

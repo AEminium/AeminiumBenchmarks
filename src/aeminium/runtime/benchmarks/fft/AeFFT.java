@@ -40,10 +40,12 @@ public class AeFFT {
 		private Complex[] odd;
 		private Complex[] even;
 		private int n;
+		private int threshold;
 		
-		public FFTBody(Complex[] input) {
+		public FFTBody(Complex[] input, int t) {
 			this.result = input;
 			n = input.length;
+			threshold = t;
 			if (n != 1 && n % 2 != 0) { throw new RuntimeException("Size of array is not a power of 2."); }
 			
 			odd = new Complex[n/2];
@@ -55,7 +57,7 @@ public class AeFFT {
 			if (n == 1) {
 				return;
 			}
-			if (!rt.parallelize()) {
+			if (n <= threshold) {
 				result = SeqFFT.sequentialFFT(result);
 				return;
 			}
@@ -65,11 +67,11 @@ public class AeFFT {
 				odd[k] = result[2*k+1];
 			}
 			
-			FFTBody b1 = new FFTBody(even);
+			FFTBody b1 = new FFTBody(even, threshold);
 			Task t1 = rt.createNonBlockingTask(b1, Runtime.NO_HINTS);
 			rt.schedule(t1, current, Runtime.NO_DEPS);
 			
-			FFTBody b2 = new FFTBody(odd);
+			FFTBody b2 = new FFTBody(odd, threshold);
 			Task t2 = rt.createNonBlockingTask(b2, Runtime.NO_HINTS);
 			rt.schedule(t2, current, Runtime.NO_DEPS);
 			
@@ -85,23 +87,26 @@ public class AeFFT {
 		}
 	}
 
-	public static FFTBody createFFTBody(final Runtime rt, final Complex[] input) {
+	public static FFTBody createFFTBody(final Runtime rt, final Complex[] input, int threshold) {
 		Complex[] in = new Complex[input.length];
 		System.arraycopy(input, 0, in, 0, input.length);
-		return new FFTBody(in);
+		return new FFTBody(in, threshold);
 	}
 
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = FFT.DEFAULT_SIZE;
 		if (be.args.length > 0) size = Integer.parseInt(be.args[0]);
+		int threshold = FFT.DEFAULT_THRESHOLD;
+		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
+		
 		Complex[] input = FFT.createRandomComplexArray(size, new Random(1L));
 		
 		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
-		FFTBody body = createFFTBody(rt, input);
+		FFTBody body = createFFTBody(rt, input, threshold);
 		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
 		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();

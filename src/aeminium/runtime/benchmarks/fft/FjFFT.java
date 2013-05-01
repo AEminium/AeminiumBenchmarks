@@ -75,10 +75,12 @@ public class FjFFT extends RecursiveAction {
 		Benchmark be = new Benchmark(args);
 		int size = FFT.DEFAULT_SIZE;
 		if (be.args.length > 0) size = Integer.parseInt(be.args[0]);
+		int threshold = FFT.DEFAULT_THRESHOLD;
+		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
 		Complex[] input = FFT.createRandomComplexArray(size);
 		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
-		FjFFT t = new FjFFT(input, 1024);
+		FjFFT t = new FjFFT(input, threshold);
 		pool.invoke(t);
 		be.end();
 		if (be.verbose) {
