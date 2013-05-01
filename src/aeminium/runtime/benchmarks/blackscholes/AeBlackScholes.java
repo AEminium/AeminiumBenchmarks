@@ -100,7 +100,7 @@ public class AeBlackScholes {
 			            }, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 			            rt.schedule(s, current, Runtime.NO_DEPS);
 					}		
-				 });
+				 }, Hints.LARGE);
 				rt.schedule(iterations, current, Runtime.NO_DEPS);
 				Task save = rt.createNonBlockingTask(new Body() {
 					@Override
@@ -142,7 +142,7 @@ public class AeBlackScholes {
 			            }, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 			            rt.schedule(s, current, Runtime.NO_DEPS);
 					}		
-				 });
+				 }, (short) (Hints.LOOPS | Hints.LARGE));
 				rt.schedule(iterations, current, Runtime.NO_DEPS);
 				Task save = rt.createNonBlockingTask(new Body() {
 					@Override

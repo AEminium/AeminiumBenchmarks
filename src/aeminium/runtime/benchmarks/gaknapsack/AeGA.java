@@ -40,7 +40,7 @@ public class AeGA {
 			public void iterate(Integer i, Runtime rt, Task current) {
 				pop[i] = Knapsack.createRandomIndiv();
 			}
-		});
+		}, (short) ( Hints.NO_CHILDREN | Hints.LARGE ));
 		rt.schedule(createRandomIndivs, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		Task main = rt.createNonBlockingTask(new Body(){
@@ -54,7 +54,7 @@ public class AeGA {
 						public void iterate(Integer i, Runtime rt, Task current) {
 							Knapsack.evaluate(pop[i]);
 						}
-					});
+					}, (short) (Hints.NO_CHILDREN | Hints.LARGE ));
 					rt.schedule(eval, Runtime.NO_PARENT, previous);
 					
 					Task sort = rt.createNonBlockingTask(new Body() {

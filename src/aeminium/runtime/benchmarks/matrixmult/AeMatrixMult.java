@@ -56,7 +56,7 @@ public class AeMatrixMult {
 				rt.schedule(innerFor, current, Runtime.NO_DEPS);
 				
 			}
-		});
+		}, Hints.LOOPS);
 		rt.schedule(outerFor, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		rt.shutdown();
 		be.end();

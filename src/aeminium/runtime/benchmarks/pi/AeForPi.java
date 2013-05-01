@@ -53,7 +53,7 @@ public class AeForPi {
 							score.getAndIncrement();
 						}
 					}		
-				 });
+				 }, (short) (Hints.LARGE | Hints.NO_CHILDREN));
 				 rt.schedule(iterations, current, Runtime.NO_DEPS);
 			}
 		};
