@@ -112,7 +112,7 @@ public class AeGA {
 					
 				}
 			}
-		}, (short)(Hints.LOOPS | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
+		}, (short)(Hints.LOOPS | Hints.NO_DEPENDENTS));
 		rt.schedule(main, Runtime.NO_PARENT, Arrays.asList(createRandomIndivs));
 		
 		rt.shutdown();
