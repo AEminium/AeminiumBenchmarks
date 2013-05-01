@@ -2,6 +2,7 @@ package aeminium.runtime.benchmarks.doall;
 
 import java.util.Arrays;
 
+import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -37,7 +38,7 @@ public class AeDoAll {
 			public void iterate(Integer i, Runtime rt, Task current) {
 				a[i] = Math.sqrt(i);
 			}
-		});
+		}, Hints.SMALL);
 		rt.schedule(as, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		Task bs = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
@@ -45,7 +46,7 @@ public class AeDoAll {
 			public void iterate(Integer i, Runtime rt, Task current) {
 				b[i] = Math.sin(i);
 			}
-		});
+		}, Hints.SMALL);
 		rt.schedule(bs, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		
@@ -54,7 +55,7 @@ public class AeDoAll {
 			public void iterate(Integer i, Runtime rt, Task current) {
 				c[i] = a[i] / b[i];
 			}
-		});
+		}, Hints.SMALL);
 		rt.schedule(cs, Runtime.NO_PARENT, Arrays.asList(as, bs));
 		rt.shutdown();
 		be.end();
