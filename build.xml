@@ -4,8 +4,7 @@
 	<property name="build.dir"	 value="bin"/> 
 	<property name="dist.dir"	value="dist"/>	
 	<property name="lib.dir"   value="lib"/>  
-	<property name="verbose" value="false" />
-	<property name="main-class"	 value="aeminium.runtime.benchmarks.fjtests.BenchmarkDispatcher"/>	
+	<property name="verbose" value="false" />	
    
 	<path id="rt.classpath">
 	   <fileset dir="../AeminiumRuntime/lib">
@@ -47,33 +46,8 @@
 			</manifest>	 
 		</jar>	
 	</target>  
-   
-	<target name="run" depends="jar">  
-		<java fork="true" classname="${main-class}">
-			<jvmarg value="-Xms512m" />
-			<jvmarg value="-Xmx1536m" />
-			
-			<classpath>	 
-				<path refid="classpath"/>  
-				<path location="${dist.dir}/${ant.project.name}.jar"/>
-			</classpath>  
-		</java>	 
-	</target>
 	
 	<target name="clean-build" depends="clean,jar"/>  
    
-	<target name="main" depends="clean,run"/>  
-   
-	<target name="test" depends="compile">
-		<junit failureProperty="test.failure">
-		  <classpath refid="classpath.test" />
-
-		  <formatter type="brief" usefile="false" />
-		  <batchtest>
-			<fileset dir="${build.dir}" includes="aeminium/gpu/tests/*.class" excludes="**/*$*.class" />
-		  </batchtest>
-		</junit>
-
-		<fail message="test failed" if="test.failure" />
-	  </target>
+	<target name="main" depends="clean,jar"/>  
 </project>	
