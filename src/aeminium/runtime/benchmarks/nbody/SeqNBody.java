@@ -15,7 +15,7 @@ public class SeqNBody {
 			size = Integer.parseInt(be.args[1]);
 		}
 
-		NBodySystem bodies = new NBodySystem(NBody.generateRandomBodies(size, 1L));
+		SeqNBodySystem bodies = new SeqNBodySystem(NBody.generateRandomBodies(size, 1L));
 		if (be.verbose)
 			System.out.printf("%.9f\n", bodies.energy());
 		be.start();
@@ -28,21 +28,10 @@ public class SeqNBody {
 	}
 }
 
-final class NBodySystem {
-	private NBody[] bodies;
+final class SeqNBodySystem extends NBodySystem {
 
-	public NBodySystem(NBody[] data) {
-		bodies = data;
-
-		double px = 0.0;
-		double py = 0.0;
-		double pz = 0.0;
-		for (NBody body : bodies) {
-			px += body.vx * body.mass;
-			py += body.vy * body.mass;
-			pz += body.vz * body.mass;
-		}
-		bodies[0].offsetMomentum(px, py, pz);
+	public SeqNBodySystem(NBody[] data) {
+		super(data);
 	}
 
 	public void advance(double dt) {
@@ -76,27 +65,5 @@ final class NBodySystem {
 		}
 	}
 
-	public double energy() {
-		double dx, dy, dz, distance;
-		double e = 0.0;
-
-		for (int i = 0; i < bodies.length; ++i) {
-			NBody iBody = bodies[i];
-			e += 0.5
-					* iBody.mass
-					* (iBody.vx * iBody.vx + iBody.vy * iBody.vy + iBody.vz
-							* iBody.vz);
-
-			for (int j = i + 1; j < bodies.length; ++j) {
-				NBody jBody = bodies[j];
-				dx = iBody.x - jBody.x;
-				dy = iBody.y - jBody.y;
-				dz = iBody.z - jBody.z;
-
-				distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-				e -= (iBody.mass * jBody.mass) / distance;
-			}
-		}
-		return e;
-	}
+	
 }

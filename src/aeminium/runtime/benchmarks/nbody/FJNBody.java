@@ -1,6 +1,8 @@
 package aeminium.runtime.benchmarks.nbody;
 
+import java.util.Queue;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
@@ -10,12 +12,20 @@ public class FJNBody {
 
 		Benchmark be = new Benchmark(args);
 		int n = NBody.DEFAULT_ITERATIONS;
-		if (be.args.length >= 1) {
+		if (be.args.length > 0) {
 			n = Integer.parseInt(be.args[0]);
 		}
 		int size = NBody.DEFAULT_SIZE;
-		if (be.args.length >= 2) {
+		if (be.args.length > 1) {
 			size = Integer.parseInt(be.args[1]);
+		}
+		int advance_t = NBody.ADVANCE_THRESHOLD;
+		if (be.args.length > 2) {
+			advance_t = Integer.parseInt(be.args[2]);
+		}
+		int apply_t = NBody.APPLY_THRESHOLD;
+		if (be.args.length > 3) {
+			apply_t = Integer.parseInt(be.args[3]);
 		}
 
 		FJNBodySystem bodies = new FJNBodySystem(NBody.generateRandomBodies(size, 1L), new ForkJoinPool());		
@@ -24,7 +34,7 @@ public class FJNBody {
 		
 		be.start();
 		for (int i = 0; i < n; ++i)
-			bodies.advance(0.01);
+			bodies.advance(0.01, advance_t, apply_t);
 		be.end();
 		
 		if (be.verbose)
@@ -36,28 +46,46 @@ public class FJNBody {
 
 class Advancer extends RecursiveAction {
 	private static final long serialVersionUID = -922639424070654902L;
+	private static Queue<Advancer> queue = new LinkedBlockingDeque<Advancer>();
 	
 	NBody[] bodies;
 	int start;
 	int end;
 	double dt;
-	public Advancer(NBody[] bodies, int start, int end, double dt) {
+	int threshold;
+	public Advancer(NBody[] bodies, int start, int end, double dt, int threshold) {
 		this.bodies = bodies;
 		this.start = start;
 		this.end = end;
 		this.dt = dt;
+		this.threshold = threshold;
+	}
+	
+	private Advancer getAdvancer(int st, int e) {
+		Advancer a = queue.poll();
+		if (a == null) return new Advancer(bodies, st, e, dt, threshold);
+		a.reInit(st, e);
+		return a;
 	}
 	
 	@Override
 	protected void compute() {
-		if (end-start < 200) {
+		if (end-start < threshold) {
 			advance();
 		} else {
-			int mid = (end - start) / 2 + start;
-			Advancer task1 = new Advancer(bodies, start, mid, dt);
-			Advancer task2 = new Advancer(bodies, mid, end, dt);
+			int mid = (end - start) / 4 + start;
+			Advancer task1 = getAdvancer(start, mid);
+			Advancer task2 = getAdvancer(mid, end);
 			invokeAll(task1, task2);
+			queue.add(task1);
+			queue.add(task2);
 		}
+	}
+	
+	public void reInit(int st, int e) {
+		this.start = st;
+		this.end = e;
+		this.reinitialize();
 	}
 
 	private void advance() {
@@ -95,21 +123,23 @@ class Applier extends RecursiveAction {
 	int start;
 	int end;
 	double dt;
-	public Applier(NBody[] bodies, int start, int end, double dt) {
+	int threshold;
+	public Applier(NBody[] bodies, int start, int end, double dt, int threshold) {
 		this.bodies = bodies;
 		this.start = start;
 		this.end = end;
 		this.dt = dt;
+		this.threshold = threshold;
 	}
 	
 	@Override
 	protected void compute() {
-		if (end-start < 100) {
+		if (end-start < threshold) {
 			advance();
 		} else {
 			int mid = (end - start) / 2 + start;
-			Applier task1 = new Applier(bodies, start, mid, dt);
-			Applier task2 = new Applier(bodies, mid, end, dt);
+			Applier task1 = new Applier(bodies, start, mid, dt, threshold);
+			Applier task2 = new Applier(bodies, mid, end, dt, threshold);
 			invokeAll(task1, task2);
 		}
 	}
@@ -124,55 +154,21 @@ class Applier extends RecursiveAction {
 	}
 }
 
-final class FJNBodySystem {
-	private NBody[] bodies;
+class FJNBodySystem extends NBodySystem {
+	
 	protected ForkJoinPool pool;
 
 	public FJNBodySystem(NBody[] data, ForkJoinPool p) {
-		bodies = data;
+		super(data);
 		pool = p;
-
-		double px = 0.0;
-		double py = 0.0;
-		double pz = 0.0;
-		for (NBody body : bodies) {
-			px += body.vx * body.mass;
-			py += body.vy * body.mass;
-			pz += body.vz * body.mass;
-		}
-		bodies[0].offsetMomentum(px, py, pz);
 	}
 
-	public void advance(double dt) {
+	public void advance(double dt, int advance_t, int apply_t) {
 		
-		Advancer t = new Advancer(bodies, 0, bodies.length, dt);
+		Advancer t = new Advancer(bodies, 0, bodies.length, dt, advance_t);
 		pool.invoke(t);
 		
-		Applier t2 = new Applier(bodies, 0, bodies.length, dt);
+		Applier t2 = new Applier(bodies, 0, bodies.length, dt, apply_t);
 		pool.invoke(t2);
-	}
-
-	public double energy() {
-		double dx, dy, dz, distance;
-		double e = 0.0;
-
-		for (int i = 0; i < bodies.length; ++i) {
-			NBody iBody = bodies[i];
-			e += 0.5
-					* iBody.mass
-					* (iBody.vx * iBody.vx + iBody.vy * iBody.vy + iBody.vz
-							* iBody.vz);
-
-			for (int j = i + 1; j < bodies.length; ++j) {
-				NBody jBody = bodies[j];
-				dx = iBody.x - jBody.x;
-				dy = iBody.y - jBody.y;
-				dz = iBody.z - jBody.z;
-
-				distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-				e -= (iBody.mass * jBody.mass) / distance;
-			}
-		}
-		return e;
 	}
 }
