@@ -69,12 +69,11 @@ public class SeqConvexHull {
 
 	  
 	  public static void hullSet(Point A, Point B, ArrayList<Point> set, ArrayList<Point> hull) {
-	    int insertPosition = hull.indexOf(B);
 	    if (set.size() == 0) return;
 	    if (set.size() == 1) {
 	      Point p = set.get(0);
 	      set.remove(p);
-	      hull.add(insertPosition,p);
+	      hull.add(p);
 	      return;
 	    }
 	    double dist = Double.MIN_VALUE;
@@ -89,7 +88,7 @@ public class SeqConvexHull {
 	    }
 	    Point P = set.get(furthestPoint);
 	    set.remove(furthestPoint);
-	    hull.add(insertPosition,P);
+	    hull.add(P);
 	    
 	    // Determine who's to the left of AP
 	    ArrayList<Point> leftSetAP = new ArrayList<Point>();

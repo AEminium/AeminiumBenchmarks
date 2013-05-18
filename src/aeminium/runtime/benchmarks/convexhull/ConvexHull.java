@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ConvexHull {
-	public static int DEFAULT_SIZE = 10 * 1000 * 1000;
+	public static final int DEFAULT_THRESHOLD = 1000 * 1000;
+	public static final int DEFAULT_SIZE = 10 * 1000 * 1000;
 	
 	
 	
