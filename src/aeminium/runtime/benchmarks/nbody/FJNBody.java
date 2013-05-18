@@ -166,9 +166,10 @@ class FJNBodySystem extends NBodySystem {
 	public void advance(double dt, int advance_t, int apply_t) {
 		
 		Advancer t = new Advancer(bodies, 0, bodies.length, dt, advance_t);
-		pool.invoke(t);
+		pool.execute(t);
 		
 		Applier t2 = new Applier(bodies, 0, bodies.length, dt, apply_t);
 		pool.invoke(t2);
+		pool.invoke(t);
 	}
 }
