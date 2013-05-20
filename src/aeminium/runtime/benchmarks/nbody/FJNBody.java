@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
-public class FJNBody {
+public class FjNBody {
 	public static void main(String[] args) {
 
 		Benchmark be = new Benchmark(args);
