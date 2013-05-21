@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
-public class FJConvexHull extends RecursiveAction {
+public class FjConvexHull extends RecursiveAction {
 
 	private static final long serialVersionUID = 1L;
 
@@ -27,7 +27,7 @@ public class FJConvexHull extends RecursiveAction {
 		ArrayList<Point> data = ConvexHull.generateData(size, new Random(1L));
 		ForkJoinPool pool = new ForkJoinPool();
 		be.start();
-		ArrayList<Point> result = FJConvexHull.quickHull(data, pool, threshold);
+		ArrayList<Point> result = FjConvexHull.quickHull(data, pool, threshold);
 		be.end();
 		if (be.verbose)
 			System.out.println(result.size());
@@ -40,7 +40,7 @@ public class FJConvexHull extends RecursiveAction {
 	private ArrayList<Point> hull;
 	private int threshold;
 
-	public FJConvexHull(Point A, Point B, ArrayList<Point> set,
+	public FjConvexHull(Point A, Point B, ArrayList<Point> set,
 			ArrayList<Point> hull, int threshold) {
 		this.A = A;
 		this.B = B;
@@ -97,8 +97,8 @@ public class FJConvexHull extends RecursiveAction {
 			SeqConvexHull.hullSet(A,P,leftSetAP,hull);
 			SeqConvexHull.hullSet(P,B,leftSetPB,hull);
 		} else {
-			FJConvexHull one = new FJConvexHull(A, P, leftSetAP, hull, threshold);
-			FJConvexHull other = new FJConvexHull(P, B, leftSetPB, hull, threshold);
+			FjConvexHull one = new FjConvexHull(A, P, leftSetAP, hull, threshold);
+			FjConvexHull other = new FjConvexHull(P, B, leftSetPB, hull, threshold);
 			invokeAll(one,other);
 		}
 	}
@@ -141,8 +141,8 @@ public class FJConvexHull extends RecursiveAction {
 				rightSet.add(p);
 		}
 
-		FJConvexHull one = new FJConvexHull(A, B, rightSet, convexHull, threshold);
-		FJConvexHull other = new FJConvexHull(B, A, leftSet, convexHull, threshold);
+		FjConvexHull one = new FjConvexHull(A, B, rightSet, convexHull, threshold);
+		FjConvexHull other = new FjConvexHull(B, A, leftSet, convexHull, threshold);
 		pool.execute(other);
 		pool.invoke(one);
 		pool.invoke(other);
