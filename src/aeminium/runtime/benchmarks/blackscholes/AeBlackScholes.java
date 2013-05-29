@@ -75,7 +75,7 @@ public class AeBlackScholes {
 				saveCallPrice = S * Gaussian.Phi(d1) - X * Math.exp(-r * T) * Gaussian.Phi(d2);
 			}
 			
-		}, Hints.NO_CHILDREN);
+		},  Runtime.NO_HINTS);
 		rt.schedule(callPrice, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		
