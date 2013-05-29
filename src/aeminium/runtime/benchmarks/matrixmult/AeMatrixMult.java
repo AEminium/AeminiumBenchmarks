@@ -52,7 +52,7 @@ public class AeMatrixMult {
 						}
 						result[c][d] = sum;
 					}
-				}, (short)(Hints.NO_CHILDREN | Hints.LOOPS | Hints.LARGE));
+				}, (short)(Hints.LOOPS | Hints.LARGE));
 				rt.schedule(innerFor, current, Runtime.NO_DEPS);
 				
 			}
