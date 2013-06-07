@@ -56,12 +56,12 @@ public class AeBlackScholes {
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 
-		final double S = Double.parseDouble(be.args[0]);
-		final double X = Double.parseDouble(be.args[1]);
-		final double r = Double.parseDouble(be.args[2]);
-		final double sigma = Double.parseDouble(be.args[3]);
-		final double T = Double.parseDouble(be.args[4]);
-		final long N   = Long.parseLong(be.args[5]);
+		final double S = BlackScholes.S;
+		final double X = BlackScholes.X;
+		final double r = BlackScholes.r;
+		final double sigma = BlackScholes.sigma;
+		final double T = BlackScholes.T;
+		final long N   = Long.parseLong(be.args[0]);
 		
 		final DataGroup pCall = rt.createDataGroup();
 		
