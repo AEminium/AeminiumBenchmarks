@@ -4,6 +4,7 @@ import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class SeqDoAll {
 	public static final int DEFAULT_SIZE = 1000000;
+	public static final int DEFAULT_THRESHOLD = 1000;
 	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
