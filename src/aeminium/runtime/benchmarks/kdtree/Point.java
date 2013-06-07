@@ -6,6 +6,7 @@ import java.util.Random;
 class Point {
 	public static final int DEFAULT_SIZE = 1000000;
 	public static final Point INFINITY = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+	public static final int DEFAULT_THRESHOLD = 100;
 
 	public double[] coord; // coord[0] = x, coord[1] = y
 
