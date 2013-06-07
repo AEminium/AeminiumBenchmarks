@@ -18,6 +18,8 @@ public class Knapsack {
 	public final static double prob_mut = 0.2;
 	public final static double prob_rec = 0.2;
 	public static final int elitism = 10;
+
+	public static final int DEFAULT_THRESHOLD = popSize / 100;
 	public static int bestLimit = elitism;
 	
 	
