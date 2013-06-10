@@ -7,6 +7,8 @@ import aeminium.runtime.benchmarks.helpers.Benchmark;
 public class SeqPi {
 	
 	public static final int DEFAULT_DART_SIZE = 100000000;
+	public static final int DEFAULT_THRESHOLD = 10000;
+	public static final int DEFAULT_BLOCK = 128;
 	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);

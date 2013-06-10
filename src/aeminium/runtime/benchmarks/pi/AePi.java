@@ -111,7 +111,7 @@ public class AePi {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 	    long darts = SeqPi.DEFAULT_DART_SIZE;
-	    int threshold = 64;
+	    int threshold = SeqPi.DEFAULT_BLOCK;
 	    if (be.args.length > 1) {
 	        darts = Integer.parseInt(be.args[0]);
 	    }
