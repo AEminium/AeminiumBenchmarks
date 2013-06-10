@@ -36,7 +36,7 @@ public class FjKDTree {
 	
 	public void createSubTrees(final Point[] points, final int depth) {
 		int median = (points.length - 1) / 2;
-		if (depth > threshold)
+		if (depth < threshold)
 			createSubTreesInPar(points, depth, median);
 		else
 			createSubTreesInSeq(points, depth, median);
