@@ -53,7 +53,7 @@ public class MatrixMultiplicationAeminium {
 			// System.out.println("Enter the elements of first matrix");
 			Collection<Task> prev1 = new ArrayList<Task>();
 			Collection<Task> prev2 = new ArrayList<Task>();
-			Collection<Task> prev3 = new ArrayList<Task>();
+			//Collection<Task> prev3 = new ArrayList<Task>();
 
 			int step1 = m / numberOfTasks;
 			for (int c = 0; c < m; c = c + step1) {
