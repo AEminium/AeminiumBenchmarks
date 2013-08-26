@@ -40,5 +40,6 @@ public class Benchmark {
 	public void end() {
 		end = System.nanoTime();
 		System.out.println((((end - start) * 1.0)/NPS));
+		System.gc();
 	}
 }
