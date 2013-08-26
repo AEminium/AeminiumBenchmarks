@@ -40,7 +40,7 @@ public class LogCounter {
     	int i = 0;
     	for (File f : fs) {
     		fa[i] = f;
-    		fa[2 * i] = f;
+    		fa[fs.size() + i] = f;
     		i++;
     	}
     	return fa;
