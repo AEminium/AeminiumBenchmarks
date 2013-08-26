@@ -12,7 +12,7 @@ public class SeqMergeSort {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = MergeSort.DEFAULT_SIZE;
-		if (be.args.length >= 1) {
+		if (be.args.length > 0) {
 			size = Integer.parseInt(be.args[0]);
 		}
 		long[] original = MergeSort.generateRandomArray(size);

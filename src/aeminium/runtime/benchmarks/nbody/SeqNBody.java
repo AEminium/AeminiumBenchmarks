@@ -7,11 +7,11 @@ public class SeqNBody {
 
 		Benchmark be = new Benchmark(args);
 		int n = NBody.DEFAULT_ITERATIONS;
-		if (be.args.length >= 1) {
+		if (be.args.length > 0) {
 			n = Integer.parseInt(be.args[0]);
 		}
 		int size = NBody.DEFAULT_SIZE;
-		if (be.args.length >= 2) {
+		if (be.args.length > 1) {
 			size = Integer.parseInt(be.args[1]);
 		}
 

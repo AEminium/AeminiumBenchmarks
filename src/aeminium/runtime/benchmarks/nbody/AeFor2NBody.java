@@ -17,13 +17,13 @@ public class AeFor2NBody {
 
 		Benchmark be = new Benchmark(args);
 		final int n;
-		if (be.args.length >= 1) {
+		if (be.args.length > 0) {
 			n = Integer.parseInt(be.args[0]);
 		} else {
 			n = NBody.DEFAULT_ITERATIONS;
 		}
 		final int size;
-		if (be.args.length >= 2) {
+		if (be.args.length > 1) {
 			size = Integer.parseInt(be.args[1]);
 		} else {
 			size = NBody.DEFAULT_SIZE;

@@ -8,9 +8,9 @@ public class SeqGA {
 	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
-		if (be.args.length >= 1)
+		if (be.args.length > 0)
 			Knapsack.popSize = Integer.parseInt(be.args[0]);
-		if (be.args.length >= 2)
+		if (be.args.length > 1)
 			Knapsack.numGen = Integer.parseInt(be.args[1]);
 		
 		Indiv[] pop = new Indiv[Knapsack.popSize];

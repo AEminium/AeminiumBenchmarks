@@ -26,12 +26,12 @@ public class AeGA {
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 				
-		if (be.args.length >= 1) {
+		if (be.args.length > 0) {
 			Knapsack.popSize = Integer.parseInt(be.args[0]);
 			pop = new Indiv[Knapsack.popSize];
 			next = new Indiv[Knapsack.popSize];
 		}
-		if (be.args.length >= 2)
+		if (be.args.length > 1)
 			Knapsack.numGen = Integer.parseInt(be.args[1]);
 		be.start();
 		

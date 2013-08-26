@@ -61,11 +61,11 @@ public class DAeFibonacci {
 		Benchmark be = new Benchmark(args);
 
 		int fib = Fibonacci.DEFAULT_SIZE;
-		if (be.args.length >= 1) {
+		if (be.args.length > 0) {
 			fib = Integer.parseInt(be.args[0]);
 		}
 		int threshold = Fibonacci.DEFAULT_THRESHOLD;
-		if (be.args.length >= 2) {
+		if (be.args.length > 1) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 		

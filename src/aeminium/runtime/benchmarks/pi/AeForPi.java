@@ -20,7 +20,7 @@ public class AeForPi {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 	    long dartsc = SeqPi.DEFAULT_DART_SIZE;
-	    if (be.args.length > 1) {
+	    if (be.args.length > 0) {
 	        dartsc = Integer.parseInt(be.args[0]);
 	    }
 	    final long darts = dartsc;

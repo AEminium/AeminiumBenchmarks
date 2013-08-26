@@ -22,10 +22,10 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 		Benchmark be = new Benchmark(args);
 		int size = MergeSort.DEFAULT_SIZE;
 		int threshold = MergeSort.DEFAULT_THRESHOLD;
-		if (be.args.length >= 1) {
+		if (be.args.length > 0) {
 			size = Integer.parseInt(be.args[0]);
 		}
-		if (be.args.length >= 2) {
+		if (be.args.length > 1) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 		long[] original = MergeSort.generateRandomArray(size);
