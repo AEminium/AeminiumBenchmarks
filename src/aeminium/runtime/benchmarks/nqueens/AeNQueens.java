@@ -1,6 +1,7 @@
 package aeminium.runtime.benchmarks.nqueens;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import aeminium.runtime.Body;
@@ -37,7 +38,7 @@ public class AeNQueens {
 		rt.init();
 		
 		int c = 0;
-		Task prev = Runtime.NO_PARENT;
+		Collection<Task> deps  = Runtime.NO_DEPS;
 		for (int size = minSize; size <= maxSize; size++) {
 			final AtomicInteger sols = new AtomicInteger(0);
 			solutions[c++] = sols;
@@ -45,11 +46,11 @@ public class AeNQueens {
 			Task t = rt.createBlockingTask(new Body() {
 				@Override
 				public void execute(Runtime rt, Task current) throws Exception {
-					solve(rt, bs, sols);
+					solve(rt, current, bs, sols);
 				}
 			}, (short) (Hints.RECURSION | Hints.LARGE | Hints.LOOPS));
-			rt.schedule(t, prev, Runtime.NO_DEPS);
-			prev = t;
+			rt.schedule(t, Runtime.NO_PARENT, deps);
+			deps = Arrays.asList(t);
 		}
 		rt.shutdown();
 		be.end();
@@ -64,8 +65,8 @@ public class AeNQueens {
 	    }
 	}
 
-	public static void solve(Runtime rt, int size, AtomicInteger sol) {
-		solve(rt, null, sol, size, new int[0]);
+	public static void solve(Runtime rt, Task t, int size, AtomicInteger sol) {
+		solve(rt, t, sol, size, new int[0]);
 	}
 	
 	public static void solve(final Runtime rt, final Task parent, final AtomicInteger sol, final int bs, final int[] array) {
@@ -73,7 +74,7 @@ public class AeNQueens {
 			sol.getAndIncrement();
 		} else {
 			
-			if (parent == null || rt.parallelize(parent)) {
+			if (rt.parallelize(parent)) {
 				Task t = ForTask.createFor(rt, new Range(bs), new ForBody<Integer>() {
 	
 					@Override
