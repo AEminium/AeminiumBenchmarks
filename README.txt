@@ -35,6 +35,8 @@ GA: Solves the Knapsack problem with 500 items using a Genetic Algorithm,
 with population size of 100, 100 generations, a probability of mutation 
 and recombination of 20% and elitism of the 10 best individuals.
 
+NQueens: Calculates the number of solutions of the NQueens problem,
+for boards between 8 and 15 squares of side.
 
 Running Benchmark Suite
 ==============================================================================
