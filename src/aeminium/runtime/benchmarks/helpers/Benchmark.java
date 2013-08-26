@@ -3,6 +3,8 @@ package aeminium.runtime.benchmarks.helpers;
 import java.util.ArrayList;
 import java.util.List;
 
+import aeminium.runtime.implementations.Configuration;
+
 public class Benchmark {
 	public String[] args;
 	public boolean verbose = true;
@@ -12,7 +14,7 @@ public class Benchmark {
 	
 	private static final long NPS = (1000L * 1000 * 1000);
 	
-	
+	public static boolean useThreshold = Configuration.getProperty(Benchmark.class, "useThreshold", false); 
 	
 	public Benchmark(String[] old){
 		List<String> nargs = new ArrayList<String>();

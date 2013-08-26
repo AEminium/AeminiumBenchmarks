@@ -1,8 +1,5 @@
 package aeminium.runtime.benchmarks.pi;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import aeminium.runtime.Body;
 import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
@@ -16,6 +13,8 @@ import aeminium.utils.random.MersenneTwisterFast;
 
 public class AeForPi {
 	
+	static volatile int score = 0;
+	final static MersenneTwisterFast random = new MersenneTwisterFast(1L);
 	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
@@ -27,42 +26,25 @@ public class AeForPi {
 	    
 	    be.start();
 		Runtime rt = Factory.getRuntime();
+		
 		rt.addErrorHandler(new PrintErrorHandler());
 		rt.init();
 
-		final MersenneTwisterFast random = new MersenneTwisterFast(1L);
-		
-		final AtomicInteger score = new AtomicInteger(0);
-		
-		Body compute = new Body() {
-
+		Task iterations = ForTask.createFor(rt, new LongRange(darts), new ForBody<Long>() {
 			@Override
-			public void execute(final Runtime rt, final Task current) throws Exception {
-				 Task iterations = ForTask.createFor(rt, new LongRange(darts), new ForBody<Long>() {
-					@Override
-					public void iterate(Long o, Runtime rt, Task current) {
-						double x_coord, y_coord, r; 
-						/* generate random numbers for x and y coordinates */
-						r = random.nextDouble();
-						x_coord = (2.0 * r) - 1.0;
-						r = random.nextDouble();
-						y_coord = (2.0 * r) - 1.0;
-
-						/* if dart lands in circle, increment score */
-						if ((x_coord*x_coord + y_coord*y_coord) <= 1.0) {
-							score.getAndIncrement();
-						}
-					}		
-				 }, (short) (Hints.LARGE | Hints.NO_CHILDREN));
-				 rt.schedule(iterations, current, Runtime.NO_DEPS);
-			}
-		};
-		
-		Task controller = rt.createNonBlockingTask(compute, (short)(Hints.LARGE | Hints.LOOPS | Hints.NO_CHILDREN));
-		rt.schedule(controller, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			public void iterate(Long o, Runtime rt, Task current) {
+				double x_coord, y_coord;
+				x_coord = (2.0 * random.nextDouble()) - 1.0;
+				y_coord = (2.0 * random.nextDouble()) - 1.0;
+				if ((x_coord*x_coord + y_coord*y_coord) <= 1.0) {
+					score++;
+				}
+			}		
+		 }, (short) (Hints.LARGE | Hints.NO_CHILDREN));
+		 rt.schedule(iterations, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		
 		rt.shutdown();
-		double pi = 4.0 * (double)score.get()/(double)darts;
+		double pi = 4.0 * (double)score/(double)darts;
 		be.end();
 		if (be.verbose) {
 			System.out.println("PI = " + pi);

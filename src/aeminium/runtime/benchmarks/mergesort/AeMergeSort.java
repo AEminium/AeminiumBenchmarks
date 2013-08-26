@@ -51,7 +51,7 @@ public class AeMergeSort {
 		public void execute(Runtime rt, Task current) throws Exception {
 			if (array.length <= 1)
 				return;
-			if (array.length < threshold) {
+			if (Benchmark.useThreshold ? array.length < threshold : rt.parallelize(current)) {
 				Arrays.sort(array);
 				return;
 			}

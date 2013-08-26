@@ -49,7 +49,7 @@ public class AeFibonacci {
 
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (value <= threshold) {
+			if (Benchmark.useThreshold ? value < threshold : rt.parallelize(current)) {
 				value = seqFib(value);
 			} else {
 				FibBody b1 = new FibBody(value - 1, threshold);

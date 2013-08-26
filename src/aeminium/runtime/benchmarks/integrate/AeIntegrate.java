@@ -88,7 +88,7 @@ public class AeIntegrate {
 				ret = alr;
 				return;
 			}
-			if (Math.abs(alr - area) <= Integrate.threshold) {
+			if (Benchmark.useThreshold ? Math.abs(alr - area) <= Integrate.threshold : rt.parallelize(current)) {
 				try {
 					ret = SeqIntegrate.recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r,
 							area);

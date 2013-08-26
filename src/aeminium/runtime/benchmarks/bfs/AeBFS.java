@@ -48,7 +48,7 @@ public class AeBFS {
 		
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (Graph.probe(graph, threshold)) {
+			if (Benchmark.useThreshold ? Graph.probe(graph, threshold) : rt.parallelize(current)) {
 				value = SeqBFS.seqCount(value, graph);
 			} else {
 				value = ((value == graph.value) ? 1 : 0);

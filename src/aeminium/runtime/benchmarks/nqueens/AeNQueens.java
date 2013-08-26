@@ -28,6 +28,12 @@ public class AeNQueens {
 	    if (be.args.length > 1) {
 	    	maxSize = Integer.parseInt(be.args[1]);
 	    }
+	    
+	    int threshold0 = NQueens.DEFAULT_THRESHOLD;
+	    if (be.args.length > 2) {
+	    	threshold0 = Integer.parseInt(be.args[2]);
+	    }
+	    final int threshold = threshold0;
 		
 	    AtomicInteger[] solutions = new AtomicInteger[maxSize - minSize + 1];
 	    
@@ -46,7 +52,7 @@ public class AeNQueens {
 			Task t = rt.createBlockingTask(new Body() {
 				@Override
 				public void execute(Runtime rt, Task current) throws Exception {
-					solve(rt, current, bs, sols);
+					solve(rt, current, bs, sols, threshold);
 				}
 			}, (short) (Hints.RECURSION | Hints.LARGE | Hints.LOOPS));
 			rt.schedule(t, Runtime.NO_PARENT, deps);
@@ -65,16 +71,16 @@ public class AeNQueens {
 	    }
 	}
 
-	public static void solve(Runtime rt, Task t, int size, AtomicInteger sol) {
-		solve(rt, t, sol, size, new int[0]);
+	public static void solve(Runtime rt, Task t, int size, AtomicInteger sol, final int threshold) {
+		solve(rt, t, sol, size, new int[0], threshold);
 	}
 	
-	public static void solve(final Runtime rt, final Task parent, final AtomicInteger sol, final int bs, final int[] array) {
+	public static void solve(final Runtime rt, final Task parent, final AtomicInteger sol, final int bs, final int[] array, final int threshold) {
 		if (array.length >= bs) {
 			sol.getAndIncrement();
 		} else {
 			
-			if (rt.parallelize(parent)) {
+			if (Benchmark.useThreshold ? array.length < threshold : rt.parallelize(parent)) {
 				Task t = ForTask.createFor(rt, new Range(bs), new ForBody<Integer>() {
 	
 					@Override
@@ -88,7 +94,7 @@ public class AeNQueens {
 			            }
 			            int[] next = Arrays.copyOf(array, row+1);
 			            next[row] = q;
-			            solve(rt, current, sol, bs, next);
+			            solve(rt, current, sol, bs, next, threshold);
 					}
 				}, Hints.RECURSION);
 				rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
@@ -104,7 +110,7 @@ public class AeNQueens {
 		            
 		            int[] next = Arrays.copyOf(array, row+1);
 		            next[row] = q;
-		            solve(rt, parent, sol, bs, next);
+		            solve(rt, parent, sol, bs, next, threshold);
 		        }
 			}
 		}
