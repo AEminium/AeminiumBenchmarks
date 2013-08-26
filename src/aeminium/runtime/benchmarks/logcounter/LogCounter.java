@@ -36,10 +36,12 @@ public class LogCounter {
     public static File[] finder(String dirName){
     	File dir = new File(dirName);
     	List<File> fs = LogCounter.addFiles(null, dir);
-    	File[] fa = new File[fs.size()];
+    	File[] fa = new File[2 * fs.size()];
     	int i = 0;
     	for (File f : fs) {
-    		fa[i++] = f;
+    		fa[i] = f;
+    		fa[2 * i] = f;
+    		i++;
     	}
     	return fa;
     }
