@@ -1,7 +1,7 @@
 package aeminium.runtime.benchmarks.integrate;
 
 public class Integrate {
-	static final double errorTolerance = 1.0e-12;
+	static double errorTolerance = 1.0e-13;
 	static final int threshold = 100;
 	static double start = -2101.0;
     static double end = 1036.0;

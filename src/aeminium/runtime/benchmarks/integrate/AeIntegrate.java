@@ -17,6 +17,11 @@ public class AeIntegrate {
 	public static void main(String[] args) {
         Benchmark be = new Benchmark(args);
         
+        if (be.args.length > 0) {
+	    	double exp = Double.parseDouble(be.args[0]);
+	    	Integrate.errorTolerance = Math.pow(10, -exp);
+	    }
+        
         be.start();
         Runtime rt = Factory.getRuntime();
         rt.addErrorHandler(new PrintErrorHandler());

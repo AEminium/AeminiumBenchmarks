@@ -75,10 +75,14 @@ public final class FjIntegrate {
 
     public static void main(String[] args) throws Exception {     
         Benchmark be = new Benchmark(args);
-        int procs = Runtime.getRuntime().availableProcessors();
+        
+        if (be.args.length > 0) {
+	    	double exp = Double.parseDouble(be.args[0]);
+	    	Integrate.errorTolerance = Math.pow(10, -exp);
+	    }
         
         be.start();
-        ForkJoinPool g = new ForkJoinPool(procs);
+        ForkJoinPool g = new ForkJoinPool();
 		double a = DQuad.computeArea(g, Integrate.start, Integrate.end);
 		g.shutdown();
 		be.end();

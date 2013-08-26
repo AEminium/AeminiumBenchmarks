@@ -8,6 +8,11 @@ public class SeqIntegrate {
     public static void main(String[] args) throws Exception {
         Benchmark be = new Benchmark(args);
         
+	    if (be.args.length > 0) {
+	    	double exp = Double.parseDouble(be.args[0]);
+	    	Integrate.errorTolerance = Math.pow(10, -exp);
+	    }
+        
         be.start();
 		double a = recEval(Integrate.start, Integrate.end, Integrate.computeFunction(Integrate.start), Integrate.computeFunction(Integrate.end), 0);
 		be.end();
