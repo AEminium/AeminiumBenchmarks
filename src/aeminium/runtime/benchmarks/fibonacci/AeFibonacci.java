@@ -90,6 +90,7 @@ public class AeFibonacci {
 		be.end();
 		if (be.verbose) {
 			System.out.println("F(" + fib + ") = " + body.value);
+			System.out.println("Tasks Created:" + rt.getTaskCount());
 		}
 	}
 }
