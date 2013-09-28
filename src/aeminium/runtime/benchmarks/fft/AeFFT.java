@@ -58,7 +58,7 @@ public class AeFFT {
 			if (n == 1) {
 				return;
 			}
-			if (Benchmark.useThreshold ? n <= threshold : rt.parallelize(current)) {
+			if (Benchmark.useThreshold ? n <= threshold : !rt.parallelize(current)) {
 				result = SeqFFT.sequentialFFT(result);
 				return;
 			}

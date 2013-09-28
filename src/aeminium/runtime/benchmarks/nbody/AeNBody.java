@@ -110,7 +110,7 @@ class AeAdvanceBody implements Body {
 
 	@Override
 	public void execute(Runtime rt, Task current) throws Exception {
-		if (Benchmark.useThreshold ? end-start < threshold : rt.parallelize(current)) {
+		if (Benchmark.useThreshold ? end-start < threshold : !rt.parallelize(current)) {
 			advance();
 		} else {
 			int mid = (end - start) / 4 + start;

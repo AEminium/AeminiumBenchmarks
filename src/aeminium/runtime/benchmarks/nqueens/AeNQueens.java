@@ -80,7 +80,7 @@ public class AeNQueens {
 			sol.getAndIncrement();
 		} else {
 			
-			if (Benchmark.useThreshold ? array.length < threshold : rt.parallelize(parent)) {
+			if (Benchmark.useThreshold ? array.length < threshold : !rt.parallelize(parent)) {
 				Task t = ForTask.createFor(rt, new Range(bs), new ForBody<Integer>() {
 	
 					@Override

@@ -161,7 +161,7 @@ class AeConvexHullBody implements Body {
 		}
 
 		
-		if (Benchmark.useThreshold ? set.size() < threshold : rt.parallelize(current)) {
+		if (Benchmark.useThreshold ? set.size() < threshold : !rt.parallelize(current)) {
 			SeqConvexHull.hullSet(A,P,leftSetAP,hull);
 			SeqConvexHull.hullSet(P,B,leftSetPB,hull);
 		} else {

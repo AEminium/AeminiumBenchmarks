@@ -37,7 +37,7 @@ public class AePi {
 
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (Benchmark.useThreshold ? value < threshold : rt.parallelize(current)) {
+			if (Benchmark.useThreshold ? value < threshold : !rt.parallelize(current)) {
 				value = seqPi(value);
 			} else {
 				AePiBody b1 = new AePiBody(value / 2, threshold);

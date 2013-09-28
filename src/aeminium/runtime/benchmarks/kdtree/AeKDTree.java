@@ -39,7 +39,7 @@ public class AeKDTree {
 	
 	public void createSubTrees(final Point[] points, final int depth, Runtime rt, Task parent) {
 		int median = (points.length - 1) / 2;
-		if (Benchmark.useThreshold ? depth <= Point.DEFAULT_THRESHOLD : rt.parallelize(parent))
+		if (Benchmark.useThreshold ? depth <= Point.DEFAULT_THRESHOLD : !rt.parallelize(parent))
 			createSubTreesInPar(points, depth, rt, parent, median);
 		else
 			createSubTreesInSeq(points, depth, rt, parent, median);
