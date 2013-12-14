@@ -31,6 +31,8 @@ with an error tolerance of 10^-11. (Threshold 10)
 Jacobi: Iterative mesh relaxation with barriers: 100 steps of nearest
 neighbor averaging on 1024x1024 matrices of doubles.
 
+LUD: Decomposition of 2048x2048 matrices with a 16 block size.
+
 KDTree: finds the closest point to each existing point of the set in a 
 10000000 random-element KD-tree. (Threshold 100)
 
