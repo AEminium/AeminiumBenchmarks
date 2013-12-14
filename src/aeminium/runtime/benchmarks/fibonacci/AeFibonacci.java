@@ -52,6 +52,11 @@ public class AeFibonacci {
 			if (Benchmark.useThreshold ? value < threshold : !rt.parallelize(current)) {
 				value = seqFib(value);
 			} else {
+				if (value <= 2) {
+					value = 1;
+					return;
+				}
+				
 				FibBody b1 = new FibBody(value - 1, threshold);
 				Task t1 = rt.createNonBlockingTask(b1, Hints.RECURSION);
 				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
