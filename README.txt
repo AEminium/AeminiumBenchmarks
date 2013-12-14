@@ -11,32 +11,40 @@ Benchmarks
 BFS: From a balanced tree of random Integers of depth 23 and width 2, tries to 
 find all the elements equals to 1. (Threshold 21)
 
+BlackScholes: MonteCarlo simulations using the BlackScholes Formula with 10000
+points.
+
+Do-All: Divides values from two arrays of 100 milion numbers.
+
 FFT: Fast-Fourier Transform of an array of 1048576 random complex numbers. 
 (Threshold 32768)
 
 Fibonacci: Fibonacci of 23 (Threshold 16)
 
-Integrate: Approximation of the integrate of (x^2 + 1)*x from -2101.0 to 200
-with an error tolerance of 10^-11. (Threshold 10)
-
-LCS: Least Common Subsequence of two random strings of size 800 with a block
-size of 100.
-
-LogCounter: Uncompresses and counts the number of accesses to a certain URL 
-from 1000 Apache webserver gziped logs.
-
-MergeSort: Sorts an array of 1000000 random longs using parallel mergesort.
-(Threshold 10000)
-
-Pi: Estimates the Pi value using a monte-carlo simulation with 100000000
-darts and 48 of threshold.
-
 GA: Solves the Knapsack problem with 500 items using a Genetic Algorithm,
 with population size of 100, 100 generations, a probability of mutation 
 and recombination of 20% and elitism of the 10 best individuals.
 
+Integrate: Approximation of the integrate of (x^2 + 1)*x from -2101.0 to 200
+with an error tolerance of 10^-11. (Threshold 10)
+
+KDTree: finds the closest point to each existing point of the set in a 
+10000000 random-element KD-tree. (Threshold 100)
+
+MatrixMult: Multiplication of two 1000x1000 matrices. 
+
+MergeSort: Sorts an array of 1000000 random longs using parallel mergesort.
+(Threshold 10000)
+
+N-Body: Simulation predicting the individual motions of 50000 Jovian planets
+ after three iterations.
+
 NQueens: Calculates the number of solutions of the NQueens problem,
 for boards between 8 and 15 squares of side.
+
+Pi: Estimates the Pi value using a monte-carlo simulation with 100000000
+darts and 48 of threshold.
+
 
 Running Benchmark Suite
 ==============================================================================
