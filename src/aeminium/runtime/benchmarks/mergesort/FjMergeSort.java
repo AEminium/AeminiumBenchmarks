@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
+import aeminium.runtime.benchmarks.helpers.ArrayHelper;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 @SuppressWarnings("serial")
@@ -28,14 +29,14 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 		if (be.args.length > 1) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
-		long[] original = MergeSort.generateRandomArray(size);
+		long[] original = ArrayHelper.generateRandomArray(size);
 		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
 		FjMergeSort t = new FjMergeSort(original, threshold);
 		pool.invoke(t);
 		be.end();
 		if (be.verbose) {
-			System.out.println("Sorted: " + MergeSort.checkArray(t.join()));
+			System.out.println("Sorted: " + ArrayHelper.checkArray(t.join()));
 		}
 	}
 

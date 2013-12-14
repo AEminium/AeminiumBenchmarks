@@ -1,5 +1,6 @@
 package aeminium.runtime.benchmarks.mergesort;
 
+import aeminium.runtime.benchmarks.helpers.ArrayHelper;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 
@@ -15,22 +16,22 @@ public class SeqMergeSort {
 		if (be.args.length > 0) {
 			size = Integer.parseInt(be.args[0]);
 		}
-		long[] original = MergeSort.generateRandomArray(size);
+		long[] original = ArrayHelper.generateRandomArray(size);
 		be.start();
 		SeqMergeSort sorter = new SeqMergeSort();
-	    sorter.sort(original);
-	    be.end();
+		sorter.sort(original);
+		be.end();
 		if (be.verbose) {
-			System.out.println("Sorted: " + MergeSort.checkArray(original));
+			System.out.println("Sorted: " + ArrayHelper.checkArray(original));
 		}
 	}
-	
+
 	public void sort(long[] values) {
-	    this.numbers = values;
-	    number = values.length;
-	    this.helper = new long[number];
-	    mergesort(0, number - 1);
-	  }
+		this.numbers = values;
+		number = values.length;
+		this.helper = new long[number];
+		mergesort(0, number - 1);
+	}
 
 	private void mergesort(int low, int high) {
 		// Check if low is smaller then high, if not then the array is sorted

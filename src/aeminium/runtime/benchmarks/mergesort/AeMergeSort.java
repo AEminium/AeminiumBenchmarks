@@ -1,5 +1,5 @@
 /**
-  * Copyright (c) 2010-11 The AEminium Project (see AUTHORS file)
+ * Copyright (c) 2010-11 The AEminium Project (see AUTHORS file)
  * 
  * This file is part of Plaid Programming Language.
  *
@@ -26,6 +26,7 @@ import aeminium.runtime.Body;
 import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
+import aeminium.runtime.benchmarks.helpers.ArrayHelper;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 import aeminium.utils.error.PrintErrorHandler;
@@ -34,19 +35,19 @@ public class AeMergeSort {
 
 	long[] array;
 	int threshold;
-	
+
 	public AeMergeSort(long[] original, int threshold) {
 		this.array = original;
 		this.threshold = threshold;
 	}
-	
+
 	public class MergeSortBody implements Body {
 		public long[] array;
-		
+
 		public MergeSortBody(long[] original) {
 			this.array = original;
 		}
-		
+
 		@Override
 		public void execute(Runtime rt, Task current) throws Exception {
 			if (array.length <= 1)
@@ -57,21 +58,21 @@ public class AeMergeSort {
 			}
 			List<long[]> partitionedArray = partitionArray();
 			final MergeSortBody left = new MergeSortBody(partitionedArray.get(0));
-			Task leftT = rt.createNonBlockingTask(left, Runtime.NO_HINTS);
+			Task leftT = rt.createNonBlockingTask(left, Hints.RECURSION);
 			rt.schedule(leftT, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			
+
 			final MergeSortBody right = new MergeSortBody(partitionedArray.get(1));
-			Task rightT = rt.createNonBlockingTask(right, Runtime.NO_HINTS);
+			Task rightT = rt.createNonBlockingTask(right, Hints.RECURSION);
 			rt.schedule(rightT, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			
+
 			leftT.getResult();
 			rightT.getResult();
-			
+
 			long[] mergedArray = new long[right.array.length + left.array.length];
 			mergeArrays(left.array, right.array, mergedArray);
 			array = mergedArray;
 		}
-		
+
 		private List<long[]> partitionArray() {
 			int mid = array.length / 2;
 			long[] partition1 = Arrays.copyOfRange(array, 0, mid);
@@ -102,12 +103,12 @@ public class AeMergeSort {
 		}
 
 	}
-	
+
 	public void doSort(Runtime rt) {
 		final MergeSortBody sorter = new MergeSortBody(array);
 		Task sorterT = rt.createNonBlockingTask(sorter, (short)(Hints.RECURSION));
 		rt.schedule(sorterT, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
+
 		Task saverT = rt.createNonBlockingTask(new Body() {
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
@@ -116,9 +117,9 @@ public class AeMergeSort {
 		},(short)(Hints.SMALL | Hints.NO_CHILDREN));
 		rt.schedule(saverT, Runtime.NO_PARENT, Arrays.asList(sorterT));
 	}
-	
-	
-public static void main(String[] args) {
+
+
+	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = MergeSort.DEFAULT_SIZE;
 		int threshold = MergeSort.DEFAULT_THRESHOLD;
@@ -129,7 +130,7 @@ public static void main(String[] args) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 
-		long[] original =  MergeSort.generateRandomArray(size);
+		long[] original =  ArrayHelper.generateRandomArray(size);
 		be.start();
 		AeMergeSort merger = new AeMergeSort(original, threshold);
 		Runtime rt = Factory.getRuntime();
@@ -139,10 +140,10 @@ public static void main(String[] args) {
 		rt.shutdown();
 		be.end();
 		if (be.verbose) {
-			System.out.println("Sorted: " +  MergeSort.checkArray(merger.array));
+			System.out.println("Sorted: " +  ArrayHelper.checkArray(merger.array));
 		}
 	}
-	
-	
-	
+
+
+
 }

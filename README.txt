@@ -45,6 +45,9 @@ for boards between 8 and 15 squares of side.
 Pi: Estimates the Pi value using a monte-carlo simulation with 100000000
 darts and 48 of threshold.
 
+QuickSort: Sorts an array of 1000000 random longs using quicksort.
+(Threshold 10000)
+
 
 Running Benchmark Suite
 ==============================================================================
