@@ -16,12 +16,12 @@ public class FjJacobi {
 
 		int steps = Jacobi.DEFAULT_STEPS;
 		if (be.args.length > 1) {
-			size = Integer.parseInt(be.args[1]);
+			steps = Integer.parseInt(be.args[1]);
 		}
 
 		int granularity = Jacobi.DEFAULT_GRANULARITY;
 		if (be.args.length > 2) {
-			size = Integer.parseInt(be.args[2]);
+			granularity = Integer.parseInt(be.args[2]);
 		}
 
 
