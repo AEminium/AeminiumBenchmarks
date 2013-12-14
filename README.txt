@@ -28,6 +28,9 @@ and recombination of 20% and elitism of the 10 best individuals.
 Integrate: Approximation of the integrate of (x^2 + 1)*x from -2101.0 to 200
 with an error tolerance of 10^-11. (Threshold 10)
 
+Jacobi: Iterative mesh relaxation with barriers: 100 steps of nearest
+neighbor averaging on 1024x1024 matrices of doubles.
+
 KDTree: finds the closest point to each existing point of the set in a 
 10000000 random-element KD-tree. (Threshold 100)
 
