@@ -85,7 +85,7 @@ public class FjBFS extends RecursiveAction {
 		int depth = Graph.DEFAULT_DEPTH;
 		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
 		int threshold = Graph.DEFAULT_DEPTH - 8;
-		if (be.args.length > 1) depth = Integer.parseInt(be.args[1]);
+		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		
