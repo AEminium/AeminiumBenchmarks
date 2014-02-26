@@ -74,9 +74,11 @@ public class AeJacobi {
 		double md = 0;
 		for (int i = 0; i < steps; ++i) {
 			try {
-				mat.execute(rt, Runtime.NO_PARENT);
+				Task t = rt.createNonBlockingTask(mat, Runtime.NO_HINTS);
+				rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			} catch (Exception e) {
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 		return md;
@@ -178,26 +180,36 @@ public class AeJacobi {
 		}
 
 		public void execute(Runtime rt, Task current) throws Exception {
-			if (current == Runtime.NO_PARENT || rt.parallelize(current)) {	
-				Task t1 = rt.createNonBlockingTask(q1, Hints.LOOPS);
-				rt.schedule(t1, current, Runtime.NO_DEPS);
-				Task t2 = rt.createNonBlockingTask(q2, Hints.LOOPS);
-				rt.schedule(t2, current, Runtime.NO_DEPS);
-				Task t3 = rt.createNonBlockingTask(q3, Hints.LOOPS);
-				rt.schedule(t3, current, Runtime.NO_DEPS);
-	
-				// Inline
-				q4.execute(rt, current);
-	
-				t1.getResult();
-				t2.getResult();
-				t3.getResult();
-			} else {
-				q1.execute(rt, current);
-				q2.execute(rt, current);
-				q3.execute(rt, current);
-				q4.execute(rt, current);
+			Task t1 = null , t2 = null, t3 = null;
+			if (rt.parallelize(current)) {
+				t1 = rt.createNonBlockingTask(q1, Hints.LOOPS);
+				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			}
+			if (rt.parallelize(current)) {
+				t2 = rt.createNonBlockingTask(q2, Hints.LOOPS);
+				rt.schedule(t2, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			}
+			if (rt.parallelize(current)) {
+				t3 = rt.createNonBlockingTask(q3, Hints.LOOPS);
+				rt.schedule(t3, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			}
+
+			q4.execute(rt, current);
+
+			if (t1 != null)
+				t1.getResult();
+			else
+				q1.execute(rt, current);
+
+			if (t2 != null)
+				t2.getResult();
+			else
+				q2.execute(rt, current);
+
+			if (t3 != null)
+				t3.getResult();
+			else
+				q3.execute(rt, current);
 
 			double md = q1.maxDiff;
 			md = q2.save(maxDiff);
@@ -216,9 +228,9 @@ public class AeJacobi {
 
 		public void execute(Runtime rt, Task current) throws Exception {
 			Task t1 = null;
-			if (current == Runtime.NO_PARENT || rt.parallelize(current)) {
+			if (rt.parallelize(current)) {
 				t1 = rt.createNonBlockingTask(q1, Hints.LOOPS);
-				rt.schedule(t1, current, Runtime.NO_DEPS);
+				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			} else {
 				q1.execute(rt, current);
 			}
