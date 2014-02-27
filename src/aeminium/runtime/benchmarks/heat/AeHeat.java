@@ -122,7 +122,7 @@ public class AeHeat extends Heat {
 		}
 
 		public void execute(Runtime rt, Task current) throws Exception {
-			if (Benchmark.useThreshold ? ub - lb > threshold : rt.parallelize(current) && ub - lb > threshold) {
+			if ((Benchmark.useThreshold ? ub - lb > threshold : rt.parallelize(current)) && ub - lb > 2) {
 				int mid = (lb + ub) >>> 1;
 				Compute left = new Compute(lb, mid, time);
 				Task tl = rt.createNonBlockingTask(left, Hints.RECURSION);
