@@ -44,7 +44,7 @@ public class FjBFS extends RecursiveAction {
 	public int seqCount() {
 		return SeqBFS.seqCount(target, graph);
 	}
-	
+
 	public int parCount() {
 		compute();
 		return found;
@@ -56,10 +56,11 @@ public class FjBFS extends RecursiveAction {
 		if (Graph.probe(graph, threshold)) {
 			found = seqCount();
 		} else {
-			if (target == graph.value) found = 1; else found = 0;
+			if (target == graph.value) found = 1;
+			else found = 0;
 			Collection<FjBFS> futures = new ArrayList<FjBFS>();
 			FjBFS tmp;
-			for (int i=0;i<graph.children.length;i++) {
+			for (int i = 0; i < graph.children.length; i++) {
 				tmp = new FjBFS(target, graph.children[i], threshold);
 				invokeAll(tmp);
 				futures.add(tmp);
@@ -75,8 +76,7 @@ public class FjBFS extends RecursiveAction {
 				}
 			}
 		}
-		
-		
+
 	}
 
 	public static void main(String[] args) {
@@ -86,7 +86,7 @@ public class FjBFS extends RecursiveAction {
 		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
 		int threshold = Graph.DEFAULT_DEPTH - 8;
 		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
-		
+
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		while (!be.stop()) {
 			be.start();

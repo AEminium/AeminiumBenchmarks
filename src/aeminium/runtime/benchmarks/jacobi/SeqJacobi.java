@@ -20,16 +20,15 @@ public class SeqJacobi {
 			granularity = Integer.parseInt(be.args[2]);
 		}
 
-
-		int dim = size+2;
+		int dim = size + 2;
 		double[][] a = new double[dim][dim];
 		double[][] b = new double[dim][dim];
 
 		Jacobi.setup(size, a, b);
-		
+
 		while (!be.stop()) {
 			be.start();
-		
+
 			double df = seqJacobi(size, steps, granularity, a, b);
 			be.end();
 			if (be.verbose) {
@@ -46,44 +45,39 @@ public class SeqJacobi {
 		return df;
 	}
 
-	public static double buildNode_seq(double[][] a, double[][] b,
-			int lr, int hr, int lc, int hc, int leafs, int steps) {
+	public static double buildNode_seq(double[][] a, double[][] b, int lr, int hr, int lc, int hc, int leafs, int steps) {
 
 		int rows = (hr - lr + 1);
 		int cols = (hc - lc + 1);
 
 		int mr = (lr + hr) >>> 1; // midpoints
-			int mc = (lc + hc) >>> 1;
+		int mc = (lc + hc) >>> 1;
 
-			int hrows = (mr - lr + 1);
-			int hcols = (mc - lc + 1);
+		int hrows = (mr - lr + 1);
+		int hcols = (mc - lc + 1);
 
-			if (rows * cols <= leafs) {
-				++leafs;
-				return processLeafNode(a, b, lr, hr, lc, hc, steps);
-			}
-			else if (hrows * hcols >= leafs) {
-				final double df1 = buildNode_seq(a, b, lr,   mr, lc,   mc, leafs, steps);
-				final double df2 = buildNode_seq(a, b, lr,   mr, mc+1, hc, leafs, steps);
-				final double df3 = buildNode_seq(a, b, mr+1, hr, lc,   mc, leafs, steps);
-				final double df4 = buildNode_seq(a, b, mr+1, hr, mc+1, hc, leafs, steps);
-				return ((((df1>df2)?df1:df2)>df3?((df1>df2)?df1:df2):df3)>df4)?(((df1>df2)?df1:df2)>df3?((df1>df2)?df1:df2):df3):df4;
-			}
-			else if (cols >= rows) {
-				final double df1 = buildNode_seq(a, b, lr, hr, lc,   mc, leafs, steps);
-				final double df2 = buildNode_seq(a, b, lr, hr, mc+1, hc, leafs, steps);
-				return ((df1 > df2) ? df1 : df2);
-			}
-			else {
-				final double df1 = buildNode_seq(a, b, lr, mr, lc, hc, leafs, steps);
-				final double df2 = buildNode_seq(a, b, mr+1, hr, lc, hc, leafs, steps);
-				return ((df1 > df2) ? df1 : df2);
-			}
+		if (rows * cols <= leafs) {
+			++leafs;
+			return processLeafNode(a, b, lr, hr, lc, hc, steps);
+		} else if (hrows * hcols >= leafs) {
+			final double df1 = buildNode_seq(a, b, lr, mr, lc, mc, leafs, steps);
+			final double df2 = buildNode_seq(a, b, lr, mr, mc + 1, hc, leafs, steps);
+			final double df3 = buildNode_seq(a, b, mr + 1, hr, lc, mc, leafs, steps);
+			final double df4 = buildNode_seq(a, b, mr + 1, hr, mc + 1, hc, leafs, steps);
+			return ((((df1 > df2) ? df1 : df2) > df3 ? ((df1 > df2) ? df1 : df2) : df3) > df4) ? (((df1 > df2) ? df1 : df2) > df3 ? ((df1 > df2) ? df1 : df2)
+					: df3) : df4;
+		} else if (cols >= rows) {
+			final double df1 = buildNode_seq(a, b, lr, hr, lc, mc, leafs, steps);
+			final double df2 = buildNode_seq(a, b, lr, hr, mc + 1, hc, leafs, steps);
+			return ((df1 > df2) ? df1 : df2);
+		} else {
+			final double df1 = buildNode_seq(a, b, lr, mr, lc, hc, leafs, steps);
+			final double df2 = buildNode_seq(a, b, mr + 1, hr, lc, hc, leafs, steps);
+			return ((df1 > df2) ? df1 : df2);
+		}
 	}
 
-	public static double processLeafNode(double[][] A, double[][] B,
-			int loRow, int hiRow,
-			int loCol, int hiCol, int steps) {
+	public static double processLeafNode(double[][] A, double[][] B, int loRow, int hiRow, int loCol, int hiCol, int steps) {
 
 		boolean AtoB = (steps++ & 1) == 0;
 		double[][] a = AtoB ? A : B;
@@ -93,8 +87,7 @@ public class SeqJacobi {
 
 		for (int i = loRow; i <= hiRow; ++i) {
 			for (int j = loCol; j <= hiCol; ++j) {
-				double v = 0.25 * (a[i-1][j] + a[i][j-1] +
-						a[i+1][j] + a[i][j+1]);
+				double v = 0.25 * (a[i - 1][j] + a[i][j - 1] + a[i + 1][j] + a[i][j + 1]);
 				b[i][j] = v;
 
 				double diff = v - a[i][j];

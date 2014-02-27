@@ -23,13 +23,13 @@ import aeminium.utils.random.MersenneTwisterFast;
 public class NBody {
 	public static final int DEFAULT_ITERATIONS = 5;
 	public static final int DEFAULT_SIZE = 2000;
-	
+
 	public static final int ADVANCE_THRESHOLD = 1000;
 	public static final int APPLY_THRESHOLD = 100;
 
 	static final double PI = 3.141592653589793;
 	static final double SOLAR_MASS = 4 * PI * PI;
-	
+
 	public double x;
 	public double y;
 	public double z;
@@ -66,11 +66,9 @@ public class NBody {
 
 }
 
-
-
 abstract class NBodySystem {
 	protected NBody[] bodies;
-	
+
 	public NBodySystem(NBody[] data) {
 		bodies = data;
 
@@ -84,18 +82,14 @@ abstract class NBodySystem {
 		}
 		bodies[0].offsetMomentum(px, py, pz);
 	}
-	
-	
+
 	public double energy() {
 		double dx, dy, dz, distance;
 		double e = 0.0;
 
 		for (int i = 0; i < bodies.length; ++i) {
 			NBody iBody = bodies[i];
-			e += 0.5
-					* iBody.mass
-					* (iBody.vx * iBody.vx + iBody.vy * iBody.vy + iBody.vz
-							* iBody.vz);
+			e += 0.5 * iBody.mass * (iBody.vx * iBody.vx + iBody.vy * iBody.vy + iBody.vz * iBody.vz);
 
 			for (int j = i + 1; j < bodies.length; ++j) {
 				NBody jBody = bodies[j];

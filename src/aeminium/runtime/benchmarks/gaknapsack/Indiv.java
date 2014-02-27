@@ -16,12 +16,12 @@ public class Indiv implements Comparable<Indiv> {
 	}
 
 	public int compareTo(Indiv other) {
-	    if (this.fitness == other.fitness) {
-	      return 0;
-	    } else if (this.fitness > other.fitness) {
-	      return 1;
-	    } else {
-	      return -1;
-	    }
-	  }
+		if (this.fitness == other.fitness) {
+			return 0;
+		} else if (this.fitness > other.fitness) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 }

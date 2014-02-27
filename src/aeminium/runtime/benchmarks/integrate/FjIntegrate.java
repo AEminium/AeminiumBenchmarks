@@ -18,6 +18,7 @@
  */
 
 package aeminium.runtime.benchmarks.integrate;
+
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
@@ -28,10 +29,10 @@ import aeminium.runtime.benchmarks.helpers.Benchmark;
  *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
-* published by the Free Software Foundation.
-*
-* This code is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * published by the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * version 2 for more details (a copy is included in the LICENSE file that
  * accompanied this code).
@@ -66,174 +67,171 @@ import aeminium.runtime.benchmarks.helpers.Benchmark;
  */
 
 /**
- * Sample program using Gaussian Quadrature for numerical integration.
- * This version uses a simplified hardwired function.  Inspired by a
- * <A href="http://www.cs.uga.edu/~dkl/filaments/dist.html">
- * Filaments</A> demo program.
+ * Sample program using Gaussian Quadrature for numerical integration. This
+ * version uses a simplified hardwired function. Inspired by a <A
+ * href="http://www.cs.uga.edu/~dkl/filaments/dist.html"> Filaments</A> demo
+ * program.
  */
 public final class FjIntegrate {
 
-    public static void main(String[] args) throws Exception {     
-        Benchmark be = new Benchmark(args);
-        
-        if (be.args.length > 0) {
-	    	double exp = Double.parseDouble(be.args[0]);
-	    	Integrate.errorTolerance = Math.pow(10, -exp);
-	    }
-        
-        ForkJoinPool g = new ForkJoinPool();
-        while (!be.stop()) {
+	public static void main(String[] args) throws Exception {
+		Benchmark be = new Benchmark(args);
+
+		if (be.args.length > 0) {
+			double exp = Double.parseDouble(be.args[0]);
+			Integrate.errorTolerance = Math.pow(10, -exp);
+		}
+
+		ForkJoinPool g = new ForkJoinPool();
+		while (!be.stop()) {
 			be.start();
 			double a = DQuad.computeArea(g, Integrate.start, Integrate.end);
 			be.end();
 			if (be.verbose) {
 				System.out.println("Integral: " + a);
 			}
-        }
-    }
+		}
+	}
 
-
-    // Sequential version
-    public static final class SQuad extends RecursiveAction {
+	// Sequential version
+	public static final class SQuad extends RecursiveAction {
 		private static final long serialVersionUID = 2280172350754386752L;
 
 		static double computeArea(ForkJoinPool pool, double l, double r) {
-            SQuad q = new SQuad(l, r, 0);
-            pool.invoke(q);
-            return q.area;
-        }
+			SQuad q = new SQuad(l, r, 0);
+			pool.invoke(q);
+			return q.area;
+		}
 
-        final double left;       // lower bound
-        final double right;      // upper bound
-        double area;
+		final double left; // lower bound
+		final double right; // upper bound
+		double area;
 
-        public SQuad(double l, double r, double a) {
-            this.left = l; this.right = r; this.area = a;
-        }
+		public SQuad(double l, double r, double a) {
+			this.left = l;
+			this.right = r;
+			this.area = a;
+		}
 
-        public final void compute() {
-            double l = left;
-            double r = right;
-            
-            area = recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
-        }
+		public final void compute() {
+			double l = left;
+			double r = right;
 
-        static final double recEval(double l, double r, double fl,
-                                    double fr, double a) {
-            double h = (r - l) * 0.5;
-            double c = l + h;
-            double fc = (c * c + 1.0) * c;
-            double hh = h * 0.5;
-            double al = (fl + fc) * hh;
-            double ar = (fr + fc) * hh;
-            double alr = al + ar;
-            if (Math.abs(alr - a) <= Integrate.errorTolerance)
-                return alr;
-            else
-                return recEval(c, r, fc, fr, ar) + recEval(l, c, fl, fc, al);
-        }
+			area = recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
+		}
 
-    }
+		static final double recEval(double l, double r, double fl, double fr, double a) {
+			double h = (r - l) * 0.5;
+			double c = l + h;
+			double fc = (c * c + 1.0) * c;
+			double hh = h * 0.5;
+			double al = (fl + fc) * hh;
+			double ar = (fr + fc) * hh;
+			double alr = al + ar;
+			if (Math.abs(alr - a) <= Integrate.errorTolerance) return alr;
+			else return recEval(c, r, fc, fr, ar) + recEval(l, c, fl, fc, al);
+		}
 
-    //....................................
+	}
 
-    // ForkJoin version
-    public static final class FQuad extends RecursiveAction {
+	// ....................................
+
+	// ForkJoin version
+	public static final class FQuad extends RecursiveAction {
 		private static final long serialVersionUID = -6277723543198168418L;
 
 		static double computeArea(ForkJoinPool pool, double l, double r) {
-            FQuad q = new FQuad(l, r, 0);
-            pool.invoke(q);
-            return q.area;
-        }
+			FQuad q = new FQuad(l, r, 0);
+			pool.invoke(q);
+			return q.area;
+		}
 
-        final double left;       // lower bound
-        final double right;      // upper bound
-        double area;
+		final double left; // lower bound
+		final double right; // upper bound
+		double area;
 
-        public FQuad(double l, double r, double a) {
-            this.left = l; this.right = r; this.area = a;
-        }
+		public FQuad(double l, double r, double a) {
+			this.left = l;
+			this.right = r;
+			this.area = a;
+		}
 
-        public final void compute() {
-            double l = left;
-            double r = right;
-            area = recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
-        }
+		public final void compute() {
+			double l = left;
+			double r = right;
+			area = recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
+		}
 
-        public static final double recEval(double l, double r, double fl,
-                                    double fr, double a) {
-            double h = (r - l) * 0.5;
-            double c = l + h;
-            double fc = (c * c + 1.0) * c;
-            double hh = h * 0.5;
-            double al = (fl + fc) * hh;
-            double ar = (fr + fc) * hh;
-            double alr = al + ar;
-            if (Math.abs(alr - a) <= Integrate.errorTolerance)
-                return alr;
-            if (Math.abs(alr - a) <= Integrate.threshold) {
+		public static final double recEval(double l, double r, double fl, double fr, double a) {
+			double h = (r - l) * 0.5;
+			double c = l + h;
+			double fc = (c * c + 1.0) * c;
+			double hh = h * 0.5;
+			double al = (fl + fc) * hh;
+			double ar = (fr + fc) * hh;
+			double alr = al + ar;
+			if (Math.abs(alr - a) <= Integrate.errorTolerance) return alr;
+			if (Math.abs(alr - a) <= Integrate.threshold) {
 				// Threshold for task
 				return SQuad.recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, a);
 			}
-            FQuad q = new FQuad(l, c, al);
-            q.fork();
-            ar = recEval(c, r, fc, fr, ar);
-            if (!q.tryUnfork()) {
-            	q.quietlyJoin();
-                return ar + q.area;
-            }
-            return ar + recEval(l, c, fl, fc, al);
-        }
+			FQuad q = new FQuad(l, c, al);
+			q.fork();
+			ar = recEval(c, r, fc, fr, ar);
+			if (!q.tryUnfork()) {
+				q.quietlyJoin();
+				return ar + q.area;
+			}
+			return ar + recEval(l, c, fl, fc, al);
+		}
 
-    }
+	}
 
-    // ...........................
+	// ...........................
 
-    // Version using on-demand Fork
-    public static final class DQuad extends RecursiveAction {
+	// Version using on-demand Fork
+	public static final class DQuad extends RecursiveAction {
 		private static final long serialVersionUID = -4117817369633015698L;
 
 		static double computeArea(ForkJoinPool pool, double l, double r) {
-            DQuad q = new DQuad(l, r, 0);
-            pool.invoke(q);
-            return q.area;
-        }
+			DQuad q = new DQuad(l, r, 0);
+			pool.invoke(q);
+			return q.area;
+		}
 
-        final double left;       // lower bound
-        final double right;      // upper bound
-        double area;
+		final double left; // lower bound
+		final double right; // upper bound
+		double area;
 
-        DQuad(double l, double r, double a) {
-            this.left = l; this.right = r; this.area = a;
-        }
+		DQuad(double l, double r, double a) {
+			this.left = l;
+			this.right = r;
+			this.area = a;
+		}
 
-        public final void compute() {
-            double l = left;
-            double r = right;
-            area = recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
-        }
+		public final void compute() {
+			double l = left;
+			double r = right;
+			area = recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
+		}
 
-        static final double recEval(double l, double r, double fl,
-                                     double fr, double a) {
-             double h = (r - l) * 0.5;
-             double c = l + h;
-             double fc = (c * c + 1.0) * c;
-             double hh = h * 0.5;
-             double al = (fl + fc) * hh;
-             double ar = (fr + fc) * hh;
-             double alr = al + ar;
-             if (Math.abs(alr - a) <= Integrate.errorTolerance)
-                 return alr;
-             DQuad q = null;
-             if (getSurplusQueuedTaskCount() <= 3)
-                 (q = new DQuad(l, c, al)).fork();
-             ar = recEval(c, r, fc, fr, ar);
-             if (q != null && !q.tryUnfork()) {
-                 q.quietlyJoin();
-                 return ar + q.area;
-             }
-        	 return ar + recEval(l, c, fl, fc, al);
-        }
-    }
+		static final double recEval(double l, double r, double fl, double fr, double a) {
+			double h = (r - l) * 0.5;
+			double c = l + h;
+			double fc = (c * c + 1.0) * c;
+			double hh = h * 0.5;
+			double al = (fl + fc) * hh;
+			double ar = (fr + fc) * hh;
+			double alr = al + ar;
+			if (Math.abs(alr - a) <= Integrate.errorTolerance) return alr;
+			DQuad q = null;
+			if (getSurplusQueuedTaskCount() <= 3) (q = new DQuad(l, c, al)).fork();
+			ar = recEval(c, r, fc, fr, ar);
+			if (q != null && !q.tryUnfork()) {
+				q.quietlyJoin();
+				return ar + q.area;
+			}
+			return ar + recEval(l, c, fl, fc, al);
+		}
+	}
 }

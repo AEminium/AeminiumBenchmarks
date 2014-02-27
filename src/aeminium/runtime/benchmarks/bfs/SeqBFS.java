@@ -10,7 +10,7 @@ public class SeqBFS {
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
 		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
-		
+
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		while (!be.stop()) {
 			be.start();
@@ -21,13 +21,11 @@ public class SeqBFS {
 			}
 		}
 	}
-	
+
 	public static int seqCount(int target, Graph graph) {
 		int t;
-		if (target == graph.value)
-			t = 1;
-		else
-			t = 0;
+		if (target == graph.value) t = 1;
+		else t = 0;
 
 		for (int i = 0; i < graph.children.length; i++) {
 			t += seqCount(target, graph.children[i]);

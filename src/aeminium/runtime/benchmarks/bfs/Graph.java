@@ -26,7 +26,7 @@ public class Graph {
 	public static int DEFAULT_DEPTH = 23;
 	public static int DEFAULT_WIDTH = 2;
 	public static int DEFAULT_TARGET = 5;
-	
+
 	public int value;
 	public Graph[] children;
 
@@ -44,15 +44,15 @@ public class Graph {
 		}
 		return root;
 	}
-	
+
 	public static boolean probe(Graph graph, int threshold) {
 		Graph tmp = graph;
-		while(tmp.children.length > 0) {
+		while (tmp.children.length > 0) {
 			if (threshold-- < 0) return false;
 			tmp = tmp.children[0];
 		}
 		return true;
-		
+
 	}
 
 }

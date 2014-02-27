@@ -30,31 +30,29 @@ public class FjNBody {
 
 		while (!be.stop()) {
 			FJNBodySystem bodies = new FJNBodySystem(NBody.generateRandomBodies(size, 1L), new ForkJoinPool());
-			if (be.verbose)
-				System.out.printf("%.9f\n", bodies.energy());
+			if (be.verbose) System.out.printf("%.9f\n", bodies.energy());
 			be.start();
-		
+
 			for (int i = 0; i < n; ++i)
 				bodies.advance(0.01, advance_t, apply_t);
 			be.end();
-		
-			if (be.verbose)
-				System.out.printf("%.9f\n", bodies.energy());
+
+			if (be.verbose) System.out.printf("%.9f\n", bodies.energy());
 		}
-		
+
 	}
 }
-
 
 class Advancer extends RecursiveAction {
 	private static final long serialVersionUID = -922639424070654902L;
 	private static Queue<Advancer> queue = new LinkedBlockingDeque<Advancer>();
-	
+
 	NBody[] bodies;
 	int start;
 	int end;
 	double dt;
 	int threshold;
+
 	public Advancer(NBody[] bodies, int start, int end, double dt, int threshold) {
 		this.bodies = bodies;
 		this.start = start;
@@ -62,17 +60,17 @@ class Advancer extends RecursiveAction {
 		this.dt = dt;
 		this.threshold = threshold;
 	}
-	
+
 	private Advancer getAdvancer(int st, int e) {
 		Advancer a = queue.poll();
 		if (a == null) return new Advancer(bodies, st, e, dt, threshold);
 		a.reInit(st, e);
 		return a;
 	}
-	
+
 	@Override
 	protected void compute() {
-		if (end-start < threshold) {
+		if (end - start < threshold) {
 			advance();
 		} else {
 			int mid = (end - start) / 4 + start;
@@ -83,7 +81,7 @@ class Advancer extends RecursiveAction {
 			queue.add(task2);
 		}
 	}
-	
+
 	public void reInit(int st, int e) {
 		this.start = st;
 		this.end = e;
@@ -106,7 +104,7 @@ class Advancer extends RecursiveAction {
 				iBody.vx -= dx * body.mass * mag;
 				iBody.vy -= dy * body.mass * mag;
 				iBody.vz -= dz * body.mass * mag;
-				
+
 				synchronized (body) {
 					body.vx += dx * iBody.mass * mag;
 					body.vy += dy * iBody.mass * mag;
@@ -117,15 +115,15 @@ class Advancer extends RecursiveAction {
 	}
 }
 
-
 class Applier extends RecursiveAction {
 	private static final long serialVersionUID = -922639424070654902L;
-	
+
 	NBody[] bodies;
 	int start;
 	int end;
 	double dt;
 	int threshold;
+
 	public Applier(NBody[] bodies, int start, int end, double dt, int threshold) {
 		this.bodies = bodies;
 		this.start = start;
@@ -133,10 +131,10 @@ class Applier extends RecursiveAction {
 		this.dt = dt;
 		this.threshold = threshold;
 	}
-	
+
 	@Override
 	protected void compute() {
-		if (end-start < threshold) {
+		if (end - start < threshold) {
 			advance();
 		} else {
 			int mid = (end - start) / 2 + start;
@@ -147,7 +145,7 @@ class Applier extends RecursiveAction {
 	}
 
 	private void advance() {
-		for (int i = start; i < end;i++) {
+		for (int i = start; i < end; i++) {
 			NBody body = bodies[i];
 			body.x += dt * body.vx;
 			body.y += dt * body.vy;
@@ -157,7 +155,7 @@ class Applier extends RecursiveAction {
 }
 
 class FJNBodySystem extends NBodySystem {
-	
+
 	protected ForkJoinPool pool;
 
 	public FJNBodySystem(NBody[] data, ForkJoinPool p) {
@@ -166,10 +164,10 @@ class FJNBodySystem extends NBodySystem {
 	}
 
 	public void advance(double dt, int advance_t, int apply_t) {
-		
+
 		Advancer t = new Advancer(bodies, 0, bodies.length, dt, advance_t);
 		pool.execute(t);
-		
+
 		Applier t2 = new Applier(bodies, 0, bodies.length, dt, apply_t);
 		pool.invoke(t2);
 		pool.invoke(t);

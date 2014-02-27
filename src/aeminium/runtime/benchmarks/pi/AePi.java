@@ -10,7 +10,7 @@ import aeminium.utils.error.PrintErrorHandler;
 import aeminium.utils.random.MersenneTwisterFast;
 
 public class AePi {
-	
+
 	public static MersenneTwisterFast random = new MersenneTwisterFast(1L);
 
 	public static class AePiBody implements Body {
@@ -23,14 +23,13 @@ public class AePi {
 		}
 
 		public long seqPi(long n) {
-			double x_coord, y_coord; 
+			double x_coord, y_coord;
 			long score = 0;
 			for (long i = 0; i < n; i++) {
 				x_coord = (2.0 * random.nextDouble()) - 1.0;
 				y_coord = (2.0 * random.nextDouble()) - 1.0;
 
-				if ((x_coord*x_coord + y_coord*y_coord) <= 1.0)
-					score++;
+				if ((x_coord * x_coord + y_coord * y_coord) <= 1.0) score++;
 			}
 			return score;
 		}
@@ -50,27 +49,27 @@ public class AePi {
 
 				t1.getResult();
 				t2.getResult();
-				
+
 				value = b1.value + b2.value;
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 
 		long darts = SeqPi.DEFAULT_DART_SIZE;
-	    int threshold = SeqPi.DEFAULT_THRESHOLD;
-	    if (be.args.length > 0) {
-	        darts = Integer.parseInt(be.args[0]);
-	    }
-	    if (be.args.length > 1) {
-	        threshold = Integer.parseInt(be.args[1]);
-	    }
-		
+		int threshold = SeqPi.DEFAULT_THRESHOLD;
+		if (be.args.length > 0) {
+			darts = Integer.parseInt(be.args[0]);
+		}
+		if (be.args.length > 1) {
+			threshold = Integer.parseInt(be.args[1]);
+		}
+
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		while (!be.stop()) {
 			be.start();
 			rt.init();
@@ -80,9 +79,9 @@ public class AePi {
 			rt.shutdown();
 			be.end();
 			if (be.verbose) {
-				System.out.println("PI = " + (4.0 * (double)body.value/(double)darts));
+				System.out.println("PI = " + (4.0 * (double) body.value / (double) darts));
 			}
 		}
-		
+
 	}
 }

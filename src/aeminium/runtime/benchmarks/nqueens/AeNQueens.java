@@ -45,7 +45,7 @@ public class AeNQueens {
 			be.start();
 			rt.init();
 			int c = 0;
-			Collection<Task> deps  = Runtime.NO_DEPS;
+			Collection<Task> deps = Runtime.NO_DEPS;
 			for (int size = minSize; size <= maxSize; size++) {
 				final AtomicInteger sols = new AtomicInteger(0);
 				solutions[c++] = sols;
@@ -62,11 +62,11 @@ public class AeNQueens {
 			rt.shutdown();
 			be.end();
 			if (be.verbose) {
-				for (int i=0; i< (maxSize - minSize + 1); i++) {
+				for (int i = 0; i < (maxSize - minSize + 1); i++) {
 					int given = solutions[i].get();
-					int expected = NQueens.expectedSolutions[minSize + i]; 
-					if ( given != expected ) {
-						System.out.println( "Failed:" + (minSize + i) + ", given: " + given + " when expected " + expected);
+					int expected = NQueens.expectedSolutions[minSize + i];
+					if (given != expected) {
+						System.out.println("Failed:" + (minSize + i) + ", given: " + given + " when expected " + expected);
 					}
 				}
 			}
@@ -94,7 +94,7 @@ public class AeNQueens {
 								return;
 							}
 						}
-						int[] next = Arrays.copyOf(array, row+1);
+						int[] next = Arrays.copyOf(array, row + 1);
 						next[row] = q;
 						solve(rt, current, sol, bs, next, threshold);
 					}
@@ -102,18 +102,16 @@ public class AeNQueens {
 				rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			} else {
 				int row = array.length;
-				outer:
-					for (int q = 0; q < bs; ++q) {
-						for (int i = 0; i < row; i++) {
-							int p = array[i];
-							if (q == p || q == p - (row - i) || q == p + (row - i))
-								continue outer; // attacked
-						}
-
-						int[] next = Arrays.copyOf(array, row+1);
-						next[row] = q;
-						solve(rt, parent, sol, bs, next, threshold);
+				outer: for (int q = 0; q < bs; ++q) {
+					for (int i = 0; i < row; i++) {
+						int p = array[i];
+						if (q == p || q == p - (row - i) || q == p + (row - i)) continue outer; // attacked
 					}
+
+					int[] next = Arrays.copyOf(array, row + 1);
+					next[row] = q;
+					solve(rt, parent, sol, bs, next, threshold);
+				}
 			}
 		}
 	}

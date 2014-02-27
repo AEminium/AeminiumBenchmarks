@@ -37,7 +37,7 @@ public class AeBFS {
 		private SearchBody[] bodies;
 		private Task[] tasks;
 		private int threshold;
-		
+
 		public SearchBody(int target, Graph graph, int threshold) {
 			this.value = target;
 			this.graph = graph;
@@ -45,20 +45,20 @@ public class AeBFS {
 			this.tasks = new Task[graph.children.length];
 			this.threshold = threshold;
 		}
-		
+
 		@Override
 		public void execute(Runtime rt, Task current) {
 			if (Benchmark.useThreshold ? Graph.probe(graph, threshold) : !rt.parallelize(current)) {
 				value = SeqBFS.seqCount(value, graph);
 			} else {
 				value = ((value == graph.value) ? 1 : 0);
-				
+
 				for (int i = 0; i < graph.children.length; i++) {
 					bodies[i] = new SearchBody(value, graph.children[i], threshold);
 					tasks[i] = rt.createNonBlockingTask(bodies[i], Hints.RECURSION);
 					rt.schedule(tasks[i], current, Runtime.NO_DEPS);
 				}
-				
+
 				for (int i = 0; i < graph.children.length; i++) {
 					tasks[i].getResult();
 					value += bodies[i].value;
@@ -71,13 +71,13 @@ public class AeBFS {
 
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
-		
+
 		int target = Graph.DEFAULT_TARGET;
 		int depth = Graph.DEFAULT_DEPTH;
 		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
 		int threshold = Graph.DEFAULT_DEPTH - 8;
 		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
-		
+
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());

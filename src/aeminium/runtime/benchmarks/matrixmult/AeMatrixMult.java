@@ -16,10 +16,10 @@ public class AeMatrixMult {
 	static int first[][];
 	static int second[][];
 	static int result[][];
-	
+
 	public static void main(String args[]) {
 		Benchmark be = new Benchmark(args);
-		
+
 		int m1 = Matrix.DEFAULT_M;
 		if (be.args.length > 0) m1 = Integer.parseInt(be.args[0]);
 		int n1 = Matrix.DEFAULT_N;
@@ -30,13 +30,13 @@ public class AeMatrixMult {
 		final int m = m1;
 		final int n = n1;
 		final int q = q1;
-		first = Matrix.createMatrix(m,n);
-		second = Matrix.createMatrix(p,q);
+		first = Matrix.createMatrix(m, n);
+		second = Matrix.createMatrix(p, q);
 		result = new int[m][q];
-		
+
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		while (!be.stop()) {
 			be.start();
 			rt.init();
@@ -45,11 +45,11 @@ public class AeMatrixMult {
 				@Override
 				public void execute(Runtime rt, Task current) throws Exception {
 					Task outerFor = ForTask.createFor(rt, new Range(m), new ForBody<Integer>() {
-						
+
 						@Override
 						public void iterate(final Integer c, Runtime rt, Task current) {
 							Task innerFor = ForTask.createFor(rt, new Range(q), new ForBody<Integer>() {
-			
+
 								@Override
 								public void iterate(Integer d, Runtime rt, Task inner) {
 									int sum = 0;
@@ -58,14 +58,14 @@ public class AeMatrixMult {
 									}
 									result[c][d] = sum;
 								}
-							}, (short)(Hints.LOOPS | Hints.LARGE));
+							}, (short) (Hints.LOOPS | Hints.LARGE));
 							rt.schedule(innerFor, current, Runtime.NO_DEPS);
-							
+
 						}
 					}, Hints.LOOPS);
 					rt.schedule(outerFor, current, Runtime.NO_DEPS);
 				}
-				
+
 			}, Hints.LOOPS);
 			rt.schedule(tmain, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			rt.shutdown();

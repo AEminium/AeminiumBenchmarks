@@ -28,8 +28,6 @@ import aeminium.runtime.implementations.Factory;
 import aeminium.utils.error.PrintErrorHandler;
 
 public class AeFibonacci {
-	
-	
 
 	public static class FibBody implements Body {
 		public volatile long value;
@@ -41,10 +39,8 @@ public class AeFibonacci {
 		}
 
 		public long seqFib(long n) {
-			if (n <= 2)
-				return 1;
-			else
-				return (seqFib(n - 1) + seqFib(n - 2));
+			if (n <= 2) return 1;
+			else return (seqFib(n - 1) + seqFib(n - 2));
 		}
 
 		@Override
@@ -56,7 +52,7 @@ public class AeFibonacci {
 					value = 1;
 					return;
 				}
-				
+
 				FibBody b1 = new FibBody(value - 1, threshold);
 				Task t1 = rt.createNonBlockingTask(b1, Hints.RECURSION);
 				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
@@ -71,7 +67,7 @@ public class AeFibonacci {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 
@@ -83,10 +79,10 @@ public class AeFibonacci {
 		if (be.args.length > 1) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
-		
+
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		while (!be.stop()) {
 			be.start();
 			rt.init();
@@ -99,6 +95,6 @@ public class AeFibonacci {
 				System.out.println("F(" + fib + ") = " + body.value);
 			}
 		}
-		
+
 	}
 }

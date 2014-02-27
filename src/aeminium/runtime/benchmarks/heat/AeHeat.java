@@ -9,18 +9,18 @@ import aeminium.runtime.implementations.Factory;
 import aeminium.utils.error.PrintErrorHandler;
 
 public class AeHeat extends Heat {
-	
+
 	static double dx;
 	static double dy;
 	static double dt;
 	static double dtdxsq;
 	static double dtdysq;
-	
+
 	static int nx;
 	static int ny;
 	static int nt;
 	static int threshold;
-	
+
 	static double[][] oldm;
 	static double[][] newm;
 
@@ -45,12 +45,12 @@ public class AeHeat extends Heat {
 		if (be.args.length > 3) {
 			threshold_p = Integer.parseInt(be.args[3]);
 		}
-		
+
 		nx = nx_p;
 		ny = ny_p;
 		nt = iterations;
 		threshold = threshold_p;
-		
+
 		dx = (xo - xu) / (nx - 1);
 		dy = (yo - yu) / (ny - 1);
 		dt = (to - tu) / nt;
@@ -62,20 +62,19 @@ public class AeHeat extends Heat {
 
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
-		
+
 		while (!be.stop()) {
 			be.start();
 			rt.init();
 			Task main = rt.createNonBlockingTask(new Body() {
-	
+
 				@Override
 				public void execute(Runtime rt, Task current) throws Exception {
 					for (int timestep = 0; timestep <= nt; timestep++) {
 						(new Compute(0, nx, timestep)).execute(rt, current);
 					}
 				}
-				
+
 			}, Hints.RECURSION);
 			rt.schedule(main, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			rt.shutdown();
@@ -127,17 +126,16 @@ public class AeHeat extends Heat {
 				Compute left = new Compute(lb, mid, time);
 				Task tl = rt.createNonBlockingTask(left, Hints.RECURSION);
 				rt.schedule(tl, current, Runtime.NO_DEPS);
-				
+
 				Compute right = new Compute(mid, ub, time);
 				Task tr = rt.createNonBlockingTask(right, Hints.RECURSION);
 				rt.schedule(tr, current, Runtime.NO_DEPS);
-				
+
 			} else if (time == 0) // if first pass, initialize cells
-				init();
+			init();
 			else if (time % 2 != 0) // alternate new/old
-				compstripe(newm, oldm);
-			else
-				compstripe(oldm, newm);
+			compstripe(newm, oldm);
+			else compstripe(oldm, newm);
 		}
 
 		/** Updates all cells. */
@@ -171,8 +169,7 @@ public class AeHeat extends Heat {
 					double twoc = 2 * cell;
 					next = row[b + 1];
 
-					nv[b] = cell + dtdysq * (prev - twoc + next) + dtdxsq
-							* (east[b] - twoc + west[b]);
+					nv[b] = cell + dtdysq * (prev - twoc + next) + dtdxsq * (east[b] - twoc + west[b]);
 
 				}
 			}
@@ -190,10 +187,7 @@ public class AeHeat extends Heat {
 				for (int b = 1; b < ny - 1; b++) {
 					double cell = oldMat[a][b];
 					double twoc = 2 * cell;
-					newMat[a][b] = cell + dtdxsq
-							* (oldMat[a + 1][b] - twoc + oldMat[a - 1][b])
-							+ dtdysq
-							* (oldMat[a][b + 1] - twoc + oldMat[a][b - 1]);
+					newMat[a][b] = cell + dtdxsq * (oldMat[a + 1][b] - twoc + oldMat[a - 1][b]) + dtdysq * (oldMat[a][b + 1] - twoc + oldMat[a][b - 1]);
 
 				}
 			}

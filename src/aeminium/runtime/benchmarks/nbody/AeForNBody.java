@@ -32,11 +32,10 @@ public class AeForNBody {
 
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		while (!be.stop()) {
 			final AeForNBodySystem bodies = new AeForNBodySystem(NBody.generateRandomBodies(size, 1L), rt);
-			if (be.verbose)
-				System.out.printf("%.9f\n", bodies.energy());
+			if (be.verbose) System.out.printf("%.9f\n", bodies.energy());
 			rt.init();
 			Task tmain = rt.createNonBlockingTask(new Body() {
 				@Override
@@ -53,16 +52,14 @@ public class AeForNBody {
 			rt.schedule(tmain, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			rt.shutdown();
 			be.end();
-			
-			if (be.verbose)
-				System.out.printf("%.9f\n", bodies.energy());
+
+			if (be.verbose) System.out.printf("%.9f\n", bodies.energy());
 		}
 	}
 }
 
-
 class AeForNBodySystem extends NBodySystem {
-	
+
 	protected Runtime runtime;
 
 	public AeForNBodySystem(NBody[] data, Runtime rt) {
@@ -96,7 +93,7 @@ class AeForNBodySystem extends NBodySystem {
 			}
 		}, Hints.LARGE);
 		runtime.schedule(advance, parent, Runtime.NO_DEPS);
-		
+
 		Task apply = ForTask.createFor(runtime, new Range(bodies.length), new ForBody<Integer>() {
 			@Override
 			public void iterate(Integer i, Runtime rt, Task current) {

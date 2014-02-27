@@ -12,12 +12,12 @@ import aeminium.utils.error.PrintErrorHandler;
 public class AeQuickSort {
 	long[] array;
 	int threshold;
-	
+
 	public AeQuickSort(long[] original, int threshold) {
 		this.array = original;
 		this.threshold = threshold;
 	}
-	
+
 	public class QuickSortBody implements Body {
 		public long[] data;
 		int left;
@@ -28,22 +28,21 @@ public class AeQuickSort {
 			this.left = left;
 			this.right = right;
 		}
-		
+
 		@Override
 		public void execute(Runtime rt, Task current) throws Exception {
-			if (data.length <= 1)
-				return;
+			if (data.length <= 1) return;
 			if (Benchmark.useThreshold ? data.length < threshold : !rt.parallelize(current)) {
 				SeqQuickSort.sort(data);
 				return;
 			}
-			
+
 			final int index = QuickSort.partition(this.data, this.left, this.right);
-			
+
 			Task leftT = null;
 			Task rightT = null;
 			if (this.left < index - 1) {
-				QuickSortBody lb = new QuickSortBody(data, left, index-1);
+				QuickSortBody lb = new QuickSortBody(data, left, index - 1);
 				leftT = rt.createNonBlockingTask(lb, Hints.RECURSION);
 				rt.schedule(leftT, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			}
@@ -52,19 +51,19 @@ public class AeQuickSort {
 				rightT = rt.createNonBlockingTask(lr, Hints.RECURSION);
 				rt.schedule(rightT, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			}
-			
+
 			if (leftT != null) leftT.getResult();
 			if (rightT != null) rightT.getResult();
 		}
-		
+
 	}
-	
+
 	public void doSort(Runtime rt) {
-		final QuickSortBody sorter = new QuickSortBody(array, 0, array.length-1);
-		Task sorterT = rt.createNonBlockingTask(sorter, (short)(Hints.RECURSION));
+		final QuickSortBody sorter = new QuickSortBody(array, 0, array.length - 1);
+		Task sorterT = rt.createNonBlockingTask(sorter, (short) (Hints.RECURSION));
 		rt.schedule(sorterT, Runtime.NO_PARENT, Runtime.NO_DEPS);
 	}
-	
+
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = QuickSort.DEFAULT_SIZE;
@@ -76,11 +75,11 @@ public class AeQuickSort {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 
-		long[] original =  ArrayHelper.generateRandomArray(size);
-		
+		long[] original = ArrayHelper.generateRandomArray(size);
+
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		while (!be.stop()) {
 			be.start();
 			AeQuickSort merger = new AeQuickSort(original, threshold);
@@ -89,7 +88,7 @@ public class AeQuickSort {
 			rt.shutdown();
 			be.end();
 			if (be.verbose) {
-				System.out.println("Sorted: " +  ArrayHelper.checkArray(merger.array));
+				System.out.println("Sorted: " + ArrayHelper.checkArray(merger.array));
 			}
 		}
 	}

@@ -35,8 +35,7 @@ public class AeFor2NBody {
 		while (!be.stop()) {
 			final AeFor2NBodySystem bodies = new AeFor2NBodySystem(NBody.generateRandomBodies(size, 1L), rt);
 
-			if (be.verbose)
-				System.out.printf("%.9f\n", bodies.energy());
+			if (be.verbose) System.out.printf("%.9f\n", bodies.energy());
 
 			be.start();
 			rt.init();
@@ -52,12 +51,10 @@ public class AeFor2NBody {
 			rt.shutdown();
 			be.end();
 
-			if (be.verbose)
-				System.out.printf("%.9f\n", bodies.energy());
+			if (be.verbose) System.out.printf("%.9f\n", bodies.energy());
 		}
 	}
 }
-
 
 class AeFor2NBodySystem extends NBodySystem {
 

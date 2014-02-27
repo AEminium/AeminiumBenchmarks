@@ -20,7 +20,7 @@ public class SeqHeat extends Heat {
 		if (be.args.length > 2) {
 			iterations = Integer.parseInt(be.args[2]);
 		}
-		
+
 		int threshold = Heat.DEFAULT_THRESHOLD;
 		if (be.args.length > 3) {
 			threshold = Integer.parseInt(be.args[3]);
@@ -38,8 +38,7 @@ public class SeqHeat extends Heat {
 		while (!be.stop()) {
 			be.start();
 			for (int timestep = 0; timestep <= iterations; timestep++) {
-				compute(0, nx, nx, ny, dx, dy, dt, dtdxsq, dtdysq, threshold,
-					timestep, oldm, newm);
+				compute(0, nx, nx, ny, dx, dy, dt, dtdxsq, dtdysq, threshold, timestep, oldm, newm);
 			}
 			be.end();
 		}
@@ -72,29 +71,22 @@ public class SeqHeat extends Heat {
 		return Math.exp(-2 * t) * Math.sin(x) * Math.sin(y);
 	}
 
-	public static void compute(int lb, int ub, int nx, int ny, double dx,
-			double dy, double dt, double dtdxsq, double dtdysq, int leafmaxcol,
-			int time, double[][] oldm, double[][] newm) {
+	public static void compute(int lb, int ub, int nx, int ny, double dx, double dy, double dt, double dtdxsq, double dtdysq, int leafmaxcol, int time,
+			double[][] oldm, double[][] newm) {
 		if (ub - lb > leafmaxcol) {
 			int mid = (lb + ub) >>> 1;
-			compute(lb, mid, nx, ny, dx, dy, dt, dtdxsq, dtdysq, leafmaxcol,
-					time, oldm, newm);
-			compute(mid, ub, nx, ny, dx, dy, dt, dtdxsq, dtdysq, leafmaxcol,
-					time, oldm, newm);
+			compute(lb, mid, nx, ny, dx, dy, dt, dtdxsq, dtdysq, leafmaxcol, time, oldm, newm);
+			compute(mid, ub, nx, ny, dx, dy, dt, dtdxsq, dtdysq, leafmaxcol, time, oldm, newm);
 		} else if (time == 0) // if first pass, initialize cells
-			init(oldm, lb, ub, nx, ny, dx, dy);
+		init(oldm, lb, ub, nx, ny, dx, dy);
 		else if (time % 2 != 0) // alternate new/old
-			comstripe(newm, oldm, lb, ub, nx, ny, dx, dy, dt, dtdxsq, dtdysq,
-					time);
-		else
-			comstripe(oldm, newm, lb, ub, nx, ny, dx, dy, dt, dtdxsq, dtdysq,
-					time);
+		comstripe(newm, oldm, lb, ub, nx, ny, dx, dy, dt, dtdxsq, dtdysq, time);
+		else comstripe(oldm, newm, lb, ub, nx, ny, dx, dy, dt, dtdxsq, dtdysq, time);
 	}
 
 	// nx, ny, dtdxsq, dtdysq, dt
-	public static void comstripe(double[][] newMat, double[][] oldMat, int lb,
-			int ub, int nx, int ny, double dx, double dy, double dt,
-			double dtdxsq, double dtdysq, int time) {
+	public static void comstripe(double[][] newMat, double[][] oldMat, int lb, int ub, int nx, int ny, double dx, double dy, double dt, double dtdxsq,
+			double dtdysq, int time) {
 		final int llb = (lb == 0) ? 1 : lb;
 		final int lub = (ub == nx) ? nx - 1 : ub;
 
@@ -121,8 +113,7 @@ public class SeqHeat extends Heat {
 				double twoc = 2 * cell;
 				next = row[b + 1];
 
-				nv[b] = cell + dtdysq * (prev - twoc + next) + dtdxsq
-						* (east[b] - twoc + west[b]);
+				nv[b] = cell + dtdysq * (prev - twoc + next) + dtdxsq * (east[b] - twoc + west[b]);
 
 			}
 		}
@@ -133,8 +124,7 @@ public class SeqHeat extends Heat {
 	// xu, dx, ny, yu, dy, nx
 
 	/** Initializes all cells. */
-	public static void init(double[][] oldm, int lb, int ub, int nx, int ny,
-			double dx, double dy) {
+	public static void init(double[][] oldm, int lb, int ub, int nx, int ny, double dx, double dy) {
 		final int llb = (lb == 0) ? 1 : lb;
 		final int lub = (ub == nx) ? nx - 1 : ub;
 
@@ -153,8 +143,7 @@ public class SeqHeat extends Heat {
 
 	// xu, dx, ny, yu, dy, nx
 	/** Fills in edges with boundary values. */
-	public static void edges(double[][] m, int llb, int lub, int lb, int ub,
-			int nx, int ny, double dx, double dy, double t) {
+	public static void edges(double[][] m, int llb, int lub, int lb, int ub, int nx, int ny, double dx, double dy, double t) {
 
 		for (int a = llb; a < lub; a++) {
 			double[] v = m[a];

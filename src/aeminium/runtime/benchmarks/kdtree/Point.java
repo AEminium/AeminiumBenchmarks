@@ -47,7 +47,7 @@ class Point {
 			return (int) (a.coord[d] - b.coord[d]);
 		}
 	}
-	
+
 	public static Point[] generatePoints(int size) {
 		Point[] points = new Point[size];
 		Random r = new Random(1L);

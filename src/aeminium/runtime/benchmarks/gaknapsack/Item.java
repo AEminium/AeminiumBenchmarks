@@ -1,7 +1,7 @@
 package aeminium.runtime.benchmarks.gaknapsack;
 
 public class Item {
-	
+
 	public Item(String n, int w, int v) {
 		this.name = n;
 		this.weight = w;

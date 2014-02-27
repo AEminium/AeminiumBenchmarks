@@ -8,7 +8,7 @@ import aeminium.runtime.implementations.Factory;
 import aeminium.utils.error.PrintErrorHandler;
 
 public class DAeFibonacci {
-	
+
 	public static class FibBody implements Body {
 		public volatile long value;
 		private int threshold;
@@ -19,16 +19,14 @@ public class DAeFibonacci {
 		}
 
 		public long seqFib(long n, Runtime rt, Task current) {
-			if (n <= 2)
-				return 1;
+			if (n <= 2) return 1;
 			else {
-				long nm1 = seqFib(n-2, rt, current);
-				long nm2 = decideFib(n-1, rt, current);
+				long nm1 = seqFib(n - 2, rt, current);
+				long nm2 = decideFib(n - 1, rt, current);
 				return nm1 + nm2;
 			}
 		}
-		
-		
+
 		public long decideFib(long n, Runtime rt, Task current) {
 			if (rt.parallelize(current)) {
 				return parFib(n, rt, current);
@@ -56,7 +54,7 @@ public class DAeFibonacci {
 			value = decideFib(this.value, rt, current);
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 
@@ -73,7 +71,7 @@ public class DAeFibonacci {
 
 		while (!be.stop()) {
 			be.start();
-		
+
 			rt.init();
 			FibBody body = new DAeFibonacci.FibBody(fib, threshold);
 			Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);

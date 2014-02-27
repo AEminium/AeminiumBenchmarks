@@ -42,17 +42,19 @@ public class AeFFT {
 		private Complex[] even;
 		private int n;
 		private int threshold;
-		
+
 		public FFTBody(Complex[] input, int t) {
 			this.result = input;
 			n = input.length;
 			threshold = t;
-			if (n != 1 && n % 2 != 0) { throw new RuntimeException("Size of array is not a power of 2."); }
-			
-			odd = new Complex[n/2];
-			even = new Complex[n/2];
+			if (n != 1 && n % 2 != 0) {
+				throw new RuntimeException("Size of array is not a power of 2.");
+			}
+
+			odd = new Complex[n / 2];
+			even = new Complex[n / 2];
 		}
-		
+
 		@Override
 		public void execute(Runtime rt, Task current) {
 			if (n == 1) {
@@ -62,28 +64,28 @@ public class AeFFT {
 				result = SeqFFT.sequentialFFT(result);
 				return;
 			}
-			
-			for (int k=0; k < n/2; k++) {
-				even[k] = result[2*k];
-				odd[k] = result[2*k+1];
+
+			for (int k = 0; k < n / 2; k++) {
+				even[k] = result[2 * k];
+				odd[k] = result[2 * k + 1];
 			}
-			
+
 			FFTBody b1 = new FFTBody(even, threshold);
 			Task t1 = rt.createNonBlockingTask(b1, Hints.RECURSION);
 			rt.schedule(t1, current, Runtime.NO_DEPS);
-			
+
 			FFTBody b2 = new FFTBody(odd, threshold);
 			Task t2 = rt.createNonBlockingTask(b2, Hints.RECURSION);
 			rt.schedule(t2, current, Runtime.NO_DEPS);
-			
+
 			t1.getResult();
 			t2.getResult();
-			
-			for (int k = 0; k < n/2; k++) {
-	            double kth = -2 * k * Math.PI / n;
-	            Complex wk = new Complex(Math.cos(kth), Math.sin(kth));
-	            result[k]       = b1.result[k].plus(wk.times(b2.result[k]));
-	            result[k + n/2] = b1.result[k].minus(wk.times(b2.result[k]));
+
+			for (int k = 0; k < n / 2; k++) {
+				double kth = -2 * k * Math.PI / n;
+				Complex wk = new Complex(Math.cos(kth), Math.sin(kth));
+				result[k] = b1.result[k].plus(wk.times(b2.result[k]));
+				result[k + n / 2] = b1.result[k].minus(wk.times(b2.result[k]));
 			}
 		}
 	}
@@ -100,15 +102,15 @@ public class AeFFT {
 		if (be.args.length > 0) size = Integer.parseInt(be.args[0]);
 		int threshold = FFT.DEFAULT_THRESHOLD;
 		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
-		
+
 		Complex[] input = FFT.createRandomComplexArray(size, new Random(1L));
-		
+
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		while (!be.stop()) {
-	    	be.start();
-		
+			be.start();
+
 			rt.init();
 			FFTBody body = createFFTBody(rt, input, threshold);
 			Task t1 = rt.createNonBlockingTask(body, Hints.RECURSION);
@@ -117,7 +119,7 @@ public class AeFFT {
 			be.end();
 			if (be.verbose) {
 				System.out.println(body.result[0]);
-	    		// FFT.show(body.result, "Result");
+				// FFT.show(body.result, "Result");
 			}
 		}
 	}

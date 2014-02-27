@@ -31,7 +31,7 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 		}
 		long[] original = ArrayHelper.generateRandomArray(size);
 		ForkJoinPool pool = new ForkJoinPool();
-		
+
 		while (!be.stop()) {
 			be.start();
 			FjMergeSort t = new FjMergeSort(original, threshold);
@@ -60,10 +60,8 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 
 			List<long[]> partitionedArray = partitionArray();
 
-			FjMergeSort task1 = new FjMergeSort(partitionedArray.get(0),
-					threshold);
-			FjMergeSort task2 = new FjMergeSort(partitionedArray.get(1),
-					threshold);
+			FjMergeSort task1 = new FjMergeSort(partitionedArray.get(0), threshold);
+			FjMergeSort task2 = new FjMergeSort(partitionedArray.get(1), threshold);
 			invokeAll(task1, task2);
 
 			// Wait for results from both the tasks
@@ -84,8 +82,7 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 		int mid = arrayToDivide.length / 2;
 		long[] partition1 = Arrays.copyOfRange(arrayToDivide, 0, mid);
 
-		long[] partition2 = Arrays.copyOfRange(arrayToDivide, mid,
-				arrayToDivide.length);
+		long[] partition2 = Arrays.copyOfRange(arrayToDivide, mid, arrayToDivide.length);
 		return Arrays.asList(partition1, partition2);
 
 	}

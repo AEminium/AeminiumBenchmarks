@@ -18,7 +18,7 @@ public class FjConvexHull extends RecursiveAction {
 		if (be.args.length > 0) {
 			size = Integer.parseInt(be.args[0]);
 		}
-		
+
 		int threshold = ConvexHull.DEFAULT_THRESHOLD;
 		if (be.args.length > 1) {
 			size = Integer.parseInt(be.args[1]);
@@ -26,14 +26,13 @@ public class FjConvexHull extends RecursiveAction {
 
 		ArrayList<Point> data = ConvexHull.generateData(size, new Random(1L));
 		ForkJoinPool pool = new ForkJoinPool();
-		
+
 		while (!be.stop()) {
-	    	be.start();
+			be.start();
 			be.start();
 			ArrayList<Point> result = FjConvexHull.quickHull(data, pool, threshold);
 			be.end();
-			if (be.verbose)
-				System.out.println(result.size());
+			if (be.verbose) System.out.println(result.size());
 		}
 	}
 
@@ -43,8 +42,7 @@ public class FjConvexHull extends RecursiveAction {
 	private ArrayList<Point> hull;
 	private int threshold;
 
-	public FjConvexHull(Point A, Point B, ArrayList<Point> set,
-			ArrayList<Point> hull, int threshold) {
+	public FjConvexHull(Point A, Point B, ArrayList<Point> set, ArrayList<Point> hull, int threshold) {
 		this.A = A;
 		this.B = B;
 		this.set = set;
@@ -54,12 +52,13 @@ public class FjConvexHull extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-		if (set.size() == 0)
-			return;
+		if (set.size() == 0) return;
 		if (set.size() == 1) {
 			Point p = set.get(0);
 			set.remove(p);
-			synchronized (hull) { hull.add(p); }
+			synchronized (hull) {
+				hull.add(p);
+			}
 			return;
 		}
 		double dist = Double.MIN_VALUE;
@@ -74,8 +73,9 @@ public class FjConvexHull extends RecursiveAction {
 		}
 		Point P = set.get(furthestPoint);
 		set.remove(furthestPoint);
-		synchronized (hull) { hull.add(P); }
-
+		synchronized (hull) {
+			hull.add(P);
+		}
 
 		// Determine who's to the left of AP
 		ArrayList<Point> leftSetAP = new ArrayList<Point>();
@@ -95,23 +95,20 @@ public class FjConvexHull extends RecursiveAction {
 			}
 		}
 
-		
 		if (set.size() < threshold) {
-			SeqConvexHull.hullSet(A,P,leftSetAP,hull);
-			SeqConvexHull.hullSet(P,B,leftSetPB,hull);
+			SeqConvexHull.hullSet(A, P, leftSetAP, hull);
+			SeqConvexHull.hullSet(P, B, leftSetPB, hull);
 		} else {
 			FjConvexHull one = new FjConvexHull(A, P, leftSetAP, hull, threshold);
 			FjConvexHull other = new FjConvexHull(P, B, leftSetPB, hull, threshold);
-			invokeAll(one,other);
+			invokeAll(one, other);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Point> quickHull(ArrayList<Point> points,
-			ForkJoinPool pool, int threshold) {
+	public static ArrayList<Point> quickHull(ArrayList<Point> points, ForkJoinPool pool, int threshold) {
 		ArrayList<Point> convexHull = new ArrayList<Point>();
-		if (points.size() < 3)
-			return (ArrayList<Point>) points.clone();
+		if (points.size() < 3) return (ArrayList<Point>) points.clone();
 		// find extremals
 		int minPoint = -1, maxPoint = -1;
 		double minX = Double.MAX_VALUE;
@@ -138,10 +135,8 @@ public class FjConvexHull extends RecursiveAction {
 
 		for (int i = 0; i < points.size(); i++) {
 			Point p = points.get(i);
-			if (ConvexHull.pointLocation(A, B, p) == -1)
-				leftSet.add(p);
-			else
-				rightSet.add(p);
+			if (ConvexHull.pointLocation(A, B, p) == -1) leftSet.add(p);
+			else rightSet.add(p);
 		}
 
 		FjConvexHull one = new FjConvexHull(A, B, rightSet, convexHull, threshold);

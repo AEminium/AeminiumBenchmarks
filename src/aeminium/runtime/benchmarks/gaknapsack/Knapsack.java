@@ -7,10 +7,10 @@ public class Knapsack {
 	public static int SIZE_LIMIT = 10000;
 
 	public final static int numberOfItems = 10000;
-	
+
 	public static MersenneTwisterFast rand = new MersenneTwisterFast(1L);
 	public final static Item[] items = Knapsack.createItems(numberOfItems);
-	
+
 	// GA Settings:
 	public static int popSize = 5000;
 	public static int numGen = 100;
@@ -21,13 +21,11 @@ public class Knapsack {
 
 	public static final int DEFAULT_THRESHOLD = popSize / 100;
 	public static int bestLimit = elitism;
-	
-	
+
 	public static void resetSeed() {
 		rand = new MersenneTwisterFast(1L);
 	}
-	
-	
+
 	private static Item[] createItems(int n) {
 		Item[] tmp = new Item[n];
 		for (int i = 0; i < n; i++) {
@@ -36,12 +34,11 @@ public class Knapsack {
 		return tmp;
 	}
 
-
 	public static Indiv createRandomIndiv() {
 		Indiv ind = new Indiv(cromSize);
 		boolean hasSth = false;
-		for (int i=0; i<cromSize; i++) {
-			boolean b = ( Knapsack.rand.nextDouble() < 0.01 );
+		for (int i = 0; i < cromSize; i++) {
+			boolean b = (Knapsack.rand.nextDouble() < 0.01);
 			ind.set(i, b);
 			hasSth = hasSth || b;
 		}
@@ -51,18 +48,17 @@ public class Knapsack {
 		return ind;
 	}
 
-
 	public static Indiv recombine(Indiv p1, Indiv p2) {
 		if (rand.nextFloat() > Knapsack.prob_rec) return p1;
 		Indiv ind = new Indiv(cromSize);
 		int cutpoint = rand.nextInt(cromSize);
-		for (int i=0; i<cromSize; i++) {
+		for (int i = 0; i < cromSize; i++) {
 			if (i < cutpoint) ind.set(i, p1.has[i]);
 			else ind.set(i, p2.has[i]);
 		}
 		return ind;
 	}
-	
+
 	public static void evaluate(Indiv indiv) {
 		int[] ph = phenotype(indiv);
 		int value = ph[0];
@@ -70,24 +66,23 @@ public class Knapsack {
 
 		// Evaluation
 		if (weight >= Knapsack.SIZE_LIMIT || value == 0) {
-			indiv.fitness= 2.0;
+			indiv.fitness = 2.0;
 		} else {
-			indiv.fitness= 1.0/(value); // Minimization problem.
+			indiv.fitness = 1.0 / (value); // Minimization problem.
 		}
 	}
 
 	public static int[] phenotype(Indiv indiv) {
 		int value = 0;
 		int weight = 0;
-		for (int i=0; i< indiv.size; i++) {
+		for (int i = 0; i < indiv.size; i++) {
 			if (indiv.has[i]) {
 				value += Knapsack.items[i].value;
 				weight += Knapsack.items[i].weight;
 			}
 		}
-		return new int[] {value, weight};
+		return new int[] { value, weight };
 	}
-
 
 	public static void mutate(Indiv indiv) {
 		if (rand.nextFloat() < Knapsack.prob_mut) {
@@ -95,5 +90,5 @@ public class Knapsack {
 			indiv.set(p, !indiv.has[p]);
 		}
 	}
-	
+
 }

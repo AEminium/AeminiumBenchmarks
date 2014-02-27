@@ -3,7 +3,6 @@ package aeminium.runtime.benchmarks.mergesort;
 import aeminium.runtime.benchmarks.helpers.ArrayHelper;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
-
 public class SeqMergeSort {
 	private long[] numbers;
 	private long[] helper;

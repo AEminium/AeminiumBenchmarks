@@ -6,18 +6,18 @@ import java.util.concurrent.RecursiveAction;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class FjHeat extends Heat {
-	
+
 	static double dx;
 	static double dy;
 	static double dt;
 	static double dtdxsq;
 	static double dtdysq;
-	
+
 	static int nx;
 	static int ny;
 	static int nt;
 	static int threshold;
-	
+
 	static double[][] oldm;
 	static double[][] newm;
 
@@ -37,18 +37,17 @@ public class FjHeat extends Heat {
 		if (be.args.length > 2) {
 			iterations = Integer.parseInt(be.args[2]);
 		}
-		
+
 		int threshold_p = Heat.DEFAULT_THRESHOLD;
 		if (be.args.length > 3) {
 			threshold_p = Integer.parseInt(be.args[3]);
 		}
 
-
 		nx = nx_p;
 		ny = ny_p;
 		nt = iterations;
 		threshold = threshold_p;
-		
+
 		dx = (xo - xu) / (nx - 1);
 		dy = (yo - yu) / (ny - 1);
 		dt = (to - tu) / nt;
@@ -59,10 +58,10 @@ public class FjHeat extends Heat {
 		newm = new double[nx][ny];
 
 		ForkJoinPool g = new ForkJoinPool();
-		
+
 		while (!be.stop()) {
 			be.start();
-			
+
 			@SuppressWarnings("serial")
 			RecursiveAction main = new RecursiveAction() {
 				public void compute() {
@@ -123,11 +122,10 @@ public class FjHeat extends Heat {
 				new Compute(mid, ub, time).compute();
 				left.join();
 			} else if (time == 0) // if first pass, initialize cells
-				init();
+			init();
 			else if (time % 2 != 0) // alternate new/old
-				compstripe(newm, oldm);
-			else
-				compstripe(oldm, newm);
+			compstripe(newm, oldm);
+			else compstripe(oldm, newm);
 		}
 
 		/** Updates all cells. */
@@ -161,8 +159,7 @@ public class FjHeat extends Heat {
 					double twoc = 2 * cell;
 					next = row[b + 1];
 
-					nv[b] = cell + dtdysq * (prev - twoc + next) + dtdxsq
-							* (east[b] - twoc + west[b]);
+					nv[b] = cell + dtdysq * (prev - twoc + next) + dtdxsq * (east[b] - twoc + west[b]);
 
 				}
 			}
@@ -180,10 +177,7 @@ public class FjHeat extends Heat {
 				for (int b = 1; b < ny - 1; b++) {
 					double cell = oldMat[a][b];
 					double twoc = 2 * cell;
-					newMat[a][b] = cell + dtdxsq
-							* (oldMat[a + 1][b] - twoc + oldMat[a - 1][b])
-							+ dtdysq
-							* (oldMat[a][b + 1] - twoc + oldMat[a][b - 1]);
+					newMat[a][b] = cell + dtdxsq * (oldMat[a + 1][b] - twoc + oldMat[a - 1][b]) + dtdysq * (oldMat[a][b + 1] - twoc + oldMat[a][b - 1]);
 
 				}
 			}

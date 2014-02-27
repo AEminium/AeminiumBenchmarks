@@ -1,6 +1,6 @@
 package aeminium.runtime.benchmarks.lud;
 
-class MatrixPosition  {
+class MatrixPosition {
 	public int row;
 	public int col;
 

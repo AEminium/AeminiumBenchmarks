@@ -3,11 +3,11 @@ package aeminium.runtime.benchmarks.matrixmult;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 class SeqMatrixMult {
-	
+
 	static int first[][];
 	static int second[][];
 	static int result[][];
-	
+
 	public static void main(String args[]) {
 		Benchmark be = new Benchmark(args);
 		int m = Matrix.DEFAULT_M;
@@ -17,9 +17,9 @@ class SeqMatrixMult {
 		int p = n;
 		int q = Matrix.DEFAULT_Q;
 		if (be.args.length > 2) q = Integer.parseInt(be.args[2]);
-		
-		first = Matrix.createMatrix(m,n);
-		second = Matrix.createMatrix(p,q);
+
+		first = Matrix.createMatrix(m, n);
+		second = Matrix.createMatrix(p, q);
 		result = new int[m][q];
 
 		while (!be.stop()) {

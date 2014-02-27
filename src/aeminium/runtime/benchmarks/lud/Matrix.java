@@ -2,7 +2,7 @@ package aeminium.runtime.benchmarks.lud;
 
 import java.util.Random;
 
-class Matrix  {
+class Matrix {
 	private double[][] A;
 
 	private int m;
@@ -23,7 +23,7 @@ class Matrix  {
 		double[][] C = new double[m][n];
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < n; j++) {
-				C[i][j]=A[i][j];
+				C[i][j] = A[i][j];
 			}
 		}
 		return C;

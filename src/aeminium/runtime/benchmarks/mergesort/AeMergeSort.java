@@ -50,8 +50,7 @@ public class AeMergeSort {
 
 		@Override
 		public void execute(Runtime rt, Task current) throws Exception {
-			if (array.length <= 1)
-				return;
+			if (array.length <= 1) return;
 			if (Benchmark.useThreshold ? array.length < threshold : !rt.parallelize(current)) {
 				Arrays.sort(array);
 				return;
@@ -76,7 +75,7 @@ public class AeMergeSort {
 		private List<long[]> partitionArray() {
 			int mid = array.length / 2;
 			long[] partition1 = Arrays.copyOfRange(array, 0, mid);
-			long[] partition2 = Arrays.copyOfRange(array, mid,array.length);
+			long[] partition2 = Arrays.copyOfRange(array, mid, array.length);
 			return Arrays.asList(partition1, partition2);
 		}
 
@@ -106,7 +105,7 @@ public class AeMergeSort {
 
 	public void doSort(Runtime rt) {
 		final MergeSortBody sorter = new MergeSortBody(array);
-		Task sorterT = rt.createNonBlockingTask(sorter, (short)(Hints.RECURSION));
+		Task sorterT = rt.createNonBlockingTask(sorter, (short) (Hints.RECURSION));
 		rt.schedule(sorterT, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
 		Task saverT = rt.createNonBlockingTask(new Body() {
@@ -114,10 +113,9 @@ public class AeMergeSort {
 			public void execute(Runtime rt, Task current) throws Exception {
 				array = sorter.array;
 			}
-		},(short)(Hints.SMALL | Hints.NO_CHILDREN));
+		}, (short) (Hints.SMALL | Hints.NO_CHILDREN));
 		rt.schedule(saverT, Runtime.NO_PARENT, Arrays.asList(sorterT));
 	}
-
 
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
@@ -130,11 +128,11 @@ public class AeMergeSort {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 
-		long[] original =  ArrayHelper.generateRandomArray(size);
-		
+		long[] original = ArrayHelper.generateRandomArray(size);
+
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		while (!be.stop()) {
 			be.start();
 			AeMergeSort merger = new AeMergeSort(original, threshold);
@@ -143,11 +141,9 @@ public class AeMergeSort {
 			rt.shutdown();
 			be.end();
 			if (be.verbose) {
-				System.out.println("Sorted: " +  ArrayHelper.checkArray(merger.array));
+				System.out.println("Sorted: " + ArrayHelper.checkArray(merger.array));
 			}
 		}
 	}
-
-
 
 }

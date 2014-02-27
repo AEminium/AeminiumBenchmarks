@@ -35,7 +35,7 @@ public class FjQuickSort extends RecursiveAction {
 		ForkJoinPool pool = new ForkJoinPool();
 		while (!be.stop()) {
 			be.start();
-			FjQuickSort t = new FjQuickSort(original, 0, size-1, threshold);
+			FjQuickSort t = new FjQuickSort(original, 0, size - 1, threshold);
 			pool.invoke(t);
 			be.end();
 			if (be.verbose) {
@@ -52,7 +52,7 @@ public class FjQuickSort extends RecursiveAction {
 		}
 
 		final int index = QuickSort.partition(this.data, this.left, this.right);
-		FjQuickSort s1=null, s2=null;
+		FjQuickSort s1 = null, s2 = null;
 		if (this.left < index - 1) {
 			s1 = new FjQuickSort(this.data, this.left, index - 1, threshold);
 			s1.fork();

@@ -23,16 +23,14 @@ public class SeqQuickSort {
 	}
 
 	public static void sort(long[] values) {
-		qsort_seq(values, 0, values.length-1);
+		qsort_seq(values, 0, values.length - 1);
 	}
-	
+
 	public static void qsort_seq(long[] data, int left, int right) {
 		int index = QuickSort.partition(data, left, right);
-		if (left < index - 1)
-			qsort_seq(data, left, index - 1);
+		if (left < index - 1) qsort_seq(data, left, index - 1);
 
-		if (index < right)
-			qsort_seq(data, index, right);
+		if (index < right) qsort_seq(data, index, right);
 	}
 
 }

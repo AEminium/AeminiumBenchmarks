@@ -11,18 +11,18 @@ import aeminium.utils.error.PrintErrorHandler;
 public class AeJacobi {
 
 	MatrixTree mat;
-	double[][] A; double[][] B;
-	int firstRow; int lastRow;
-	int firstCol; int lastCol;
+	double[][] A;
+	double[][] B;
+	int firstRow;
+	int lastRow;
+	int firstCol;
+	int lastCol;
 	final int steps;
 	final int leafs;
 	int nleaf;
 	double md;
-	
-	public AeJacobi(double[][] A, double[][] B,
-			int firstRow, int lastRow,
-			int firstCol, int lastCol,
-			int steps, int leafs) {
+
+	public AeJacobi(double[][] A, double[][] B, int firstRow, int lastRow, int firstCol, int lastCol, int steps, int leafs) {
 		this.A = A;
 		this.B = B;
 		this.firstRow = firstRow;
@@ -46,13 +46,12 @@ public class AeJacobi {
 			steps = Integer.parseInt(be.args[1]);
 		}
 
-		int granularity = 3; //Jacobi.DEFAULT_GRANULARITY;
+		int granularity = 3; // Jacobi.DEFAULT_GRANULARITY;
 		if (be.args.length > 2) {
 			granularity = Integer.parseInt(be.args[2]);
 		}
 
-
-		int dim = size+2;
+		int dim = size + 2;
 		double[][] a = new double[dim][dim];
 		double[][] b = new double[dim][dim];
 
@@ -86,8 +85,7 @@ public class AeJacobi {
 		return md;
 	}
 
-	MatrixTree build(double[][] a, double[][] b,
-			int lr, int hr, int lc, int hc, int leafs) {
+	MatrixTree build(double[][] a, double[][] b, int lr, int hr, int lc, int hc, int leafs) {
 		int rows = (hr - lr + 1);
 		int cols = (hc - lc + 1);
 
@@ -100,24 +98,16 @@ public class AeJacobi {
 		if (rows * cols <= leafs) {
 			++nleaf;
 			return new LeafNode(a, b, lr, hr, lc, hc);
-		}
-		else if (hrows * hcols >= leafs) {
-			return new FourNode(build(a, b, lr,   mr, lc,   mc, leafs),
-					build(a, b, lr,   mr, mc+1, hc, leafs),
-					build(a, b, mr+1, hr, lc,   mc, leafs),
-					build(a, b, mr+1, hr, mc+1, hc, leafs));
-		}
-		else if (cols >= rows) {
-			return new TwoNode(build(a, b, lr, hr, lc,   mc, leafs),
-					build(a, b, lr, hr, mc+1, hc, leafs));
-		}
-		else {
-			return new TwoNode(build(a, b, lr,   mr, lc, hc, leafs),
-					build(a, b, mr+1, hr, lc, hc, leafs));
+		} else if (hrows * hcols >= leafs) {
+			return new FourNode(build(a, b, lr, mr, lc, mc, leafs), build(a, b, lr, mr, mc + 1, hc, leafs), build(a, b, mr + 1, hr, lc, mc, leafs), build(a, b,
+					mr + 1, hr, mc + 1, hc, leafs));
+		} else if (cols >= rows) {
+			return new TwoNode(build(a, b, lr, hr, lc, mc, leafs), build(a, b, lr, hr, mc + 1, hc, leafs));
+		} else {
+			return new TwoNode(build(a, b, lr, mr, lc, hc, leafs), build(a, b, mr + 1, hr, lc, hc, leafs));
 
 		}
 	}
-
 
 	abstract static class MatrixTree implements Body {
 		double maxDiff;
@@ -133,17 +123,20 @@ public class AeJacobi {
 		final double[][] B; // matrix to put new values into
 
 		// indices of current submatrix
-		final int loRow;    final int hiRow;
-		final int loCol;    final int hiCol;
+		final int loRow;
+		final int hiRow;
+		final int loCol;
+		final int hiCol;
 
 		int steps = 0; // track even/odd steps
 
-		LeafNode(double[][] A, double[][] B,
-				int loRow, int hiRow,
-				int loCol, int hiCol) {
-			this.A = A;   this.B = B;
-			this.loRow = loRow; this.hiRow = hiRow;
-			this.loCol = loCol; this.hiCol = hiCol;
+		LeafNode(double[][] A, double[][] B, int loRow, int hiRow, int loCol, int hiCol) {
+			this.A = A;
+			this.B = B;
+			this.loRow = loRow;
+			this.hiRow = hiRow;
+			this.loCol = loCol;
+			this.hiCol = hiCol;
 		}
 
 		@Override
@@ -156,8 +149,7 @@ public class AeJacobi {
 
 			for (int i = loRow; i <= hiRow; ++i) {
 				for (int j = loCol; j <= hiCol; ++j) {
-					double v = 0.25 * (a[i-1][j] + a[i][j-1] +
-							a[i+1][j] + a[i][j+1]);
+					double v = 0.25 * (a[i - 1][j] + a[i][j - 1] + a[i + 1][j] + a[i][j + 1]);
 					b[i][j] = v;
 
 					double diff = v - a[i][j];
@@ -168,7 +160,6 @@ public class AeJacobi {
 			maxDiff = md;
 		}
 
-
 	}
 
 	static final class FourNode extends MatrixTree {
@@ -176,13 +167,16 @@ public class AeJacobi {
 		MatrixTree q2;
 		MatrixTree q3;
 		MatrixTree q4;
-		FourNode(MatrixTree q1, MatrixTree q2,
-				MatrixTree q3, MatrixTree q4) {
-			this.q1 = q1; this.q2 = q2; this.q3 = q3; this.q4 = q4;
+
+		FourNode(MatrixTree q1, MatrixTree q2, MatrixTree q3, MatrixTree q4) {
+			this.q1 = q1;
+			this.q2 = q2;
+			this.q3 = q3;
+			this.q4 = q4;
 		}
 
 		public void execute(Runtime rt, Task current) throws Exception {
-			Task t1 = null , t2 = null, t3 = null;
+			Task t1 = null, t2 = null, t3 = null;
 			if (rt.parallelize(current)) {
 				t1 = rt.createNonBlockingTask(q1, Hints.LOOPS);
 				rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
@@ -198,20 +192,14 @@ public class AeJacobi {
 
 			q4.execute(rt, current);
 
-			if (t1 != null)
-				t1.getResult();
-			else
-				q1.execute(rt, current);
+			if (t1 != null) t1.getResult();
+			else q1.execute(rt, current);
 
-			if (t2 != null)
-				t2.getResult();
-			else
-				q2.execute(rt, current);
+			if (t2 != null) t2.getResult();
+			else q2.execute(rt, current);
 
-			if (t3 != null)
-				t3.getResult();
-			else
-				q3.execute(rt, current);
+			if (t3 != null) t3.getResult();
+			else q3.execute(rt, current);
 
 			double md = q1.maxDiff;
 			md = q2.save(maxDiff);
@@ -224,8 +212,10 @@ public class AeJacobi {
 	static final class TwoNode extends MatrixTree {
 		MatrixTree q1;
 		MatrixTree q2;
+
 		TwoNode(MatrixTree q1, MatrixTree q2) {
-			this.q1 = q1; this.q2 = q2;
+			this.q1 = q1;
+			this.q2 = q2;
 		}
 
 		public void execute(Runtime rt, Task current) throws Exception {
@@ -238,7 +228,7 @@ public class AeJacobi {
 			}
 			q2.execute(rt, current);
 			if (t1 != null) t1.getResult();
-			
+
 			double md = q1.maxDiff;
 			md = q2.save(maxDiff);
 			maxDiff = md;

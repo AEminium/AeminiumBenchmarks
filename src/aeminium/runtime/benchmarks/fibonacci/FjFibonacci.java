@@ -25,38 +25,35 @@ import java.util.concurrent.RecursiveAction;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 @SuppressWarnings("serial")
-public
-
-class FjFibonacci extends RecursiveAction { 
+public class FjFibonacci extends RecursiveAction {
 	public volatile int number;
 	private int threshold = 13;
-	
-	public FjFibonacci(int n, int thre) { 
+
+	public FjFibonacci(int n, int thre) {
 		number = n;
 		threshold = thre;
 	}
 
 	private int seqFib(int n) {
 		if (n <= 2) return 1;
-		else return seqFib(n-1) + seqFib(n-2);
+		else return seqFib(n - 1) + seqFib(n - 2);
 	}
 
 	@Override
 	protected void compute() {
 		int n = number;
-		if (n <= 1) { /* do nothing */ }
-		else if (n <= threshold) 
-			number = seqFib(n);
+		if (n <= 1) { /* do nothing */
+		} else if (n <= threshold) number = seqFib(n);
 		else {
-			FjFibonacci f1 = new FjFibonacci(n - 1, threshold);	
+			FjFibonacci f1 = new FjFibonacci(n - 1, threshold);
 			FjFibonacci f2 = new FjFibonacci(n - 2, threshold);
-			invokeAll(f1,f2);
+			invokeAll(f1, f2);
 			number = f1.number + f2.number; // compose
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		
+
 		Benchmark be = new Benchmark(args);
 
 		int fib = Fibonacci.DEFAULT_SIZE;
@@ -67,7 +64,7 @@ class FjFibonacci extends RecursiveAction {
 		if (be.args.length > 1) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
-		
+
 		ForkJoinPool pool = new ForkJoinPool();
 		while (!be.stop()) {
 			be.start();
@@ -78,6 +75,6 @@ class FjFibonacci extends RecursiveAction {
 				System.out.println("F(" + fib + ") = " + t.number);
 			}
 		}
-		
+
 	}
 }

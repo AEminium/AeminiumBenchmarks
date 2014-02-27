@@ -19,38 +19,34 @@ public class AeConvexHull {
 		if (be.args.length > 0) {
 			size = Integer.parseInt(be.args[0]);
 		}
-		
+
 		int threshold = ConvexHull.DEFAULT_THRESHOLD;
 		if (be.args.length > 1) {
 			size = Integer.parseInt(be.args[1]);
 		}
 
-		
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		ArrayList<Point> data = ConvexHull.generateData(size, new Random(1L));
-		
+
 		while (!be.stop()) {
-	    	be.start();
+			be.start();
 			rt.init();
-			
+
 			ArrayList<Point> result = AeConvexHull.quickHull(data, rt, threshold);
-			
+
 			rt.shutdown();
 			be.end();
-			if (be.verbose)
-				System.out.println(result.size());
+			if (be.verbose) System.out.println(result.size());
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private static ArrayList<Point> quickHull(final ArrayList<Point> points,
-			Runtime rt, final int threshold) {
-		if (points.size() < 3)
-			return (ArrayList<Point>) points.clone();
-		
+	private static ArrayList<Point> quickHull(final ArrayList<Point> points, Runtime rt, final int threshold) {
+		if (points.size() < 3) return (ArrayList<Point>) points.clone();
+
 		final ArrayList<Point> convexHull = new ArrayList<Point>();
 		Body setupB = new Body() {
 
@@ -83,18 +79,16 @@ public class AeConvexHull {
 
 				for (int i = 0; i < points.size(); i++) {
 					Point p = points.get(i);
-					if (ConvexHull.pointLocation(A, B, p) == -1)
-						leftSet.add(p);
-					else
-						rightSet.add(p);
+					if (ConvexHull.pointLocation(A, B, p) == -1) leftSet.add(p);
+					else rightSet.add(p);
 				}
-				
+
 				Task one = rt.createBlockingTask(new AeConvexHullBody(A, B, rightSet, convexHull, threshold), Hints.RECURSION);
 				rt.schedule(one, current, Runtime.NO_DEPS);
 				Task two = rt.createBlockingTask(new AeConvexHullBody(B, A, leftSet, convexHull, threshold), Hints.RECURSION);
 				rt.schedule(two, current, Runtime.NO_DEPS);
 			}
-			
+
 		};
 		Task setup = rt.createNonBlockingTask(setupB, Hints.RECURSION);
 		rt.schedule(setup, Runtime.NO_PARENT, Runtime.NO_DEPS);
@@ -102,31 +96,30 @@ public class AeConvexHull {
 	}
 }
 
-
 class AeConvexHullBody implements Body {
-	
+
 	private Point A;
 	private Point B;
 	private ArrayList<Point> set;
 	private ArrayList<Point> hull;
 	private int threshold;
-	
-	public AeConvexHullBody(Point A, Point B, ArrayList<Point> set,
-			ArrayList<Point> hull, int threshold) {
+
+	public AeConvexHullBody(Point A, Point B, ArrayList<Point> set, ArrayList<Point> hull, int threshold) {
 		this.A = A;
 		this.B = B;
 		this.set = set;
 		this.hull = hull;
 		this.threshold = threshold;
 	}
-	
+
 	public void execute(Runtime rt, Task current) throws Exception {
-		if (set.size() == 0)
-			return;
+		if (set.size() == 0) return;
 		if (set.size() == 1) {
 			Point p = set.get(0);
 			set.remove(p);
-			synchronized (hull) { hull.add(p); }
+			synchronized (hull) {
+				hull.add(p);
+			}
 			return;
 		}
 		double dist = Double.MIN_VALUE;
@@ -141,8 +134,9 @@ class AeConvexHullBody implements Body {
 		}
 		Point P = set.get(furthestPoint);
 		set.remove(furthestPoint);
-		synchronized (hull) { hull.add(P); }
-
+		synchronized (hull) {
+			hull.add(P);
+		}
 
 		// Determine who's to the left of AP
 		ArrayList<Point> leftSetAP = new ArrayList<Point>();
@@ -162,10 +156,9 @@ class AeConvexHullBody implements Body {
 			}
 		}
 
-		
 		if (Benchmark.useThreshold ? set.size() < threshold : !rt.parallelize(current)) {
-			SeqConvexHull.hullSet(A,P,leftSetAP,hull);
-			SeqConvexHull.hullSet(P,B,leftSetPB,hull);
+			SeqConvexHull.hullSet(A, P, leftSetAP, hull);
+			SeqConvexHull.hullSet(P, B, leftSetPB, hull);
 		} else {
 			Task one = rt.createBlockingTask(new AeConvexHullBody(A, P, leftSetAP, hull, threshold), Hints.RECURSION);
 			rt.schedule(one, current, Runtime.NO_DEPS);

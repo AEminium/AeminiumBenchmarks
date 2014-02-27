@@ -24,8 +24,7 @@ import java.util.concurrent.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
-
-public class FjFFT extends RecursiveAction { 
+public class FjFFT extends RecursiveAction {
 	/**
 	 * 
 	 */
@@ -35,15 +34,17 @@ public class FjFFT extends RecursiveAction {
 	private Complex[] odd;
 	private int threshold;
 	private int n;
-	
+
 	public FjFFT(Complex[] input, int thre) {
 		result = input;
 		n = input.length;
 		threshold = thre;
-		if (n != 1 && n % 2 != 0) { throw new RuntimeException("Size of array is not a power of 2."); }
-		
-		odd = new Complex[n/2];
-		even = new Complex[n/2];
+		if (n != 1 && n % 2 != 0) {
+			throw new RuntimeException("Size of array is not a power of 2.");
+		}
+
+		odd = new Complex[n / 2];
+		even = new Complex[n / 2];
 	}
 
 	protected void compute() {
@@ -52,25 +53,25 @@ public class FjFFT extends RecursiveAction {
 			result = SeqFFT.sequentialFFT(result);
 			return;
 		}
-		
-		for (int k=0; k < n/2; k++) {
-			even[k] = result[2*k];
-			odd[k] = result[2*k+1];
+
+		for (int k = 0; k < n / 2; k++) {
+			even[k] = result[2 * k];
+			odd[k] = result[2 * k + 1];
 		}
-		
-		FjFFT f1 = new FjFFT(even, threshold);	
+
+		FjFFT f1 = new FjFFT(even, threshold);
 		FjFFT f2 = new FjFFT(odd, threshold);
-		invokeAll(f1,f2);
-		
-		for (int k = 0; k < n/2; k++) {
-            double kth = -2 * k * Math.PI / n;
-            Complex wk = new Complex(Math.cos(kth), Math.sin(kth));
-            result[k]       = f1.result[k].plus(wk.times(f2.result[k]));
-            result[k + n/2] = f1.result[k].minus(wk.times(f2.result[k]));
+		invokeAll(f1, f2);
+
+		for (int k = 0; k < n / 2; k++) {
+			double kth = -2 * k * Math.PI / n;
+			Complex wk = new Complex(Math.cos(kth), Math.sin(kth));
+			result[k] = f1.result[k].plus(wk.times(f2.result[k]));
+			result[k + n / 2] = f1.result[k].minus(wk.times(f2.result[k]));
 		}
-		
+
 	}
-	
+
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		int size = FFT.DEFAULT_SIZE;
@@ -79,17 +80,17 @@ public class FjFFT extends RecursiveAction {
 		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
 		Complex[] input = FFT.createRandomComplexArray(size);
 		ForkJoinPool pool = new ForkJoinPool();
-		
+
 		while (!be.stop()) {
-	    	be.start();
-	    	FjFFT t = new FjFFT(input, threshold);
-	    	pool.invoke(t);
-	    	be.end();
+			be.start();
+			FjFFT t = new FjFFT(input, threshold);
+			pool.invoke(t);
+			be.end();
 			if (be.verbose) {
 				System.out.println(t.result[0]);
-	    		// FFT.show(t.result, "Result");
+				// FFT.show(t.result, "Result");
 			}
 		}
 	}
-	
+
 }

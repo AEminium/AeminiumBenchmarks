@@ -47,129 +47,121 @@ public class AeBlackScholes {
 	private static double saveCallPrice = 0.0;
 	private static double saveCall = 0.0;
 	private static double saveCall2 = 0.0;
-	
+
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
-    	
+
 		rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
+
 		final double S = BlackScholes.S;
 		final double X = BlackScholes.X;
 		final double r = BlackScholes.r;
 		final double sigma = BlackScholes.sigma;
 		final double T = BlackScholes.T;
-		final long N   = Long.parseLong(be.args[0]);
-		
+		final long N = Long.parseLong(be.args[0]);
+
 		while (!be.stop()) {
-	    	be.start();
-	    	rt.init();
-			
+			be.start();
+			rt.init();
+
 			final DataGroup pCall = rt.createDataGroup();
-			
-			
+
 			Task callPrice = rt.createNonBlockingTask(new Body() {
-	
+
 				@Override
 				public void execute(Runtime rt, Task current) throws Exception {
-					double d1 = (Math.log(S/X) + (r + sigma * sigma/2) * T) / (sigma * Math.sqrt(T));
+					double d1 = (Math.log(S / X) + (r + sigma * sigma / 2) * T) / (sigma * Math.sqrt(T));
 					double d2 = d1 - sigma * Math.sqrt(T);
 					saveCallPrice = S * Gaussian.Phi(d1) - X * Math.exp(-r * T) * Gaussian.Phi(d2);
 				}
-				
-			},  Runtime.NO_HINTS);
+
+			}, Runtime.NO_HINTS);
 			rt.schedule(callPrice, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			
-			
+
 			Task call = rt.createNonBlockingTask(new Body() {
-	
+
 				@Override
 				public void execute(final Runtime rt, final Task current) throws Exception {
-					
+
 					Task iterations = ForTask.createFor(rt, new LongRange(N), new ForBody<Long>() {
 						@Override
 						public void iterate(final Long o, Runtime rt, Task current) {
 							double eps = StdRandom.gaussian();
-				            double price = S * Math.exp(r*T - 0.5*sigma*sigma*T + sigma*eps*Math.sqrt(T));
-				            final double value = Math.max(price - X, 0);
-				            Task s = rt.createAtomicTask(new Body() {
-	
+							double price = S * Math.exp(r * T - 0.5 * sigma * sigma * T + sigma * eps * Math.sqrt(T));
+							final double value = Math.max(price - X, 0);
+							Task s = rt.createAtomicTask(new Body() {
+
 								@Override
-								public void execute(Runtime rt, Task current)
-										throws Exception {
+								public void execute(Runtime rt, Task current) throws Exception {
 									saveCall += value / N;
 								}
-				            }, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
-				            rt.schedule(s, current, Runtime.NO_DEPS);
-						}		
-					 }, Hints.LARGE);
+							}, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
+							rt.schedule(s, current, Runtime.NO_DEPS);
+						}
+					}, Hints.LARGE);
 					rt.schedule(iterations, current, Runtime.NO_DEPS);
 					Task save = rt.createNonBlockingTask(new Body() {
 						@Override
-						public void execute(Runtime rt, Task current)
-								throws Exception {
-							saveCall = Math.exp(-r*T) * saveCall;
+						public void execute(Runtime rt, Task current) throws Exception {
+							saveCall = Math.exp(-r * T) * saveCall;
 						}
 					}, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 					ArrayList<Task> ts = new ArrayList<Task>();
 					ts.add(iterations);
 					rt.schedule(save, current, ts);
 				}
-				
+
 			}, (short) (Hints.LOOPS | Hints.NO_DEPENDENTS));
 			rt.schedule(call, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			
-			
+
 			Task call2 = rt.createNonBlockingTask(new Body() {
-	
+
 				@Override
 				public void execute(final Runtime rt, final Task current) throws Exception {
-					
+
 					Task iterations = ForTask.createFor(rt, new LongRange(N), new ForBody<Long>() {
 						@Override
 						public void iterate(final Long o, Runtime rt, Task current) {
 							double price = S;
-				            double dt = T/10000.0;
-				            for (double t = 0; t <= T; t = t + dt) {
-				                price += r*price*dt +sigma*price*Math.sqrt(dt)*StdRandom.gaussian();
-				            }
-				            final double value = Math.max(price - X, 0);
-				            Task s = rt.createAtomicTask(new Body() {
-	
+							double dt = T / 10000.0;
+							for (double t = 0; t <= T; t = t + dt) {
+								price += r * price * dt + sigma * price * Math.sqrt(dt) * StdRandom.gaussian();
+							}
+							final double value = Math.max(price - X, 0);
+							Task s = rt.createAtomicTask(new Body() {
+
 								@Override
-								public void execute(Runtime rt, Task current)
-										throws Exception {
+								public void execute(Runtime rt, Task current) throws Exception {
 									saveCall2 += value / N;
 								}
-				            }, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
-				            rt.schedule(s, current, Runtime.NO_DEPS);
-						}		
-					 }, (short) (Hints.LOOPS | Hints.LARGE));
+							}, pCall, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
+							rt.schedule(s, current, Runtime.NO_DEPS);
+						}
+					}, (short) (Hints.LOOPS | Hints.LARGE));
 					rt.schedule(iterations, current, Runtime.NO_DEPS);
 					Task save = rt.createNonBlockingTask(new Body() {
 						@Override
-						public void execute(Runtime rt, Task current)
-								throws Exception {
-							saveCall = Math.exp(-r*T) * saveCall2;
+						public void execute(Runtime rt, Task current) throws Exception {
+							saveCall = Math.exp(-r * T) * saveCall2;
 						}
 					}, (short) (Hints.SMALL | Hints.NO_CHILDREN | Hints.NO_DEPENDENTS));
 					ArrayList<Task> ts = new ArrayList<Task>();
 					ts.add(iterations);
 					rt.schedule(save, current, ts);
 				}
-				
+
 			}, (short) (Hints.LOOPS | Hints.NO_DEPENDENTS));
 			rt.schedule(call2, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			
-			
+
 			rt.shutdown();
-			
-	        be.end();
-	        if (be.verbose) {
-	    		System.out.println(saveCallPrice);
-	    		System.out.println(saveCall);
-	    		System.out.println(saveCall2);
-	        }
+
+			be.end();
+			if (be.verbose) {
+				System.out.println(saveCallPrice);
+				System.out.println(saveCall);
+				System.out.println(saveCall2);
+			}
 		}
 	}
 
