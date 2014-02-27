@@ -16,18 +16,22 @@ public class SeqDoAll {
 		double[] b = new double[size];
 		double[] c = new double[size];
 		
-		be.start();
-		for (int i = 0; i < size; i++) {
-			a[i] = Math.sqrt(i);
-		}
 		
-		for (int i = 0; i < size; i++) {
-			b[i] = Math.sin(i);
+		while (!be.stop()) {
+	    	be.start();
+	
+			for (int i = 0; i < size; i++) {
+				a[i] = Math.sqrt(i);
+			}
+			
+			for (int i = 0; i < size; i++) {
+				b[i] = Math.sin(i);
+			}
+			
+			for (int i = 0; i < size; i++) {
+				c[i] = a[i] / b[i];
+			}
+			be.end();
 		}
-		
-		for (int i = 0; i < size; i++) {
-			c[i] = a[i] / b[i];
-		}
-		be.end();
 	}
 }

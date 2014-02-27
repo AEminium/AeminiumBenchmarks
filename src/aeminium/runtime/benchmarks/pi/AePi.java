@@ -37,7 +37,7 @@ public class AePi {
 
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (Benchmark.useThreshold ? value < threshold : !rt.parallelize(current)) {
+			if (value < 1 || (Benchmark.useThreshold ? value < threshold : !rt.parallelize(current))) {
 				value = seqPi(value);
 			} else {
 				AePiBody b1 = new AePiBody(value / 2, threshold);
@@ -68,17 +68,21 @@ public class AePi {
 	        threshold = Integer.parseInt(be.args[1]);
 	    }
 		
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		AePiBody body = new AePi.AePiBody(darts, threshold);
-		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
-		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("PI = " + (4.0 * (double)body.value/(double)darts));
+		
+		while (!be.stop()) {
+			be.start();
+			rt.init();
+			AePiBody body = new AePi.AePiBody(darts, threshold);
+			Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
+			rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("PI = " + (4.0 * (double)body.value/(double)darts));
+			}
 		}
+		
 	}
 }

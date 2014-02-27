@@ -28,12 +28,14 @@ public class FjLUD extends LUD {
 		Random r = new Random(1L);
 		Matrix A = Matrix.random(size, size, r);
 		final int numOfBlocks = size / blocksize;
-		be.start();
-		final FjLUD lud = new FjLUD(A, blocksize);
+		
 		ForkJoinPool pool = new ForkJoinPool();
-		pool.invoke(new CalcLU(lud, new MatrixPosition(0, 0), numOfBlocks));
-		pool.shutdown();
-		be.end();		
+		while (!be.stop()) {
+			be.start();
+			final FjLUD lud = new FjLUD(A, blocksize);
+			pool.invoke(new CalcLU(lud, new MatrixPosition(0, 0), numOfBlocks));
+			be.end();
+		}
 	}
 	
 	@SuppressWarnings("serial")

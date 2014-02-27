@@ -32,17 +32,20 @@ public class AeLUD extends LUD {
 		Random r = new Random(1L);
 		Matrix A = Matrix.random(size, size, r);
 		final int numOfBlocks = size / blocksize;
-		be.start();
-		final AeLUD lud = new AeLUD(A, blocksize);
+		
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-
-		CalcLU b = new CalcLU(lud, new MatrixPosition(0, 0), numOfBlocks);
-		Task t = rt.createNonBlockingTask(b, Hints.RECURSION);
-		rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();		
+		
+		while (!be.stop()) {
+			be.start();
+			final AeLUD lud = new AeLUD(A, blocksize);
+			rt.init();
+			CalcLU b = new CalcLU(lud, new MatrixPosition(0, 0), numOfBlocks);
+			Task t = rt.createNonBlockingTask(b, Hints.RECURSION);
+			rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
+		}
 	}
 	
 	static final class Schur implements Body {

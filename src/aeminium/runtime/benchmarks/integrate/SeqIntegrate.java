@@ -13,11 +13,13 @@ public class SeqIntegrate {
 	    	Integrate.errorTolerance = Math.pow(10, -exp);
 	    }
         
-        be.start();
-		double a = recEval(Integrate.start, Integrate.end, Integrate.computeFunction(Integrate.start), Integrate.computeFunction(Integrate.end), 0);
-		be.end();
-		if (be.verbose) {
-			System.out.println("Integral: " + a);
+		while (!be.stop()) {
+			be.start();
+			double a = recEval(Integrate.start, Integrate.end, Integrate.computeFunction(Integrate.start), Integrate.computeFunction(Integrate.end), 0);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Integral: " + a);
+			}
 		}
     }
     

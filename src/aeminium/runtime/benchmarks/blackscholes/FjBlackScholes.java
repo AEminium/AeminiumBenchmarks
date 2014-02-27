@@ -2,6 +2,7 @@ package aeminium.runtime.benchmarks.blackscholes;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.RejectedExecutionException;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
@@ -26,7 +27,11 @@ public class FjBlackScholes {
 
 		static double computeSum(ForkJoinPool pool, long N, double S, double X, double r, double sigma, double T, int th) {
             DCall q = new DCall(N, S, X, r, sigma, T, th);
-            pool.invoke(q);
+            try {
+            	pool.invoke(q);
+            } catch (RejectedExecutionException ex) {
+            	ex.printStackTrace();
+            }
             return q.sum;
         }
 
@@ -142,24 +147,28 @@ public class FjBlackScholes {
 
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
-		be.start();
 		long N = Long.parseLong(be.args[0]);
 		
 		int threshold = BlackScholes.DEFAULT_THRESHOLD;
 		if (be.args.length > 1) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
-
+		
 		ForkJoinPool g = new ForkJoinPool();
-		double cP = callPrice(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T);
-		double ca = call(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N, g, threshold);
-		double c2 = call2(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N, g, threshold);
-		g.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println(cP);
-			System.out.println(ca);
-			System.out.println(c2);
+		while (!be.stop()) {
+			StdRandom.setSeed(1L);
+	    	be.start();
+
+			double cP = callPrice(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T);
+			double ca = call(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N, g, threshold);
+			double c2 = call2(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N, g, threshold);
+			be.end();
+			if (be.verbose) {
+				System.out.println(cP);
+				System.out.println(ca);
+				System.out.println(c2);
+			}
 		}
+		g.shutdown();
 	}
 }

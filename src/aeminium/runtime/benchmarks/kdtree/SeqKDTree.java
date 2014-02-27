@@ -68,18 +68,20 @@ public class SeqKDTree {
 		Point[] points = Point.generatePoints(size);
 		Point[] closest = new Point[size];
 		
-		be.start();
-		SeqKDTree tree = new SeqKDTree(points, 0);
-		
-		for (int i = 0; i < points.length; i++) { 
-			closest[i] = tree.findClosest(points[i]); 
-		}
-		
-		Point markPoint = new Point(10, 100);
-		Point closestP = tree.findClosest(markPoint); 
-		be.end();
-		if (be.verbose) {
-			System.out.println("Closest:" + closestP);
+		while (!be.stop()) {
+			be.start();
+			SeqKDTree tree = new SeqKDTree(points, 0);
+			
+			for (int i = 0; i < points.length; i++) { 
+				closest[i] = tree.findClosest(points[i]); 
+			}
+			
+			Point markPoint = new Point(10, 100);
+			Point closestP = tree.findClosest(markPoint); 
+			be.end();
+			if (be.verbose) {
+				System.out.println("Closest:" + closestP);
+			}
 		}
 		
 	}

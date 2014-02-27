@@ -68,13 +68,16 @@ class FjFibonacci extends RecursiveAction {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 		
-		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
-		FjFibonacci t = new FjFibonacci(fib, threshold);
-		pool.invoke(t);
-		be.end();
-		if (be.verbose) {
-			System.out.println("F(" + fib + ") = " + t.number);
+		while (!be.stop()) {
+			be.start();
+			FjFibonacci t = new FjFibonacci(fib, threshold);
+			pool.invoke(t);
+			be.end();
+			if (be.verbose) {
+				System.out.println("F(" + fib + ") = " + t.number);
+			}
 		}
+		
 	}
 }

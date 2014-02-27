@@ -2,6 +2,7 @@ package aeminium.runtime.benchmarks.nbody;
 
 import java.util.Arrays;
 
+import aeminium.runtime.Body;
 import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
@@ -32,28 +33,30 @@ public class AeForNBody {
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 		
-		final AeForNBodySystem bodies = new AeForNBodySystem(NBody.generateRandomBodies(size, 1L), rt);
-		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
-		
-		be.start();
-		rt.init();
-		
-		Task t = ForTask.createFor(rt, new Range(n), new ForBody<Integer>() {
-			@Override
-			public void iterate(Integer i, Runtime rt, Task current) {
-				bodies.advance(0.01, current);
-			}
-		}, Hints.NO_DEPENDENTS);
-		rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
-		rt.shutdown();
-		be.end();
-		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
+		while (!be.stop()) {
+			final AeForNBodySystem bodies = new AeForNBodySystem(NBody.generateRandomBodies(size, 1L), rt);
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+			rt.init();
+			Task tmain = rt.createNonBlockingTask(new Body() {
+				@Override
+				public void execute(Runtime rt, Task current) throws Exception {
+					Task t = ForTask.createFor(rt, new Range(n), new ForBody<Integer>() {
+						@Override
+						public void iterate(Integer i, Runtime rt, Task current) {
+							bodies.advance(0.01, current);
+						}
+					}, Hints.NO_DEPENDENTS);
+					rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
+				}
+			}, Hints.LOOPS);
+			rt.schedule(tmain, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
 			
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+		}
 	}
 }
 

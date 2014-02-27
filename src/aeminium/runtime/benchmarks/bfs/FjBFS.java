@@ -88,13 +88,14 @@ public class FjBFS extends RecursiveAction {
 		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
-		
-		be.start();
-		FjBFS searcher = new FjBFS(target, g, threshold);
-		int f = searcher.parCount();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Found " + f + " occurrences of " + target);
+		while (!be.stop()) {
+			be.start();
+			FjBFS searcher = new FjBFS(target, g, threshold);
+			int f = searcher.parCount();
+			be.end();
+			if (be.verbose) {
+				System.out.println("Found " + f + " occurrences of " + target);
+			}
 		}
 	}
 

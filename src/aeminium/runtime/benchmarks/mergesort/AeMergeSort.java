@@ -131,16 +131,20 @@ public class AeMergeSort {
 		}
 
 		long[] original =  ArrayHelper.generateRandomArray(size);
-		be.start();
-		AeMergeSort merger = new AeMergeSort(original, threshold);
+		
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		merger.doSort(rt);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Sorted: " +  ArrayHelper.checkArray(merger.array));
+		
+		while (!be.stop()) {
+			be.start();
+			AeMergeSort merger = new AeMergeSort(original, threshold);
+			rt.init();
+			merger.doSort(rt);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("Sorted: " +  ArrayHelper.checkArray(merger.array));
+			}
 		}
 	}
 

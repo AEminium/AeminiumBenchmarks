@@ -18,7 +18,7 @@ public class AeJacobi {
 	final int leafs;
 	int nleaf;
 	double md;
-
+	
 	public AeJacobi(double[][] A, double[][] B,
 			int firstRow, int lastRow,
 			int firstCol, int lastCol,
@@ -46,7 +46,7 @@ public class AeJacobi {
 			steps = Integer.parseInt(be.args[1]);
 		}
 
-		int granularity = Jacobi.DEFAULT_GRANULARITY;
+		int granularity = 3; //Jacobi.DEFAULT_GRANULARITY;
 		if (be.args.length > 2) {
 			granularity = Integer.parseInt(be.args[2]);
 		}
@@ -57,16 +57,18 @@ public class AeJacobi {
 		double[][] b = new double[dim][dim];
 
 		Jacobi.setup(size, a, b);
-		AeJacobi jac = new AeJacobi(a, b, 1, size, 1, size, steps, granularity);
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		double df = jac.jacobi(rt);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Total: " + df);
+		while (!be.stop()) {
+			be.start();
+			rt.init();
+			AeJacobi jac = new AeJacobi(a, b, 1, size, 1, size, steps, granularity);
+			double df = jac.jacobi(rt);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("Total: " + df);
+			}
 		}
 	}
 

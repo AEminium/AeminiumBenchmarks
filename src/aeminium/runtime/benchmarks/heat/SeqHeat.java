@@ -35,12 +35,14 @@ public class SeqHeat extends Heat {
 		double[][] oldm = new double[nx][ny];
 		double[][] newm = new double[nx][ny];
 
-		be.start();
-		for (int timestep = 0; timestep <= iterations; timestep++) {
-			compute(0, nx, nx, ny, dx, dy, dt, dtdxsq, dtdysq, threshold,
+		while (!be.stop()) {
+			be.start();
+			for (int timestep = 0; timestep <= iterations; timestep++) {
+				compute(0, nx, nx, ny, dx, dy, dt, dtdxsq, dtdysq, threshold,
 					timestep, oldm, newm);
+			}
+			be.end();
 		}
-		be.end();
 	}
 
 	// the function being applied across the cells

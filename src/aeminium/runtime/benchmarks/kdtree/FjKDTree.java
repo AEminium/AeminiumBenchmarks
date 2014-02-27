@@ -187,18 +187,22 @@ public class FjKDTree {
 		
 		Point[] points = Point.generatePoints(size);
 		Point[] closest = new Point[size];
-
-		be.start();
+		
 		ForkJoinPool pool = new ForkJoinPool();
-		FjKDTree tree = new FjKDTree(pool, points, 0, threshold);
-
-		pool.invoke(new Finder(tree, points, closest, 0, points.length, threshold));
-
-		Point markPoint = new Point(10, 100);
-		Point closestP = tree.findClosest(markPoint);
-		be.end();
-		if (be.verbose) {
-			System.out.println("Closest:" + closestP);
+		
+		while (!be.stop()) {
+			be.start();
+		
+			FjKDTree tree = new FjKDTree(pool, points, 0, threshold);
+	
+			pool.invoke(new Finder(tree, points, closest, 0, points.length, threshold));
+	
+			Point markPoint = new Point(10, 100);
+			Point closestP = tree.findClosest(markPoint);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Closest:" + closestP);
+			}
 		}
 	}
 }

@@ -78,13 +78,17 @@ public class FjFFT extends RecursiveAction {
 		int threshold = FFT.DEFAULT_THRESHOLD;
 		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
 		Complex[] input = FFT.createRandomComplexArray(size);
-		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
-		FjFFT t = new FjFFT(input, threshold);
-		pool.invoke(t);
-		be.end();
-		if (be.verbose) {
-			FFT.show(t.result, "Result");
+		
+		while (!be.stop()) {
+	    	be.start();
+	    	FjFFT t = new FjFFT(input, threshold);
+	    	pool.invoke(t);
+	    	be.end();
+			if (be.verbose) {
+				System.out.println(t.result[0]);
+	    		// FFT.show(t.result, "Result");
+			}
 		}
 	}
 	

@@ -24,40 +24,44 @@ public class AeDoAll {
 		if (be.args.length > 0)
 			size = Integer.parseInt(be.args[0]);
 
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 		
 		a = new double[size];
 		b = new double[size];
 		c = new double[size];
-		rt.init();
 		
-		Task as = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
-			@Override
-			public void iterate(Integer i, Runtime rt, Task current) {
-				a[i] = Math.sqrt(i);
-			}
-		}, Hints.SMALL);
-		rt.schedule(as, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
-		Task bs = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
-			@Override
-			public void iterate(Integer i, Runtime rt, Task current) {
-				b[i] = Math.sin(i);
-			}
-		}, Hints.SMALL);
-		rt.schedule(bs, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
-		
-		Task cs = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
-			@Override
-			public void iterate(Integer i, Runtime rt, Task current) {
-				c[i] = a[i] / b[i];
-			}
-		}, Hints.SMALL);
-		rt.schedule(cs, Runtime.NO_PARENT, Arrays.asList(as, bs));
-		rt.shutdown();
-		be.end();
+		while (!be.stop()) {
+			be.start();
+			
+			rt.init();
+			
+			Task as = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
+				@Override
+				public void iterate(Integer i, Runtime rt, Task current) {
+					a[i] = Math.sqrt(i);
+				}
+			}, Hints.SMALL);
+			rt.schedule(as, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			
+			Task bs = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
+				@Override
+				public void iterate(Integer i, Runtime rt, Task current) {
+					b[i] = Math.sin(i);
+				}
+			}, Hints.SMALL);
+			rt.schedule(bs, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			
+			
+			Task cs = ForTask.createFor(rt, new Range(size), new ForBody<Integer>() {
+				@Override
+				public void iterate(Integer i, Runtime rt, Task current) {
+					c[i] = a[i] / b[i];
+				}
+			}, Hints.SMALL);
+			rt.schedule(cs, Runtime.NO_PARENT, Arrays.asList(as, bs));
+			rt.shutdown();
+			be.end();
+		}
 	}
 }

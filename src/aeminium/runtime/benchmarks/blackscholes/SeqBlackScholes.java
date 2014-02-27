@@ -81,17 +81,18 @@ public class SeqBlackScholes {
 
     public static void main(String[] args) {
     	Benchmark be = new Benchmark(args);
-    	be.start();
-        long N 		 = Long.parseLong(be.args[0]);
-        
-        double cP = callPrice(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T);
-        double ca = call(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N);
-        double c2 = call2(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N);
-        be.end();
-        if (be.verbose) {
-        	System.out.println(cP);
-        	System.out.println(ca);
-        	System.out.println(c2);
-        }
+    	long N 		 = Long.parseLong(be.args[0]);
+    	while (!be.stop()) {
+	    	be.start();
+	        double cP = callPrice(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T);
+	        double ca = call(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N);
+	        double c2 = call2(BlackScholes.S, BlackScholes.X, BlackScholes.r, BlackScholes.sigma, BlackScholes.T, N);
+	        be.end();
+	        if (be.verbose) {
+	        	System.out.println(cP);
+	        	System.out.println(ca);
+	        	System.out.println(c2);
+	        }
+    	}
     }
 }

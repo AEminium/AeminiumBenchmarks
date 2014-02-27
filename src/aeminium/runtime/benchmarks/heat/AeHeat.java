@@ -60,23 +60,27 @@ public class AeHeat extends Heat {
 		oldm = new double[nx][ny];
 		newm = new double[nx][ny];
 
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		Task main = rt.createNonBlockingTask(new Body() {
-
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				for (int timestep = 0; timestep <= nt; timestep++) {
-					(new Compute(0, nx, timestep)).execute(rt, current);
+		
+		
+		while (!be.stop()) {
+			be.start();
+			rt.init();
+			Task main = rt.createNonBlockingTask(new Body() {
+	
+				@Override
+				public void execute(Runtime rt, Task current) throws Exception {
+					for (int timestep = 0; timestep <= nt; timestep++) {
+						(new Compute(0, nx, timestep)).execute(rt, current);
+					}
 				}
-			}
-			
-		}, Hints.RECURSION);
-		rt.schedule(main, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();
+				
+			}, Hints.RECURSION);
+			rt.schedule(main, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
+		}
 	}
 
 	// the function being applied across the cells

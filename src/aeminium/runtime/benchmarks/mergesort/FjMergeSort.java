@@ -30,13 +30,16 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 		long[] original = ArrayHelper.generateRandomArray(size);
-		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
-		FjMergeSort t = new FjMergeSort(original, threshold);
-		pool.invoke(t);
-		be.end();
-		if (be.verbose) {
-			System.out.println("Sorted: " + ArrayHelper.checkArray(t.join()));
+		
+		while (!be.stop()) {
+			be.start();
+			FjMergeSort t = new FjMergeSort(original, threshold);
+			pool.invoke(t);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Sorted: " + ArrayHelper.checkArray(t.join()));
+			}
 		}
 	}
 

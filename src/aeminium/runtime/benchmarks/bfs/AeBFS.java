@@ -62,6 +62,8 @@ public class AeBFS {
 				for (int i = 0; i < graph.children.length; i++) {
 					tasks[i].getResult();
 					value += bodies[i].value;
+					tasks[i] = null;
+					bodies[i] = null;
 				}
 			}
 		}
@@ -77,18 +79,19 @@ public class AeBFS {
 		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
-		
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		SearchBody body = new AeBFS.SearchBody(1, g, threshold);
-		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
-		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Found " + body.value + " occurrences of " + target);
+		while (!be.stop()) {
+			be.start();
+			rt.init();
+			SearchBody body = new AeBFS.SearchBody(1, g, threshold);
+			Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
+			rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("Found " + body.value + " occurrences of " + target);
+			}
 		}
 	}
 }

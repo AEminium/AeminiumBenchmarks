@@ -30,7 +30,7 @@ public class DAeFibonacci {
 		
 		
 		public long decideFib(long n, Runtime rt, Task current) {
-			if (n % 5 == 0) {
+			if (rt.parallelize(current)) {
 				return parFib(n, rt, current);
 			} else {
 				return seqFib(n, rt, current);
@@ -68,18 +68,21 @@ public class DAeFibonacci {
 		if (be.args.length > 1) {
 			threshold = Integer.parseInt(be.args[1]);
 		}
-		
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		FibBody body = new DAeFibonacci.FibBody(fib, threshold);
-		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
-		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("F(" + fib + ") = " + body.value);
+
+		while (!be.stop()) {
+			be.start();
+		
+			rt.init();
+			FibBody body = new DAeFibonacci.FibBody(fib, threshold);
+			Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
+			rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("F(" + fib + ") = " + body.value);
+			}
 		}
 	}
 }

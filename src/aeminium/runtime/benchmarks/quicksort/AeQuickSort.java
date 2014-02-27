@@ -77,16 +77,20 @@ public class AeQuickSort {
 		}
 
 		long[] original =  ArrayHelper.generateRandomArray(size);
-		be.start();
-		AeQuickSort merger = new AeQuickSort(original, threshold);
+		
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		merger.doSort(rt);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Sorted: " +  ArrayHelper.checkArray(merger.array));
+		
+		while (!be.stop()) {
+			be.start();
+			AeQuickSort merger = new AeQuickSort(original, threshold);
+			rt.init();
+			merger.doSort(rt);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("Sorted: " +  ArrayHelper.checkArray(merger.array));
+			}
 		}
 	}
 }

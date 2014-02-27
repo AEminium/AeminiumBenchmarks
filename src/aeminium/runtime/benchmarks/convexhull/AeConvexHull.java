@@ -31,15 +31,17 @@ public class AeConvexHull {
 		
 		ArrayList<Point> data = ConvexHull.generateData(size, new Random(1L));
 		
-		be.start();
-		rt.init();
-		
-		ArrayList<Point> result = AeConvexHull.quickHull(data, rt, threshold);
-		
-		rt.shutdown();
-		be.end();
-		if (be.verbose)
-			System.out.println(result.size());
+		while (!be.stop()) {
+	    	be.start();
+			rt.init();
+			
+			ArrayList<Point> result = AeConvexHull.quickHull(data, rt, threshold);
+			
+			rt.shutdown();
+			be.end();
+			if (be.verbose)
+				System.out.println(result.size());
+		}
 
 	}
 

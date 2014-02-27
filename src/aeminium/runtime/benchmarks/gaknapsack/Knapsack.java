@@ -8,7 +8,7 @@ public class Knapsack {
 
 	public final static int numberOfItems = 10000;
 	
-	public final static MersenneTwisterFast rand = new MersenneTwisterFast(1L);
+	public static MersenneTwisterFast rand = new MersenneTwisterFast(1L);
 	public final static Item[] items = Knapsack.createItems(numberOfItems);
 	
 	// GA Settings:
@@ -21,6 +21,11 @@ public class Knapsack {
 
 	public static final int DEFAULT_THRESHOLD = popSize / 100;
 	public static int bestLimit = elitism;
+	
+	
+	public static void resetSeed() {
+		rand = new MersenneTwisterFast(1L);
+	}
 	
 	
 	private static Item[] createItems(int n) {

@@ -59,25 +59,26 @@ public class FjNQueens extends RecursiveAction {
 	    int[] solutions = new int[maxSize - minSize + 1];
 	    
 	    ForkJoinPool g = new ForkJoinPool();
-	    
-		be.start();
+	    while (!be.stop()) {
+	    	be.start();
 		
-		int c = 0;
-		for (int size = minSize; size <= maxSize; size++) {
-			FjNQueens task = new FjNQueens(size, new int[0]);
-	        g.invoke(task);
-			solutions[c++] = task.solutions;
-		}
-		
-		be.end();
-	    if (be.verbose) {
-	    	for (int i=0; i< (maxSize - minSize + 1); i++) {
-	    		int given = solutions[i];
-	    		int expected = NQueens.expectedSolutions[minSize + i]; 
-	    		if ( given != expected ) {
-	    			System.out.println( "Failed:" + (minSize + i) + ", given: " + given + " when expected " + expected);
-	    		}
-	    	}
+			int c = 0;
+			for (int size = minSize; size <= maxSize; size++) {
+				FjNQueens task = new FjNQueens(size, new int[0]);
+		        g.invoke(task);
+				solutions[c++] = task.solutions;
+			}
+			
+			be.end();
+		    if (be.verbose) {
+		    	for (int i=0; i< (maxSize - minSize + 1); i++) {
+		    		int given = solutions[i];
+		    		int expected = NQueens.expectedSolutions[minSize + i]; 
+		    		if ( given != expected ) {
+		    			System.out.println( "Failed:" + (minSize + i) + ", given: " + given + " when expected " + expected);
+		    		}
+		    	}
+		    }
 	    }
 	}
 

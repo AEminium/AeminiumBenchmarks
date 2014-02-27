@@ -15,15 +15,17 @@ public class SeqNBody {
 			size = Integer.parseInt(be.args[1]);
 		}
 
-		SeqNBodySystem bodies = new SeqNBodySystem(NBody.generateRandomBodies(size, 1L));
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
-		be.start();
-		for (int i = 0; i < n; ++i)
-			bodies.advance(0.01);
-		be.end();
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
+		while (!be.stop()) {
+			SeqNBodySystem bodies = new SeqNBodySystem(NBody.generateRandomBodies(size, 1L));
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+			be.start();
+			for (int i = 0; i < n; ++i)
+				bodies.advance(0.01);
+			be.end();
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+		}
 		
 	}
 }

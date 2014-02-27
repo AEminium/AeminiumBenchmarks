@@ -95,12 +95,16 @@ public class FjDoAll {
 		double[] b = new double[size];
 		double[] c = new double[size];
 		
-		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
-		pool.invoke(new MakeAB(a, 0, size, true, threshold));
-		pool.invoke(new MakeAB(b, 0, size, false, threshold));
-		pool.invoke(new MakeC(c, a, b, 0, size, threshold));
 		
-		be.end();
+		while (!be.stop()) {
+	    	be.start();
+		
+	    	pool.invoke(new MakeAB(a, 0, size, true, threshold));
+	    	pool.invoke(new MakeAB(b, 0, size, false, threshold));
+	    	pool.invoke(new MakeC(c, a, b, 0, size, threshold));
+		
+	    	be.end();
+		}
 	}
 }

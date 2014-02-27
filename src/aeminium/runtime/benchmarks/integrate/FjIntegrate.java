@@ -81,14 +81,15 @@ public final class FjIntegrate {
 	    	Integrate.errorTolerance = Math.pow(10, -exp);
 	    }
         
-        be.start();
         ForkJoinPool g = new ForkJoinPool();
-		double a = DQuad.computeArea(g, Integrate.start, Integrate.end);
-		g.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Integral: " + a);
-		}
+        while (!be.stop()) {
+			be.start();
+			double a = DQuad.computeArea(g, Integrate.start, Integrate.end);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Integral: " + a);
+			}
+        }
     }
 
 

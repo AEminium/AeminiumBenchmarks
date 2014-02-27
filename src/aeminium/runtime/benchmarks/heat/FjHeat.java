@@ -58,20 +58,22 @@ public class FjHeat extends Heat {
 		oldm = new double[nx][ny];
 		newm = new double[nx][ny];
 
-		be.start();
 		ForkJoinPool g = new ForkJoinPool();
 		
-		@SuppressWarnings("serial")
-		RecursiveAction main = new RecursiveAction() {
-			public void compute() {
-				for (int timestep = 0; timestep <= nt; timestep++) {
-					(new Compute(0, nx, timestep)).invoke();
+		while (!be.stop()) {
+			be.start();
+			
+			@SuppressWarnings("serial")
+			RecursiveAction main = new RecursiveAction() {
+				public void compute() {
+					for (int timestep = 0; timestep <= nt; timestep++) {
+						(new Compute(0, nx, timestep)).invoke();
+					}
 				}
-			}
-		};
-		g.invoke(main);
-		g.shutdown();
-		be.end();
+			};
+			g.invoke(main);
+			be.end();
+		}
 	}
 
 	// the function being applied across the cells

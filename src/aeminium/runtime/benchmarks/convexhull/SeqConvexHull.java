@@ -17,11 +17,16 @@ public class SeqConvexHull {
 		}
 
 		ArrayList<Point> data = ConvexHull.generateData(size, new Random(1L));
-		be.start();
-		ArrayList<Point> result = SeqConvexHull.quickHull(data);
-		be.end();
-		if (be.verbose)
-			System.out.println(result.size());
+		
+		while (!be.stop()) {
+	    	be.start();
+		
+	    	ArrayList<Point> result = SeqConvexHull.quickHull(data);
+	    	be.end();
+	    	
+	    	if (be.verbose)
+	    		System.out.println(result.size());
+		}
 		
 	}
 	

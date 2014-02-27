@@ -28,16 +28,19 @@ public class FjPi extends RecursiveAction {
 	    if (be.args.length > 1) {
 	        threshold = Integer.parseInt(be.args[1]);
 	    }
-	    be.start();
+	    
 	    ForkJoinPool pool = new ForkJoinPool();
 		
-	    FjPi pi = new FjPi(darts, threshold);
-	    pool.invoke(pi);
-	    double pivalue = 4.0 * (double) pi.count/(double)darts;
-		be.end();
-		if (be.verbose) {
-			System.out.println("PI = " + pivalue);
-		}
+	    while (!be.stop()) {
+	    	be.start();
+	    	FjPi pi = new FjPi(darts, threshold);
+	    	pool.invoke(pi);
+	    	double pivalue = 4.0 * (double) pi.count/(double)darts;
+	    	be.end();
+	    	if (be.verbose) {
+	    		System.out.println("PI = " + pivalue);
+	    	}
+	    }
 	}
 
 	@Override

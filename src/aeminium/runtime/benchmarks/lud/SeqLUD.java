@@ -27,10 +27,12 @@ public class SeqLUD extends LUD {
 		Matrix A = Matrix.random(size, size, r); 
 		final int numOfBlocks = size / blocksize;
 		
-		be.start();
-		final SeqLUD lu = new SeqLUD(A, blocksize);
-		lu.calcLU(new MatrixPosition(0, 0), numOfBlocks);
-		be.end();		
+		while (!be.stop()) {
+			be.start();
+			final SeqLUD lu = new SeqLUD(A, blocksize);
+			lu.calcLU(new MatrixPosition(0, 0), numOfBlocks);
+			be.end();
+		}
 	}
 
 	/* ---------------------------------------------

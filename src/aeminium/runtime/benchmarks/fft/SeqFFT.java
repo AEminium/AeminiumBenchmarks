@@ -13,12 +13,15 @@ public class SeqFFT {
 		
 		Complex[] input = FFT.createRandomComplexArray(size, new Random(1L));
 		
-		be.start();
-		Complex[] result = sequentialFFT(input);
-		be.end();
+		while (!be.stop()) {
+	    	be.start();
+	    	Complex[] result = sequentialFFT(input);
+	    	be.end();
 		
-		if (be.verbose) {
-			FFT.show(result, "Result");
+	    	if (be.verbose) {
+	    		System.out.println(result[0]);
+	    		// FFT.show(result, "Result");
+	    	}
 		}
 	}
 	

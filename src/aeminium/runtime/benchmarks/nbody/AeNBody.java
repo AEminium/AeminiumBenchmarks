@@ -37,28 +37,31 @@ public class AeNBody {
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 		
-		final AeNBodySystem bodies = new AeNBodySystem(NBody.generateRandomBodies(size, 1L), rt);
-		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
-		
-		be.start();
-		rt.init();
-		
-		Task t = ForTask.createFor(rt, new Range(n), new ForBody<Integer>() {
-			@Override
-			public void iterate(Integer i, Runtime rt, Task current) {
-				bodies.advance(0.01, advance_t, current);
-			}
-		}, Hints.NO_DEPENDENTS);
-		rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
-		rt.shutdown();
-		be.end();
-		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
+		while (!be.stop()) {
+			final AeNBodySystem bodies = new AeNBodySystem(NBody.generateRandomBodies(size, 1L), rt);
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+			be.start();
+			rt.init();
+			Task tmain = rt.createNonBlockingTask(new Body() {
+				@Override
+				public void execute(Runtime rt, Task current) throws Exception {
+					Task t = ForTask.createFor(rt, new Range(n), new ForBody<Integer>() {
+						@Override
+						public void iterate(Integer i, Runtime rt, Task current) {
+							bodies.advance(0.01, advance_t, current);
+						}
+					}, Hints.NO_DEPENDENTS);
+					rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
+				}
+			}, Hints.LOOPS);
+			rt.schedule(tmain, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
 			
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+		}		
 	}
 }
 
@@ -110,18 +113,23 @@ class AeAdvanceBody implements Body {
 
 	@Override
 	public void execute(Runtime rt, Task current) throws Exception {
+		if (end-start <= 2) {
+			advance();
+			return;
+		}
+		
 		if (Benchmark.useThreshold ? end-start < threshold : !rt.parallelize(current)) {
 			advance();
 		} else {
-			int mid = (end - start) / 4 + start;
+			int mid = (end - start) / 2 + start;
 			
 			Body b = new AeAdvanceBody(runtime, bodies, start, mid, dt, threshold);
 			Task t1 = runtime.createNonBlockingTask(b, (short) (Hints.RECURSION & Hints.LARGE));
-			runtime.schedule(t1, current, Runtime.NO_DEPS);
+			runtime.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			
 			Body b2 = new AeAdvanceBody(runtime, bodies, mid, end, dt, threshold);
 			Task t2 = runtime.createNonBlockingTask(b2, (short) (Hints.RECURSION & Hints.LARGE));
-			runtime.schedule(t2, current, Runtime.NO_DEPS);
+			runtime.schedule(t2, Runtime.NO_PARENT, Runtime.NO_DEPS);
 		}
 	}
 	

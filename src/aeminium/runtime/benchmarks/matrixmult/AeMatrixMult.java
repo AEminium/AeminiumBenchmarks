@@ -1,5 +1,6 @@
 package aeminium.runtime.benchmarks.matrixmult;
 
+import aeminium.runtime.Body;
 import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
@@ -33,41 +34,42 @@ public class AeMatrixMult {
 		second = Matrix.createMatrix(p,q);
 		result = new int[m][q];
 		
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
 		
-		Task outerFor = ForTask.createFor(rt, new Range(m), new ForBody<Integer>() {
+		while (!be.stop()) {
+			be.start();
+			rt.init();
+			Task tmain = rt.createNonBlockingTask(new Body() {
 
-			@Override
-			public void iterate(final Integer c, Runtime rt, Task current) {
-				Task innerFor = ForTask.createFor(rt, new Range(q), new ForBody<Integer>() {
-
-					@Override
-					public void iterate(Integer d, Runtime rt, Task inner) {
-						int sum = 0;
-						for (int k = 0; k < p; k++) {
-							sum += first[c][k] * second[k][d];
+				@Override
+				public void execute(Runtime rt, Task current) throws Exception {
+					Task outerFor = ForTask.createFor(rt, new Range(m), new ForBody<Integer>() {
+						
+						@Override
+						public void iterate(final Integer c, Runtime rt, Task current) {
+							Task innerFor = ForTask.createFor(rt, new Range(q), new ForBody<Integer>() {
+			
+								@Override
+								public void iterate(Integer d, Runtime rt, Task inner) {
+									int sum = 0;
+									for (int k = 0; k < p; k++) {
+										sum += first[c][k] * second[k][d];
+									}
+									result[c][d] = sum;
+								}
+							}, (short)(Hints.LOOPS | Hints.LARGE));
+							rt.schedule(innerFor, current, Runtime.NO_DEPS);
+							
 						}
-						result[c][d] = sum;
-					}
-				}, (short)(Hints.LOOPS | Hints.LARGE));
-				rt.schedule(innerFor, current, Runtime.NO_DEPS);
+					}, Hints.LOOPS);
+					rt.schedule(outerFor, current, Runtime.NO_DEPS);
+				}
 				
-			}
-		}, Hints.LOOPS);
-		rt.schedule(outerFor, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();
-
-		if (be.verbose) {
-			System.out.println("Product of entered matrices:-");
-			for (int c = 0; c < m; c++) {
-				for (int d = 0; d < q; d++)
-					System.out.print(result[c][d] + "\t");
-				System.out.print("\n");
-			}
+			}, Hints.LOOPS);
+			rt.schedule(tmain, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
 		}
 	}
 }

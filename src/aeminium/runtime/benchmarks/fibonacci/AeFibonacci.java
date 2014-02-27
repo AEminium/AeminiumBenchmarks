@@ -84,17 +84,21 @@ public class AeFibonacci {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 		
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		FibBody body = new AeFibonacci.FibBody(fib, threshold);
-		Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
-		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("F(" + fib + ") = " + body.value);
+		
+		while (!be.stop()) {
+			be.start();
+			rt.init();
+			FibBody body = new AeFibonacci.FibBody(fib, threshold);
+			Task t1 = rt.createNonBlockingTask(body, Runtime.NO_HINTS);
+			rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("F(" + fib + ") = " + body.value);
+			}
 		}
+		
 	}
 }

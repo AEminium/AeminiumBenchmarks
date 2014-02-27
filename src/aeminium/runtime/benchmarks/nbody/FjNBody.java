@@ -28,17 +28,19 @@ public class FjNBody {
 			apply_t = Integer.parseInt(be.args[3]);
 		}
 
-		FJNBodySystem bodies = new FJNBodySystem(NBody.generateRandomBodies(size, 1L), new ForkJoinPool());		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
+		while (!be.stop()) {
+			FJNBodySystem bodies = new FJNBodySystem(NBody.generateRandomBodies(size, 1L), new ForkJoinPool());
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+			be.start();
 		
-		be.start();
-		for (int i = 0; i < n; ++i)
-			bodies.advance(0.01, advance_t, apply_t);
-		be.end();
+			for (int i = 0; i < n; ++i)
+				bodies.advance(0.01, advance_t, apply_t);
+			be.end();
 		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+		}
 		
 	}
 }

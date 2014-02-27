@@ -26,11 +26,15 @@ public class SeqJacobi {
 		double[][] b = new double[dim][dim];
 
 		Jacobi.setup(size, a, b);
-		be.start();
-		double df = seqJacobi(size, steps, granularity, a, b);
-		be.end();
-		if (be.verbose) {
-			System.out.println("Total: " + df);
+		
+		while (!be.stop()) {
+			be.start();
+		
+			double df = seqJacobi(size, steps, granularity, a, b);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Total: " + df);
+			}
 		}
 	}
 

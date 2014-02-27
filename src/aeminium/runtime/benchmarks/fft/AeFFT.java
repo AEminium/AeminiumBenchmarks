@@ -103,18 +103,22 @@ public class AeFFT {
 		
 		Complex[] input = FFT.createRandomComplexArray(size, new Random(1L));
 		
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-		FFTBody body = createFFTBody(rt, input, threshold);
-		Task t1 = rt.createNonBlockingTask(body, Hints.RECURSION);
-		rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			FFT.show(body.result, "Result");
-			FFT.show(SeqFFT.sequentialFFT(input), "Result Linear");
+		
+		while (!be.stop()) {
+	    	be.start();
+		
+			rt.init();
+			FFTBody body = createFFTBody(rt, input, threshold);
+			Task t1 = rt.createNonBlockingTask(body, Hints.RECURSION);
+			rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println(body.result[0]);
+	    		// FFT.show(body.result, "Result");
+			}
 		}
 	}
 }

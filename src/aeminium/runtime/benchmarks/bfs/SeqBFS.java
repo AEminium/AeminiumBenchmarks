@@ -12,12 +12,13 @@ public class SeqBFS {
 		if (be.args.length > 0) depth = Integer.parseInt(be.args[0]);
 		
 		Graph g = Graph.randomIntGraph(depth, Graph.DEFAULT_WIDTH, new Random(1L));
-		
-		be.start();
-		int f = seqCount(target, g);
-		be.end();
-		if (be.verbose) {
-			System.out.println("Found " + f + " occurrences of " + target);
+		while (!be.stop()) {
+			be.start();
+			int f = seqCount(target, g);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Found " + f + " occurrences of " + target);
+			}
 		}
 	}
 	

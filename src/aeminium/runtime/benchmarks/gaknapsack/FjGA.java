@@ -63,61 +63,66 @@ public class FjGA {
 		
 		Indiv[] pop = new Indiv[Knapsack.popSize];
 		Indiv[] next = new Indiv[Knapsack.popSize];
-		be.start();
+		
 		ForkJoinPool pool = new ForkJoinPool();
 		
-		// Initialize Population Randomly
-		pool.invoke(new Applier(pop, next, 0, Knapsack.popSize, new Action() {
-			@Override
-			public void lambda(Indiv[] pop, Indiv[] next, int i) {
-				pop[i] = Knapsack.createRandomIndiv();
-			}
-		},threshold));
-
-		// Main loop
-		for (int g=0; g<Knapsack.numGen; g++) {
-			// Sort by fitness
+		while (!be.stop()) {
+			Knapsack.resetSeed();
+			be.start();
+			
+			// Initialize Population Randomly
 			pool.invoke(new Applier(pop, next, 0, Knapsack.popSize, new Action() {
 				@Override
 				public void lambda(Indiv[] pop, Indiv[] next, int i) {
-					Knapsack.evaluate(pop[i]);
+					pop[i] = Knapsack.createRandomIndiv();
 				}
 			},threshold));
-			Arrays.sort(pop);
-			if (be.verbose) {
-				System.out.println("Best fit at " + g + ": " + pop[0].fitness);
+	
+			// Main loop
+			for (int g=0; g<Knapsack.numGen; g++) {
+				// Sort by fitness
+				pool.invoke(new Applier(pop, next, 0, Knapsack.popSize, new Action() {
+					@Override
+					public void lambda(Indiv[] pop, Indiv[] next, int i) {
+						Knapsack.evaluate(pop[i]);
+					}
+				},threshold));
+				Arrays.sort(pop);
+				if (be.verbose) {
+					System.out.println("Best fit at " + g + ": " + pop[0].fitness);
+				}
+				
+				// Elitism
+				pool.invoke(new Applier(pop, next, 0, Knapsack.elitism, new Action() {
+					@Override
+					public void lambda(Indiv[] pop, Indiv[] next, int i) {
+						next[Knapsack.popSize - i - 1] = pop[i];
+					}
+				},threshold));
+				
+				
+				// Recombine
+				pool.invoke(new Applier(pop, next, 0, Knapsack.popSize - Knapsack.elitism, new Action() {
+					@Override
+					public void lambda(Indiv[] pop, Indiv[] next, int i) {
+						Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
+						next[i] = Knapsack.recombine(pop[i], other);
+					}
+				},threshold));
+				
+				// Mutation
+				pool.invoke(new Applier(pop, next, 0, Knapsack.popSize - Knapsack.elitism, new Action() {
+					@Override
+					public void lambda(Indiv[] pop, Indiv[] next, int i) {
+						Knapsack.mutate(next[i]);
+					}
+				},threshold));
+				
+				Indiv[] tmp = pop;
+				pop = next;
+				next = tmp;
 			}
-			
-			// Elitism
-			pool.invoke(new Applier(pop, next, 0, Knapsack.elitism, new Action() {
-				@Override
-				public void lambda(Indiv[] pop, Indiv[] next, int i) {
-					next[Knapsack.popSize - i - 1] = pop[i];
-				}
-			},threshold));
-			
-			
-			// Recombine
-			pool.invoke(new Applier(pop, next, 0, Knapsack.popSize - Knapsack.elitism, new Action() {
-				@Override
-				public void lambda(Indiv[] pop, Indiv[] next, int i) {
-					Indiv other = (i < Knapsack.bestLimit) ? pop[i+1] : pop[i-Knapsack.bestLimit];
-					next[i] = Knapsack.recombine(pop[i], other);
-				}
-			},threshold));
-			
-			// Mutation
-			pool.invoke(new Applier(pop, next, 0, Knapsack.popSize - Knapsack.elitism, new Action() {
-				@Override
-				public void lambda(Indiv[] pop, Indiv[] next, int i) {
-					Knapsack.mutate(next[i]);
-				}
-			},threshold));
-			
-			Indiv[] tmp = pop;
-			pop = next;
-			next = tmp;
+			be.end();
 		}
-		be.end();
 	}
 }

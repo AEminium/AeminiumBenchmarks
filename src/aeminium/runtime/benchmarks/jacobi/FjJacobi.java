@@ -30,14 +30,18 @@ public class FjJacobi {
 		double[][] b = new double[dim][dim];
 
 		Jacobi.setup(size, a, b);
-		be.start();
 		ForkJoinPool fjp = new ForkJoinPool();
-		Driver driver = new Driver(a, b, 1, size, 1, size, steps, granularity);
-		fjp.invoke(driver);
-        fjp.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Total: " + driver.md);
+		
+		while (!be.stop()) {
+			be.start();
+		
+			Driver driver = new Driver(a, b, 1, size, 1, size, steps, granularity);
+			fjp.invoke(driver);
+       
+			be.end();
+			if (be.verbose) {
+				System.out.println("Total: " + driver.md);
+			}
 		}
 	}
 	

@@ -11,12 +11,14 @@ public class SeqFibonacci {
 		if (be.args.length > 0) {
 			fib = Integer.parseInt(be.args[0]);
 		}
-		
-		be.start();
-		long val = seqFib(fib);
-		be.end();
-		if (be.verbose) {
-			System.out.println("F(" + fib + ") = " + val);
+		while (!be.stop()) {
+			be.start();
+			long val = seqFib(fib);
+			be.end();
+			
+			if (be.verbose) {
+				System.out.println("F(" + fib + ") = " + val);
+			}
 		}
 	}
 	

@@ -21,22 +21,24 @@ public class SeqNQueens {
 		
 	    int[] solutions = new int[maxSize - minSize + 1];
 	    
-		be.start();
+	    while (!be.stop()) {
+	    	be.start();
 		
-		int c = 0;
-		for (int size = minSize; size <= maxSize; size++) {
-			solutions[c++] = solve(size);
-		}
-		
-		be.end();
-	    if (be.verbose) {
-	    	for (int i=0; i< (maxSize - minSize + 1); i++) {
-	    		int given = solutions[i];
-	    		int expected = NQueens.expectedSolutions[minSize + i]; 
-	    		if ( given != expected ) {
-	    			System.out.println( "Failed:" + (minSize + i) + ", given: " + given + " when expected " + expected);
-	    		}
+	    	int c = 0;
+	    	for (int size = minSize; size <= maxSize; size++) {
+	    		solutions[c++] = solve(size);
 	    	}
+		
+	    	be.end();
+		    if (be.verbose) {
+		    	for (int i=0; i< (maxSize - minSize + 1); i++) {
+		    		int given = solutions[i];
+		    		int expected = NQueens.expectedSolutions[minSize + i]; 
+		    		if ( given != expected ) {
+		    			System.out.println( "Failed:" + (minSize + i) + ", given: " + given + " when expected " + expected);
+		    		}
+		    	}
+		    }
 	    }
 	}
 

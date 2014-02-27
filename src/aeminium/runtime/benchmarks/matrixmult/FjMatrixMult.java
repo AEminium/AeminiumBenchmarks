@@ -69,20 +69,13 @@ public class FjMatrixMult extends RecursiveAction {
 		second = Matrix.createMatrix(p,q);
 		result = new int[m][q];
 
-		be.start();
-		
 		ForkJoinPool pool = new ForkJoinPool();
-		FjMatrixMult fj = new FjMatrixMult(0, m, 0, q, p, threshold);
-		pool.invoke(fj);
-		be.end();
-
-		if (be.verbose) {
-			System.out.println("Product of entered matrices:-");
-			for (int c = 0; c < m; c++) {
-				for (int d = 0; d < q; d++)
-					System.out.print(result[c][d] + "\t");
-				System.out.print("\n");
-			}
+		
+		while (!be.stop()) {
+			be.start();
+			FjMatrixMult fj = new FjMatrixMult(0, m, 0, q, p, threshold);
+			pool.invoke(fj);
+			be.end();
 		}
 	}
 	

@@ -26,12 +26,15 @@ public class FjConvexHull extends RecursiveAction {
 
 		ArrayList<Point> data = ConvexHull.generateData(size, new Random(1L));
 		ForkJoinPool pool = new ForkJoinPool();
-		be.start();
-		ArrayList<Point> result = FjConvexHull.quickHull(data, pool, threshold);
-		be.end();
-		if (be.verbose)
-			System.out.println(result.size());
-
+		
+		while (!be.stop()) {
+	    	be.start();
+			be.start();
+			ArrayList<Point> result = FjConvexHull.quickHull(data, pool, threshold);
+			be.end();
+			if (be.verbose)
+				System.out.println(result.size());
+		}
 	}
 
 	private Point A;

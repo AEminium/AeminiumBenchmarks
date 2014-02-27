@@ -122,43 +122,46 @@ public class AeKDTree {
 		final Point[] points = Point.generatePoints(size);
 		final Point[] closest = new Point[size];
 		
-		be.start();
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
 		
-		Task createTree = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				root = new AeKDTree(points, 0);
-				root.createSubTrees(points, 0, rt, current);
+		while (!be.stop()) {
+			be.start();
+			
+			rt.init();
+			
+			Task createTree = rt.createNonBlockingTask(new Body() {
+				@Override
+				public void execute(Runtime rt, Task current) throws Exception {
+					root = new AeKDTree(points, 0);
+					root.createSubTrees(points, 0, rt, current);
+				}
+			}, (short)(Hints.RECURSION));
+			rt.schedule(createTree, Runtime.NO_PARENT, Runtime.NO_DEPS);
+			
+			Task findClosest = ForTask.createFor(rt, new Range(points.length), new ForBody<Integer>(){
+				@Override
+				public void iterate(Integer i, Runtime rt, Task current) {
+					closest[i] = root.findClosest(points[i]);
+				}
+			}, Hints.LARGE);
+			rt.schedule(findClosest, Runtime.NO_PARENT, Arrays.asList(createTree));
+			
+			
+			Task findPoint = rt.createNonBlockingTask(new Body() {
+				@Override
+				public void execute(Runtime rt, Task current) throws Exception {
+					Point markPoint = new Point(10, 100);
+					result = root.findClosest(markPoint);
+				}
+			}, (short)(Hints.LARGE | Hints.NO_CHILDREN));
+			rt.schedule(findPoint, Runtime.NO_PARENT, Arrays.asList(findClosest));
+			
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("Closest:" + result);
 			}
-		}, (short)(Hints.RECURSION));
-		rt.schedule(createTree, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
-		Task findClosest = ForTask.createFor(rt, new Range(points.length), new ForBody<Integer>(){
-			@Override
-			public void iterate(Integer i, Runtime rt, Task current) {
-				closest[i] = root.findClosest(points[i]);
-			}
-		}, Hints.LARGE);
-		rt.schedule(findClosest, Runtime.NO_PARENT, Arrays.asList(createTree));
-		
-		
-		Task findPoint = rt.createNonBlockingTask(new Body() {
-			@Override
-			public void execute(Runtime rt, Task current) throws Exception {
-				Point markPoint = new Point(10, 100);
-				result = root.findClosest(markPoint);
-			}
-		}, (short)(Hints.LARGE | Hints.NO_CHILDREN));
-		rt.schedule(findPoint, Runtime.NO_PARENT, Arrays.asList(findClosest));
-		
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Closest:" + result);
 		}
-		
 	}
 }

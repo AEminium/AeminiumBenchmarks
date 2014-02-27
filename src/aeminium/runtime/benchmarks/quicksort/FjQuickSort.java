@@ -8,12 +8,12 @@ import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 @SuppressWarnings("serial")
 public class FjQuickSort extends RecursiveAction {
-	
+
 	long[] data;
 	int threshold;
 	int left;
 	int right;
-	
+
 	public FjQuickSort(long[] arrayToDivide, int left, int right, int threshold) {
 		this.data = arrayToDivide;
 		this.threshold = threshold;
@@ -32,13 +32,15 @@ public class FjQuickSort extends RecursiveAction {
 			threshold = Integer.parseInt(be.args[1]);
 		}
 		long[] original = ArrayHelper.generateRandomArray(size);
-		be.start();
 		ForkJoinPool pool = new ForkJoinPool();
-		FjQuickSort t = new FjQuickSort(original, 0, size-1, threshold);
-		pool.invoke(t);
-		be.end();
-		if (be.verbose) {
-			System.out.println("Sorted: " + ArrayHelper.checkArray(t.data));
+		while (!be.stop()) {
+			be.start();
+			FjQuickSort t = new FjQuickSort(original, 0, size-1, threshold);
+			pool.invoke(t);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Sorted: " + ArrayHelper.checkArray(t.data));
+			}
 		}
 	}
 
@@ -48,7 +50,7 @@ public class FjQuickSort extends RecursiveAction {
 			SeqQuickSort.sort(data);
 			return;
 		}
-		
+
 		final int index = QuickSort.partition(this.data, this.left, this.right);
 		FjQuickSort s1=null, s2=null;
 		if (this.left < index - 1) {
@@ -60,7 +62,7 @@ public class FjQuickSort extends RecursiveAction {
 			s2 = new FjQuickSort(this.data, index, this.right, threshold);
 			s2.compute();
 		}
-		
+
 		if (this.left < index - 1) {
 			s1.join();
 		}

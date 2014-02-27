@@ -17,12 +17,14 @@ public class SeqMergeSort {
 			size = Integer.parseInt(be.args[0]);
 		}
 		long[] original = ArrayHelper.generateRandomArray(size);
-		be.start();
-		SeqMergeSort sorter = new SeqMergeSort();
-		sorter.sort(original);
-		be.end();
-		if (be.verbose) {
-			System.out.println("Sorted: " + ArrayHelper.checkArray(original));
+		while (!be.stop()) {
+			be.start();
+			SeqMergeSort sorter = new SeqMergeSort();
+			sorter.sort(original);
+			be.end();
+			if (be.verbose) {
+				System.out.println("Sorted: " + ArrayHelper.checkArray(original));
+			}
 		}
 	}
 

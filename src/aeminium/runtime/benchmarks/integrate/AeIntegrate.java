@@ -22,19 +22,22 @@ public class AeIntegrate {
 	    	Integrate.errorTolerance = Math.pow(10, -exp);
 	    }
         
-        be.start();
         Runtime rt = Factory.getRuntime();
         rt.addErrorHandler(new PrintErrorHandler());
-		rt.init();
-
-		Task main = startCall(rt, Integrate.start, Integrate.end, 0);
-		rt.schedule(main, Runtime.NO_PARENT, Runtime.NO_DEPS);
-
-		rt.shutdown();
-		be.end();
-		if (be.verbose) {
-			System.out.println("Integral: " + integral);
-		}
+        
+        while (!be.stop()) {
+			be.start();
+			rt.init();
+	
+			Task main = startCall(rt, Integrate.start, Integrate.end, 0);
+			rt.schedule(main, Runtime.NO_PARENT, Runtime.NO_DEPS);
+	
+			rt.shutdown();
+			be.end();
+			if (be.verbose) {
+				System.out.println("Integral: " + integral);
+			}
+        }
 	
 	}
 

@@ -22,25 +22,18 @@ class SeqMatrixMult {
 		second = Matrix.createMatrix(p,q);
 		result = new int[m][q];
 
-		be.start();
-		for (int c = 0; c < m; c++) {
-			for (int d = 0; d < q; d++) {
-				int sum = 0;
-				for (int k = 0; k < p; k++) {
-					sum += first[c][k] * second[k][d];
-				}
-				result[c][d] = sum;
-			}
-		}
-		be.end();
-
-		if (be.verbose) {
-			System.out.println("Product of entered matrices:-");
+		while (!be.stop()) {
+			be.start();
 			for (int c = 0; c < m; c++) {
-				for (int d = 0; d < q; d++)
-					System.out.print(result[c][d] + "\t");
-				System.out.print("\n");
+				for (int d = 0; d < q; d++) {
+					int sum = 0;
+					for (int k = 0; k < p; k++) {
+						sum += first[c][k] * second[k][d];
+					}
+					result[c][d] = sum;
+				}
 			}
+			be.end();
 		}
 	}
 }

@@ -31,35 +31,36 @@ public class AeFor2NBody {
 
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-		
-		final AeFor2NBodySystem bodies = new AeFor2NBodySystem(NBody.generateRandomBodies(size, 1L), rt);
-		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
-		
-		be.start();
-		rt.init();
-		
-		Task t = ForTask.createFor(rt, new Range(n), new ForBody<Integer>() {
-			@Override
-			public void iterate(Integer i, Runtime rt, Task current) {
-				bodies.advance(0.01, current);
-			}
-		}, Hints.NO_DEPENDENTS);
-		rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
-		
-		rt.shutdown();
-		be.end();
-		
-		if (be.verbose)
-			System.out.printf("%.9f\n", bodies.energy());
-			
+
+		while (!be.stop()) {
+			final AeFor2NBodySystem bodies = new AeFor2NBodySystem(NBody.generateRandomBodies(size, 1L), rt);
+
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+
+			be.start();
+			rt.init();
+
+			Task t = ForTask.createFor(rt, new Range(n), new ForBody<Integer>() {
+				@Override
+				public void iterate(Integer i, Runtime rt, Task current) {
+					bodies.advance(0.01, current);
+				}
+			}, Hints.NO_DEPENDENTS);
+			rt.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
+
+			rt.shutdown();
+			be.end();
+
+			if (be.verbose)
+				System.out.printf("%.9f\n", bodies.energy());
+		}
 	}
 }
 
 
 class AeFor2NBodySystem extends NBodySystem {
-	
+
 	protected Runtime runtime;
 
 	public AeFor2NBodySystem(NBody[] data, Runtime rt) {
@@ -75,29 +76,29 @@ class AeFor2NBodySystem extends NBodySystem {
 				Task advance_inner = ForTask.createFor(runtime, new Range(i + 1, bodies.length), new ForBody<Integer>() {
 					@Override
 					public void iterate(Integer j, Runtime rt, Task inner) {
-							final NBody body = bodies[j];
-							double dx = iBody.x - body.x;
-							double dy = iBody.y - body.y;
-							double dz = iBody.z - body.z;
+						final NBody body = bodies[j];
+						double dx = iBody.x - body.x;
+						double dy = iBody.y - body.y;
+						double dz = iBody.z - body.z;
 
-							double dSquared = dx * dx + dy * dy + dz * dz;
-							double distance = Math.sqrt(dSquared);
-							double mag = dt / (dSquared * distance);
+						double dSquared = dx * dx + dy * dy + dz * dz;
+						double distance = Math.sqrt(dSquared);
+						double mag = dt / (dSquared * distance);
 
-							iBody.vx -= dx * body.mass * mag;
-							iBody.vy -= dy * body.mass * mag;
-							iBody.vz -= dz * body.mass * mag;
+						iBody.vx -= dx * body.mass * mag;
+						iBody.vy -= dy * body.mass * mag;
+						iBody.vz -= dz * body.mass * mag;
 
-							body.vx += dx * iBody.mass * mag;
-							body.vy += dy * iBody.mass * mag;
-							body.vz += dz * iBody.mass * mag;
+						body.vx += dx * iBody.mass * mag;
+						body.vy += dy * iBody.mass * mag;
+						body.vz += dz * iBody.mass * mag;
 					}
 				}, Hints.LARGE);
 				runtime.schedule(advance_inner, current, Runtime.NO_DEPS);
 			}
 		}, Hints.LARGE);
 		runtime.schedule(advance, parent, Runtime.NO_DEPS);
-		
+
 		Task apply = ForTask.createFor(runtime, new Range(bodies.length), new ForBody<Integer>() {
 			@Override
 			public void iterate(Integer i, Runtime rt, Task current) {
