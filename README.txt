@@ -41,6 +41,11 @@ MatrixMult: Multiplication of two 1000x1000 matrices.
 MergeSort: Sorts an array of 1000000 random longs using parallel mergesort.
 (Threshold 10000)
 
+MonteCarlo: A financial simulation, using Monte Carlo techniques to price 
+products derived from the price of an underlying asset. The code generates 
+N sample time series with the same mean and fluctuation as a series of 
+historical data. (Threshold is 10 iterations) Source: JavaGrande
+
 N-Body: Simulation predicting the individual motions of 50000 Jovian planets
  after three iterations.
 
