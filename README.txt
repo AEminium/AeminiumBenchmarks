@@ -65,6 +65,9 @@ darts and 48 of threshold.
 QuickSort: Sorts an array of 1000000 random longs using quicksort.
 (Threshold 10000)
 
+RayTracer: This benchmark measures the performance of a 3D raytracer. The scene 
+rendered contains 64 spheres, and is rendered at a resolution of 500x500 pixels.
+(Threshold is 10 pixels) Source: JavaGrande
 
 Running Benchmark Suite
 ==============================================================================
