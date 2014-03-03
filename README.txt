@@ -46,6 +46,13 @@ products derived from the price of an underlying asset. The code generates
 N sample time series with the same mean and fluctuation as a series of 
 historical data. (Threshold is 10 iterations) Source: JavaGrande
 
+MolDyn: MolDyn is an N-body code modelling particles interacting under a 
+Lennard-Jones potential in a cubic spatial volume with periodic boundary 
+conditions. Performance is reported in interactions per second. The number 
+of particles is give by N.  The computationally intense component of the 
+benchmark is the force calculation, which calculates the force on a particle 
+in a pair wise manner. (Threshold is 1000 particles) Source: JavaGrande
+
 N-Body: Simulation predicting the individual motions of 50000 Jovian planets
  after three iterations.
 
