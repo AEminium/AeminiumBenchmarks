@@ -21,6 +21,7 @@
 
 package aeminium.runtime.benchmarks.montecarlo;
 
+
 /**
  * Wrapper code to invoke the Application demonstrator.
  * 
@@ -51,7 +52,7 @@ public class CallAppDemo {
 	public void presults() {
 		ap.processSerial();
 	}
-
+	
 	public static void main(String[] args) {
 		CallAppDemo cad = new CallAppDemo();
 		cad.initialise();

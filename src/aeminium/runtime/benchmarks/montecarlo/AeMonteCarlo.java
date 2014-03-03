@@ -27,15 +27,14 @@ public class AeMonteCarlo extends MonteCarlo {
 	}
 
 	public void processResults(final boolean verbose, Runtime rt) throws DemoException {
-		Task merge = rt.createNonBlockingTask(new Body() {
+		Task merge =  rt.createNonBlockingTask(new Body() {
 
 			@Override
 			public void execute(Runtime rt, Task current) throws Exception {
 				double avgExpectedReturnRateMC = 0.0;
 				ToResult returnMC;
-				assert (nRunsMC == results.size());
-				// Create an instance of a RatePath, for accumulating the
-				// results of the Monte Carlo simulations.
+				assert(nRunsMC == results.size());
+				// Create an instance of a RatePath, for accumulating the results of the Monte Carlo simulations.
 				RatePath avgMCrate = new RatePath(nTimeStepsMC, "MC", 19990109, 19991231, dTime);
 				for (int i = 0; i < nRunsMC; i++) {
 					// First, create an instance which is supposed to generate a
@@ -51,8 +50,9 @@ public class AeMonteCarlo extends MonteCarlo {
 
 				JGFavgExpectedReturnRateMC = avgExpectedReturnRateMC;
 				if (verbose) {
-					System.out.println("Average over " + nRunsMC + ": expectedReturnRate=" + avgExpectedReturnRateMC + " volatility=" + avgVolatilityMC
-							+ JGFavgExpectedReturnRateMC);
+					System.out.println("Average over "+nRunsMC+": expectedReturnRate="+
+							avgExpectedReturnRateMC+" volatility="+avgVolatilityMC +
+							JGFavgExpectedReturnRateMC);
 				}
 			}
 		}, Hints.LOOPS);
@@ -79,7 +79,7 @@ public class AeMonteCarlo extends MonteCarlo {
 			}
 		}, Hints.LOOPS);
 		rt.schedule(tmain, Runtime.NO_PARENT, Runtime.NO_DEPS);
-
+		
 	}
 
 	public static void main(String[] args) {
@@ -101,7 +101,7 @@ public class AeMonteCarlo extends MonteCarlo {
 		}
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
-
+		
 		AeMonteCarlo mc = new AeMonteCarlo(fname, size1, size2, threshold);
 		mc.initSerial();
 		while (!be.stop()) {
@@ -114,7 +114,7 @@ public class AeMonteCarlo extends MonteCarlo {
 				e.printStackTrace();
 			}
 			rt.shutdown();
-			be.end();
+			be.end();		
 		}
 	}
 }

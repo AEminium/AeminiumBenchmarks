@@ -37,7 +37,7 @@ import java.util.*;
  * @version $Revision: 1.28 $ $Date: 1999/02/16 18:52:29 $
  */
 public class RatePath extends PathId {
-
+	
 	/**
 	 * Class variable for determining which field in the stock data should be
 	 * used. This is currently set to point to the 'closing price'.

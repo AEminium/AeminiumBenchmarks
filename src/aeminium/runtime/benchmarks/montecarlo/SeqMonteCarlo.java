@@ -12,12 +12,13 @@ public class SeqMonteCarlo extends MonteCarlo {
 		this.nRunsMC = nRunsMC;
 	}
 
+
+
 	public void processResults(boolean verbose) throws DemoException {
 		double avgExpectedReturnRateMC = 0.0;
 		ToResult returnMC;
-		assert (nRunsMC == results.size());
-		// Create an instance of a RatePath, for accumulating the results of the
-		// Monte Carlo simulations.
+		assert(nRunsMC == results.size());
+		// Create an instance of a RatePath, for accumulating the results of the Monte Carlo simulations.
 		RatePath avgMCrate = new RatePath(nTimeStepsMC, "MC", 19990109, 19991231, dTime);
 		for (int i = 0; i < nRunsMC; i++) {
 			// First, create an instance which is supposed to generate a
@@ -33,14 +34,15 @@ public class SeqMonteCarlo extends MonteCarlo {
 
 		JGFavgExpectedReturnRateMC = avgExpectedReturnRateMC;
 		if (verbose) {
-			System.out.println("Average over " + nRunsMC + ": expectedReturnRate=" + avgExpectedReturnRateMC + " volatility=" + avgVolatilityMC
-					+ JGFavgExpectedReturnRateMC);
+			System.out.println("Average over "+nRunsMC+": expectedReturnRate="+
+					avgExpectedReturnRateMC+" volatility="+avgVolatilityMC +
+					JGFavgExpectedReturnRateMC);
 		}
 	}
-
+	
 	public void run() {
 		results = new Vector<ToResult>(nRunsMC);
-
+		
 		PriceStock ps;
 		for (int iRun = 0; iRun < nRunsMC; iRun++) {
 			ps = new PriceStock();
@@ -49,14 +51,14 @@ public class SeqMonteCarlo extends MonteCarlo {
 			ps.run();
 			SeqMonteCarlo.results.addElement(ps.getResult());
 		}
-
+		
 	}
 
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
-
+		
 		String fname = be.args[0];
-
+		
 		int size1 = MonteCarlo.SIZE_1;
 		if (be.args.length > 1) {
 			size1 = Integer.parseInt(be.args[1]);
@@ -76,7 +78,7 @@ public class SeqMonteCarlo extends MonteCarlo {
 			} catch (DemoException e) {
 				e.printStackTrace();
 			}
-			be.end();
+			be.end();		
 		}
 	}
 

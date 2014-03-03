@@ -210,9 +210,9 @@ public class AppDemo {
 	 */
 	private void processResults() throws DemoException {
 		double avgExpectedReturnRateMC = 0.0;
-		// double avgVolatilityMC = 0.0;
-		// double runAvgExpectedReturnRateMC = 0.0;
-		// double runAvgVolatilityMC = 0.0;
+		//double avgVolatilityMC = 0.0;
+		//double runAvgExpectedReturnRateMC = 0.0;
+		//double runAvgVolatilityMC = 0.0;
 		ToResult returnMC;
 		if (nRunsMC != results.size()) {
 			System.out.println("Fatal: TaskRunner managed to finish with no all the results gathered in!");
@@ -229,9 +229,8 @@ public class AppDemo {
 			avgMCrate.inc_pathValue(returnMC.get_pathValue());
 			avgExpectedReturnRateMC += returnMC.get_expectedReturnRate();
 			avgVolatilityMC += returnMC.get_volatility();
-			// runAvgExpectedReturnRateMC = avgExpectedReturnRateMC / ((double)
-			// (i + 1));
-			// runAvgVolatilityMC = avgVolatilityMC / ((double) (i + 1));
+			//runAvgExpectedReturnRateMC = avgExpectedReturnRateMC / ((double) (i + 1));
+			//runAvgVolatilityMC = avgVolatilityMC / ((double) (i + 1));
 		} // for i;
 		avgMCrate.inc_pathValue((double) 1.0 / ((double) nRunsMC));
 		avgExpectedReturnRateMC /= nRunsMC;
@@ -243,8 +242,9 @@ public class AppDemo {
 
 		JGFavgExpectedReturnRateMC = avgExpectedReturnRateMC;
 
-		System.out.println("Average over " + nRunsMC + ": expectedReturnRate=" + avgExpectedReturnRateMC + " volatility=" + avgVolatilityMC
-				+ JGFavgExpectedReturnRateMC);
+		System.out.println("Average over "+nRunsMC+": expectedReturnRate="+
+		 avgExpectedReturnRateMC+" volatility="+avgVolatilityMC +
+		 JGFavgExpectedReturnRateMC);
 	}
 
 	//
