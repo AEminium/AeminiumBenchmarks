@@ -25,6 +25,10 @@ GA: Solves the Knapsack problem with 500 items using a Genetic Algorithm,
 with population size of 100, 100 generations, a probability of mutation 
 and recombination of 20% and elitism of the 10 best individuals.
 
+Heat: Heat diffusion simulation across a mesh of size 4096 x 1024 
+(based on algorithm from Cilk- 5.4.6). Leaf column size of 10 is 
+the granularity parameter. Timestep used is 200.
+
 Integrate: Approximation of the integrate of (x^2 + 1)*x from -2101.0 to 200
 with an error tolerance of 10^-11. (Threshold 10)
 
