@@ -22,7 +22,7 @@ public class AeConvexHull {
 
 		int threshold = ConvexHull.DEFAULT_THRESHOLD;
 		if (be.args.length > 1) {
-			size = Integer.parseInt(be.args[1]);
+			threshold = Integer.parseInt(be.args[1]);
 		}
 
 		Runtime rt = Factory.getRuntime();
