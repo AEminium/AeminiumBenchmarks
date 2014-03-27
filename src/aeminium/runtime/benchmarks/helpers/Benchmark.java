@@ -67,7 +67,11 @@ public class Benchmark {
 		if (debug) System.out.println("COV: " + cov);
 		if (cov < 0.02 || si > maxRepetitions) {
 			System.out.println(Stats.doubleMean(reps));
-			return true;
+			if (this.debug) {
+				return true;
+			} else {
+				System.exit(0);
+			}
 		}
 		return false;
 	}
