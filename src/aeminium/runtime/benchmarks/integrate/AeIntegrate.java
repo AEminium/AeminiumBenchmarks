@@ -21,6 +21,10 @@ public class AeIntegrate {
 			double exp = Double.parseDouble(be.args[0]);
 			Integrate.errorTolerance = Math.pow(10, -exp);
 		}
+		
+		if (be.args.length > 1) {
+			Integrate.threshold = Integer.parseInt(be.args[1]);
+		}
 
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());

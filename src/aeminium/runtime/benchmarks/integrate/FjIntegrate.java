@@ -81,6 +81,10 @@ public final class FjIntegrate {
 			double exp = Double.parseDouble(be.args[0]);
 			Integrate.errorTolerance = Math.pow(10, -exp);
 		}
+		
+		if (be.args.length > 1) {
+			Integrate.threshold = Integer.parseInt(be.args[1]);
+		}
 
 		ForkJoinPool g = new ForkJoinPool();
 		while (!be.stop()) {
