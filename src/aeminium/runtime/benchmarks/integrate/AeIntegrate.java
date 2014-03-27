@@ -96,7 +96,7 @@ public class AeIntegrate {
 				try {
 					ret = SeqIntegrate.recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
 				} catch (StackOverflowError e) {
-					e.printStackTrace();
+					System.exit(1);
 				}
 				return;
 			}
