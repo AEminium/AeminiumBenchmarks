@@ -1,7 +1,7 @@
 package aeminium.runtime.benchmarks.doall;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
@@ -28,7 +28,7 @@ public class FjDoAll {
 		protected void compute() {
 			if (st == end) {
 				target[st] = (this.isA) ? Math.sqrt(st) : Math.sin(st);
-			} else if (end - st < threshold) {
+			} else if (Benchmark.useThreshold ? end - st < threshold : !this.shouldFork()) {
 				for (int i = st; i < end; i++) {
 					target[i] = (this.isA) ? Math.sqrt(i) : Math.sin(i);
 				}
@@ -66,7 +66,7 @@ public class FjDoAll {
 		protected void compute() {
 			if (st == end) {
 				target[st] = src1[st] / src2[st];
-			} else if (end - st < threshold) {
+			} else if (Benchmark.useThreshold ? end - st < threshold : !this.shouldFork()) {
 				for (int i = st; i < end; i++) {
 					target[i] = src1[i] / src2[i];
 				}

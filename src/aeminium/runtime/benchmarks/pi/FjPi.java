@@ -1,10 +1,9 @@
 package aeminium.runtime.benchmarks.pi;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
-
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
+import jsr166e.ThreadLocalRandom;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
-import aeminium.utils.random.MersenneTwisterFast;
 
 public class FjPi extends RecursiveAction {
 	private static final long serialVersionUID = 175230925631318519L;
@@ -57,7 +56,7 @@ public class FjPi extends RecursiveAction {
 
 	protected void computeSeq() {
 		double x_coord, y_coord, r;
-		MersenneTwisterFast random = new MersenneTwisterFast(1L);
+		ThreadLocalRandom random = ThreadLocalRandom.current();
 		for (long i = 1; i <= n; i++) {
 			/* generate random numbers for x and y coordinates */
 			r = random.nextDouble();

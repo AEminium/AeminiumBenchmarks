@@ -2,10 +2,10 @@ package aeminium.runtime.benchmarks.kdtree;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ExecutionException;
+import jsr166e.ForkJoinPool;
+import jsr166e.ForkJoinTask;
+import jsr166e.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 

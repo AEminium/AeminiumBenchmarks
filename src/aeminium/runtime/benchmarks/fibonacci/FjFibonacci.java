@@ -19,8 +19,8 @@
 
 package aeminium.runtime.benchmarks.fibonacci;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
@@ -43,7 +43,7 @@ public class FjFibonacci extends RecursiveAction {
 	protected void compute() {
 		int n = number;
 		if (n <= 1) { /* do nothing */
-		} else if (n <= threshold) number = seqFib(n);
+		} else if (Benchmark.useThreshold ? n <= threshold : !this.shouldFork()) number = seqFib(n);
 		else {
 			FjFibonacci f1 = new FjFibonacci(n - 1, threshold);
 			FjFibonacci f2 = new FjFibonacci(n - 2, threshold);

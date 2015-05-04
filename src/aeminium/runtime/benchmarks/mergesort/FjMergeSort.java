@@ -2,8 +2,8 @@ package aeminium.runtime.benchmarks.mergesort;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveTask;
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveTask;
 
 import aeminium.runtime.benchmarks.helpers.ArrayHelper;
 import aeminium.runtime.benchmarks.helpers.Benchmark;

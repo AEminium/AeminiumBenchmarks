@@ -19,9 +19,9 @@
 
 package aeminium.runtime.benchmarks.fft;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
-
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
+import aeminium.runtime.benchmarks.bfs.Graph;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class FjFFT extends RecursiveAction {
@@ -49,7 +49,7 @@ public class FjFFT extends RecursiveAction {
 
 	protected void compute() {
 		if (n == 1) return;
-		if (n <= threshold) {
+		if (Benchmark.useThreshold ? n <= threshold : !this.shouldFork()) {
 			result = SeqFFT.sequentialFFT(result);
 			return;
 		}

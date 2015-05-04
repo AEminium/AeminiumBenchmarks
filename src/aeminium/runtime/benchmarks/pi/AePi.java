@@ -1,5 +1,6 @@
 package aeminium.runtime.benchmarks.pi;
 
+import jsr166e.ThreadLocalRandom;
 import aeminium.runtime.Body;
 import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
@@ -7,11 +8,8 @@ import aeminium.runtime.Task;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 import aeminium.runtime.implementations.Factory;
 import aeminium.utils.error.PrintErrorHandler;
-import aeminium.utils.random.MersenneTwisterFast;
 
 public class AePi {
-
-	public static MersenneTwisterFast random = new MersenneTwisterFast(1L);
 
 	public static class AePiBody implements Body {
 		public volatile long value;
@@ -25,18 +23,22 @@ public class AePi {
 		public long seqPi(long n) {
 			double x_coord, y_coord;
 			long score = 0;
+			ThreadLocalRandom random = ThreadLocalRandom.current();
 			for (long i = 0; i < n; i++) {
 				x_coord = (2.0 * random.nextDouble()) - 1.0;
 				y_coord = (2.0 * random.nextDouble()) - 1.0;
 
-				if ((x_coord * x_coord + y_coord * y_coord) <= 1.0) score++;
+				if ((x_coord * x_coord + y_coord * y_coord) <= 1.0)
+					score++;
 			}
 			return score;
 		}
 
 		@Override
 		public void execute(Runtime rt, Task current) {
-			if (value < 1 || (Benchmark.useThreshold ? value < threshold : !rt.parallelize(current))) {
+			if (value < 1
+					|| (Benchmark.useThreshold ? value < threshold : !rt
+							.parallelize(current))) {
 				value = seqPi(value);
 			} else {
 				AePiBody b1 = new AePiBody(value / 2, threshold);
@@ -79,7 +81,8 @@ public class AePi {
 			rt.shutdown();
 			be.end();
 			if (be.verbose) {
-				System.out.println("PI = " + (4.0 * (double) body.value / (double) darts));
+				System.out.println("PI = "
+						+ (4.0 * (double) body.value / (double) darts));
 			}
 		}
 

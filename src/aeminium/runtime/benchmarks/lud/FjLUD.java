@@ -1,8 +1,8 @@
 package aeminium.runtime.benchmarks.lud;
 
 import java.util.Random;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 

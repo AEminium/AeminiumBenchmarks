@@ -1,6 +1,6 @@
 package aeminium.runtime.benchmarks.gaknapsack;
 
-import aeminium.utils.random.MersenneTwisterFast;
+import jsr166e.ThreadLocalRandom;
 
 // Describes the KnapSack Problem
 public class Knapsack {
@@ -8,7 +8,7 @@ public class Knapsack {
 
 	public final static int numberOfItems = 10000;
 
-	public static MersenneTwisterFast rand = new MersenneTwisterFast(1L);
+	public static ThreadLocalRandom rand = ThreadLocalRandom.current();
 	public final static Item[] items = Knapsack.createItems(numberOfItems);
 
 	// GA Settings:
@@ -23,7 +23,7 @@ public class Knapsack {
 	public static int bestLimit = elitism;
 
 	public static void resetSeed() {
-		rand = new MersenneTwisterFast(1L);
+		rand = ThreadLocalRandom.current();
 	}
 
 	private static Item[] createItems(int n) {

@@ -15,6 +15,7 @@
 	<path id="classpath">  
 		<fileset dir="${lib.dir}" includes="**/*.jar"/>
 		<pathelement location="../AeminiumRuntime/bin/" />
+		<pathelement location="../ForkJoinWithCutoff/bin/" />
 		<path refid="rt.classpath" />
 	</path>
 	

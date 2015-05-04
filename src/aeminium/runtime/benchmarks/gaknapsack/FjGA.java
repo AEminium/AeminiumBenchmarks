@@ -1,8 +1,8 @@
 package aeminium.runtime.benchmarks.gaknapsack;
 
 import java.util.Arrays;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
@@ -35,7 +35,7 @@ public class FjGA {
 		protected void compute() {
 			if (st == end) {
 				action.lambda(pop, next, st);
-			} else if (end - st < threshold) {
+			} else if (Benchmark.useThreshold ? end - st < threshold : !this.shouldFork()) {
 				for (int i = st; i < end; i++) {
 					action.lambda(pop, next, i);
 				}

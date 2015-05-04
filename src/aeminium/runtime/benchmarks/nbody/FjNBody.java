@@ -1,9 +1,9 @@
 package aeminium.runtime.benchmarks.nbody;
 
 import java.util.Queue;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ForkJoinPool;
+import jsr166e.LinkedBlockingDeque;
+import jsr166e.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 

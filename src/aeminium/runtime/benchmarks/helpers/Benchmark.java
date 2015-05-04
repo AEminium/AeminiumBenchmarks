@@ -29,7 +29,7 @@ public class Benchmark {
 				verbose = false;
 			} else if (a.startsWith("-r")) {
 				String b = a.substring(2);
-				maxRepetitions = Integer.parseInt(b);
+				k = Integer.parseInt(b);
 			} else if (a.startsWith("-k")) {
 				String b = a.substring(2);
 				maxRepetitions = Integer.parseInt(b);

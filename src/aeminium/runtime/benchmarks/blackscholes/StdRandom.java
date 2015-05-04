@@ -1,6 +1,6 @@
 package aeminium.runtime.benchmarks.blackscholes;
 
-import aeminium.utils.random.MersenneTwisterFast;
+import jsr166e.ThreadLocalRandom;
 
 /**
  * <i>Standard random</i>. This class provides methods for generating random
@@ -13,14 +13,14 @@ import aeminium.utils.random.MersenneTwisterFast;
  */
 public final class StdRandom {
 
-	private static MersenneTwisterFast random; // pseudo-random number generator
+	private static ThreadLocalRandom random;
 	private static long seed; // pseudo-random number generator seed
 
 	// static initializer
 	static {
 		// this is how the seed was set in Java 1.4
 		seed = System.currentTimeMillis();
-		random = new MersenneTwisterFast(seed);
+		random = ThreadLocalRandom.current();
 	}
 
 	// don't instantiate
@@ -32,7 +32,7 @@ public final class StdRandom {
 	 */
 	public static void setSeed(long s) {
 		seed = s;
-		random = new MersenneTwisterFast(seed);
+		random = ThreadLocalRandom.current();
 	}
 
 	/**

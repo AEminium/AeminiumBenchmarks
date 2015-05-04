@@ -3,7 +3,7 @@ package aeminium.utils.concurrent;
 import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.intBitsToFloat;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import jsr166e.atomic.AtomicInteger;
 
 @SuppressWarnings("serial")
 public class AtomicFloat extends Number {

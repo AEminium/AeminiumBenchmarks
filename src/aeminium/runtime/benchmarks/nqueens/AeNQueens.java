@@ -2,7 +2,7 @@ package aeminium.runtime.benchmarks.nqueens;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
+import jsr166e.atomic.AtomicInteger;
 
 import aeminium.runtime.Body;
 import aeminium.runtime.Hints;

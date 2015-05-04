@@ -22,9 +22,9 @@ package aeminium.runtime.benchmarks.bfs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ExecutionException;
 
+import jsr166e.RecursiveAction;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class FjBFS extends RecursiveAction {
@@ -52,8 +52,7 @@ public class FjBFS extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-
-		if (Graph.probe(graph, threshold)) {
+		if (Benchmark.useThreshold ? Graph.probe(graph, threshold) : !this.shouldFork()) {
 			found = seqCount();
 		} else {
 			if (target == graph.value) found = 1;

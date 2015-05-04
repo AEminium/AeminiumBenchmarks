@@ -1,6 +1,6 @@
 package aeminium.runtime.benchmarks.nbody;
 
-import aeminium.utils.random.MersenneTwisterFast;
+import java.util.Random;
 
 /*
  * Copyright (c) 2011.  Peter Lawrey
@@ -38,7 +38,7 @@ public class NBody {
 	public double vz;
 	public double mass;
 
-	public NBody(MersenneTwisterFast r) {
+	public NBody(Random r) {
 		x = r.nextDouble();
 		y = r.nextDouble();
 		z = r.nextDouble();
@@ -50,7 +50,7 @@ public class NBody {
 	}
 
 	public static NBody[] generateRandomBodies(int n, long seed) {
-		MersenneTwisterFast random = new MersenneTwisterFast(seed);
+		Random random = new Random(seed);
 		NBody[] r = new NBody[n];
 		for (int i = 0; i < n; i++)
 			r[i] = new NBody(random);

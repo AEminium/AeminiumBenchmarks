@@ -3,7 +3,7 @@ package aeminium.utils.concurrent;
 import static java.lang.Double.doubleToLongBits;
 import static java.lang.Double.longBitsToDouble;
 
-import java.util.concurrent.atomic.AtomicLong;
+import jsr166e.atomic.AtomicLong;
 
 @SuppressWarnings("serial")
 public class AtomicDouble extends Number {

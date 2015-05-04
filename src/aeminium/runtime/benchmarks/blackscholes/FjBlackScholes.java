@@ -1,9 +1,11 @@
 package aeminium.runtime.benchmarks.blackscholes;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
-import java.util.concurrent.RejectedExecutionException;
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
 
+import jsr166e.RejectedExecutionException;
+
+import aeminium.runtime.benchmarks.bfs.Graph;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class FjBlackScholes {
@@ -58,7 +60,7 @@ public class FjBlackScholes {
 				double price = S * Math.exp(r * T - 0.5 * sigma * sigma * T + sigma * eps * Math.sqrt(T));
 				double value = Math.max(price - X, 0);
 				sum = value;
-			} else if (top < threshold) {
+			} else if (Benchmark.useThreshold ? top < threshold : !this.shouldFork()) {
 				double s = 0;
 				for (int i = 0; i < top; i++) {
 					double price = S;
@@ -148,7 +150,10 @@ public class FjBlackScholes {
 
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
-		long N = Long.parseLong(be.args[0]);
+		long N = 1000;
+		if (be.args.length > 0) {
+			N = Long.parseLong(be.args[0]);
+		}
 
 		int threshold = BlackScholes.DEFAULT_THRESHOLD;
 		if (be.args.length > 1) {

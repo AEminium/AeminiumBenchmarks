@@ -2,8 +2,8 @@ package aeminium.runtime.benchmarks.convexhull;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import jsr166e.ForkJoinPool;
+import jsr166e.RecursiveAction;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
@@ -95,7 +95,7 @@ public class FjConvexHull extends RecursiveAction {
 			}
 		}
 
-		if (set.size() < threshold) {
+		if (Benchmark.useThreshold ? set.size() < threshold : !this.shouldFork()) {
 			SeqConvexHull.hullSet(A, P, leftSetAP, hull);
 			SeqConvexHull.hullSet(P, B, leftSetPB, hull);
 		} else {
