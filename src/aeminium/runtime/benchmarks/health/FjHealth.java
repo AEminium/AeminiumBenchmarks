@@ -24,7 +24,7 @@ public class FjHealth extends RecursiveAction {
 	}
 
 	protected void explore(Village v) {
-		if (v.level > threshold) {
+		if (Benchmark.useThreshold ? v.level > threshold : this.shouldFork()) {
 			List<FjHealth> exp = new ArrayList<FjHealth>();
 			for (Village child : v.children) {
 				FjHealth e = new FjHealth(child,threshold);

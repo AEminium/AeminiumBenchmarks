@@ -34,9 +34,9 @@ package aeminium.runtime.benchmarks.nqueens;
  */
 
 import java.util.Arrays;
+
 import jsr166e.ForkJoinPool;
 import jsr166e.RecursiveAction;
-
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class FjNQueens extends RecursiveAction {
@@ -55,6 +55,11 @@ public class FjNQueens extends RecursiveAction {
 		if (be.args.length > 1) {
 			maxSize = Integer.parseInt(be.args[1]);
 		}
+		
+		int threshold = NQueens.DEFAULT_THRESHOLD;
+		if (be.args.length > 2) {
+			threshold = Integer.parseInt(be.args[2]);
+		}
 
 		int[] solutions = new int[maxSize - minSize + 1];
 
@@ -64,7 +69,7 @@ public class FjNQueens extends RecursiveAction {
 
 			int c = 0;
 			for (int size = minSize; size <= maxSize; size++) {
-				FjNQueens task = new FjNQueens(size, new int[0]);
+				FjNQueens task = new FjNQueens(size, new int[0], threshold);
 				g.invoke(task);
 				solutions[c++] = task.solutions;
 			}
@@ -89,8 +94,9 @@ public class FjNQueens extends RecursiveAction {
 	FjNQueens nextSubtask; // to link subtasks
 	int solutions;
 	int boardSize;
-
-	FjNQueens(int bs, int[] a) {
+	int threshold = 3;
+	
+	FjNQueens(int bs, int[] a, int threshold) {
 		this.sofar = a;
 		this.boardSize = bs;
 	}
@@ -99,10 +105,16 @@ public class FjNQueens extends RecursiveAction {
 		FjNQueens subtasks;
 		int bs = boardSize;
 		if (sofar.length >= bs) solutions = 1;
-		else if ((subtasks = explore(sofar, bs)) != null) solutions = processSubtasks(subtasks);
+		else 
+			if (Benchmark.useThreshold ? bs-sofar.length <= threshold : !this.shouldFork()) {
+				solutions = solve(bs, sofar);
+			} else {
+				if ((subtasks = explore(sofar, bs)) != null) solutions = processSubtasks(subtasks);
+			}
+
 	}
 
-	private static FjNQueens explore(int[] array, int bs) {
+	private FjNQueens explore(int[] array, int bs) {
 		int row = array.length;
 		FjNQueens s = null; // subtask list
 		outer: for (int q = 0; q < bs; ++q) {
@@ -110,13 +122,13 @@ public class FjNQueens extends RecursiveAction {
 				int p = array[i];
 				if (q == p || q == p - (row - i) || q == p + (row - i)) continue outer; // attacked
 			}
-			FjNQueens first = s; // lag forks to ensure 1 kept
-			if (first != null) first.fork();
-			int[] next = Arrays.copyOf(array, row + 1);
-			next[row] = q;
-			FjNQueens subtask = new FjNQueens(bs, next);
-			subtask.nextSubtask = first;
-			s = subtask;
+				FjNQueens first = s; // lag forks to ensure 1 kept
+				if (first != null) first.fork();
+				int[] next = Arrays.copyOf(array, row + 1);
+				next[row] = q;
+				FjNQueens subtask = new FjNQueens(bs, next, threshold);
+				subtask.nextSubtask = first;
+				s = subtask;
 		}
 		return s;
 	}
@@ -139,5 +151,25 @@ public class FjNQueens extends RecursiveAction {
 			s = s.nextSubtask;
 		}
 		return ns;
+	}
+	
+	public static int solve(int bs, int[] array) {
+		if (array.length >= bs) {
+			return 1;
+		} else {
+			int solutions = 0;
+			int row = array.length;
+			outer: for (int q = 0; q < bs; ++q) {
+				for (int i = 0; i < row; i++) {
+					int p = array[i];
+					if (q == p || q == p - (row - i) || q == p + (row - i)) continue outer; // attacked
+				}
+
+				int[] next = Arrays.copyOf(array, row + 1);
+				next[row] = q;
+				solutions += solve(bs, next);
+			}
+			return solutions;
+		}
 	}
 }

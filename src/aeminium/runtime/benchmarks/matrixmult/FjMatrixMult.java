@@ -27,12 +27,12 @@ public class FjMatrixMult extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-		if (cf - ci > threshold) {
+		if (Benchmark.useThreshold ? cf - ci > threshold : this.shouldFork()) {
 			int half = (cf - ci) / 2 + ci;
 			FjMatrixMult p1 = new FjMatrixMult(ci, half, di, df, p, threshold);
 			FjMatrixMult p2 = new FjMatrixMult(half, cf, di, df, p, threshold);
 			invokeAll(p1, p2);
-		} else if (df - di > threshold) {
+		} else if (Benchmark.useThreshold ? df - di > threshold : this.shouldFork()) {
 			int half = (df - di) / 2 + di;
 			FjMatrixMult p1 = new FjMatrixMult(ci, cf, di, half, p, threshold);
 			FjMatrixMult p2 = new FjMatrixMult(ci, cf, half, df, p, threshold);

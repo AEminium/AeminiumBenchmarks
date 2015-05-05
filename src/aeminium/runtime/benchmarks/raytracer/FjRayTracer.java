@@ -63,7 +63,7 @@ public class FjRayTracer extends RayTracer {
 
 		@Override
 		protected void compute() {
-			if (to - fro < threshold) {
+			if (Benchmark.useThreshold ? to - fro < threshold : !this.shouldFork()) {
 				for (int y = fro; y < to; y++) {
 					renderLine(y, interval, r, col, viewVec, leftVec, upVec);
 				} // end for (y)

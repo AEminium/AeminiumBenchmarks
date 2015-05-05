@@ -2,10 +2,7 @@ package aeminium.runtime.benchmarks.blackscholes;
 
 import jsr166e.ForkJoinPool;
 import jsr166e.RecursiveAction;
-
 import jsr166e.RejectedExecutionException;
-
-import aeminium.runtime.benchmarks.bfs.Graph;
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
 public class FjBlackScholes {

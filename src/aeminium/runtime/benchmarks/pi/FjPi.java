@@ -44,7 +44,7 @@ public class FjPi extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-		if (n < threshold) {
+		if (Benchmark.useThreshold ? n < threshold : !this.shouldFork()) {
 			computeSeq();
 		} else {
 			FjPi f1 = new FjPi(n / 2, threshold);

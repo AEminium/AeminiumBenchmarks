@@ -1,7 +1,7 @@
 package aeminium.runtime.benchmarks.nqueens;
 
 public class NQueens {
-	public final static int DEFAULT_MIN_SIZE = 8;
+	public final static int DEFAULT_MIN_SIZE = 12;
 	public final static int DEFAULT_MAX_SIZE = 15;
 	public static final int DEFAULT_THRESHOLD = 8;
 

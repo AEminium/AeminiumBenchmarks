@@ -115,7 +115,7 @@ public class FjHeat extends Heat {
 		}
 
 		public void compute() {
-			if (ub - lb > threshold) {
+			if (Benchmark.useThreshold ? ub - lb > threshold : this.shouldFork()) {
 				int mid = (lb + ub) >>> 1;
 				Compute left = new Compute(lb, mid, time);
 				left.fork();

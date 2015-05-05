@@ -70,7 +70,7 @@ class Advancer extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-		if (end - start < threshold) {
+		if (Benchmark.useThreshold ? end - start < threshold : !this.shouldFork()) {
 			advance();
 		} else {
 			int mid = (end - start) / 4 + start;
@@ -134,7 +134,7 @@ class Applier extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-		if (end - start < threshold) {
+		if (Benchmark.useThreshold ? end - start < threshold : !this.shouldFork()) {
 			advance();
 		} else {
 			int mid = (end - start) / 2 + start;

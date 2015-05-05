@@ -46,7 +46,7 @@ public class FjQuickSort extends RecursiveAction {
 
 	@Override
 	protected void compute() {
-		if (data.length < threshold) {
+		if (Benchmark.useThreshold ? data.length < threshold : !this.shouldFork()) {
 			SeqQuickSort.sort(data);
 			return;
 		}

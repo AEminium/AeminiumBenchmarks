@@ -60,7 +60,7 @@ public class FjMonteCarlo extends MonteCarlo {
 		
 		@Override
 		protected void compute() {
-			if (top - bottom < threshold || top-bottom < 2) {
+			if (Benchmark.useThreshold ? top - bottom < threshold : !this.shouldFork() || top-bottom < 2) {
 				seq();
 			} else {
 				int mid = (top-bottom)/2 + bottom; 

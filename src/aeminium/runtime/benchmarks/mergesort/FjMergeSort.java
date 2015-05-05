@@ -51,7 +51,7 @@ public class FjMergeSort extends RecursiveTask<long[]> {
 		 * would be Arrays.sort(arrayToDivide) instead.
 		 */
 
-		if (arrayToDivide.length < threshold) {
+		if (Benchmark.useThreshold ? arrayToDivide.length < threshold : !this.shouldFork()) {
 			sequentialSort();
 			return arrayToDivide;
 		}
