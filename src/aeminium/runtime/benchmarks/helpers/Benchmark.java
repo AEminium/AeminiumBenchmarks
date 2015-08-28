@@ -32,7 +32,7 @@ public class Benchmark {
 				maxRepetitions = Integer.parseInt(b);
 			} else if (a.startsWith("-k")) {
 				String b = a.substring(2);
-				maxRepetitions = Integer.parseInt(b);
+				k = Integer.parseInt(b);
 			} else if (a.equals("-d")) {
 				debug = true;
 			} else {
