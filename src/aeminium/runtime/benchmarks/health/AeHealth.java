@@ -28,8 +28,8 @@ public class AeHealth {
 
 		final int threshold;
 		
-		if (be.args.length > 0) {
-			threshold = Integer.parseInt(be.args[0]);
+		if (be.args.length > 2) {
+			threshold = Integer.parseInt(be.args[2]);
 		} else {
 			threshold = Health.DEFAULT_THRESHOLD;
 		}
