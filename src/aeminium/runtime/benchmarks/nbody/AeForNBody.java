@@ -36,6 +36,7 @@ public class AeForNBody {
 		while (!be.stop()) {
 			final AeForNBodySystem bodies = new AeForNBodySystem(NBody.generateRandomBodies(size, 1L), rt);
 			if (be.verbose) System.out.printf("%.9f\n", bodies.energy());
+			be.start();
 			rt.init();
 			Task tmain = rt.createNonBlockingTask(new Body() {
 				@Override
