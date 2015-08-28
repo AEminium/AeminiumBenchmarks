@@ -1,5 +1,7 @@
 package aeminium.runtime.benchmarks.pi;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import aeminium.runtime.Body;
 import aeminium.runtime.Hints;
 import aeminium.runtime.Runtime;
@@ -10,9 +12,9 @@ import aeminium.utils.error.PrintErrorHandler;
 import aeminium.utils.random.MersenneTwisterFast;
 
 public class AePi {
-
-	public static MersenneTwisterFast random = new MersenneTwisterFast(1L);
-
+	
+	public static ThreadLocalRandom random = ThreadLocalRandom.current();
+	
 	public static class AePiBody implements Body {
 		public volatile long value;
 		private int threshold;
@@ -23,6 +25,7 @@ public class AePi {
 		}
 
 		public long seqPi(long n) {
+			MersenneTwisterFast random = new MersenneTwisterFast(1L);
 			double x_coord, y_coord;
 			long score = 0;
 			for (long i = 0; i < n; i++) {
