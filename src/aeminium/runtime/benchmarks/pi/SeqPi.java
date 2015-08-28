@@ -1,6 +1,6 @@
 package aeminium.runtime.benchmarks.pi;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import aeminium.runtime.benchmarks.helpers.Benchmark;
 
@@ -10,6 +10,8 @@ public class SeqPi {
 	public static final int DEFAULT_THRESHOLD = 100000;
 	public static final int DEFAULT_BLOCK = 128;
 
+	public static ThreadLocalRandom random = ThreadLocalRandom.current();
+	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		long dartsc = DEFAULT_DART_SIZE;
@@ -18,7 +20,6 @@ public class SeqPi {
 		}
 		while (!be.stop()) {
 			be.start();
-			Random random = new Random(1L);
 			double x_coord, y_coord, r;
 			long score = 0;
 			for (long n = 1; n <= dartsc; n++) {
