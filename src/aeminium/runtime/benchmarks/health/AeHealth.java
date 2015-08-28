@@ -15,11 +15,19 @@ public class AeHealth {
 		Benchmark be = new Benchmark(args);
 
 		int size = Health.sim_time;
+		int level = Health.sim_level;
+		
+		
 		if (be.args.length > 0) {
-			size = Integer.parseInt(be.args[0]);
+			level = Integer.parseInt(be.args[0]);
+		}
+		
+		if (be.args.length > 1) {
+			size = Integer.parseInt(be.args[1]);
 		}
 
 		final int threshold;
+		
 		if (be.args.length > 0) {
 			threshold = Integer.parseInt(be.args[0]);
 		} else {
@@ -29,7 +37,7 @@ public class AeHealth {
 		Runtime rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 
-		final AeVillage village = (AeVillage) Health.allocate_village(Health.sim_level, 0, null, true, threshold);
+		final AeVillage village = (AeVillage) Health.allocate_village(level, 0, null, true, threshold);
 
 		while (!be.stop()) {
 			be.start();

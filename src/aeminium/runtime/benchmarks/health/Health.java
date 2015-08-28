@@ -4,10 +4,10 @@ package aeminium.runtime.benchmarks.health;
 
 public class Health {
 public static final int DEFAULT_THRESHOLD = 5;
-	public static int sim_level = 6;
+	public static int sim_level = 5;
 	public static int sim_cities = 12;
 	public static int sim_population_ratio = 10;
-	public static int sim_time = 365/2;
+	public static int sim_time = 365;
 	public static int sim_assess_time = 2;
 	public static int sim_convalescence_time = 12;
 	public static int sim_seed = 23;
