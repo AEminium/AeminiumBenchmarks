@@ -93,12 +93,8 @@ public class AeIntegrate {
 				return;
 			}
 			if (Benchmark.useThreshold ? Math.abs(alr - area) <= Integrate.threshold : !rt.parallelize(current)) {
-				try {
-					ret = SeqIntegrate.recEval(l, r, fl, fr, area);
-					return;
-				} catch (StackOverflowError e) {
-					// Continue with parallel version
-				}
+				ret = SeqIntegrate.recEval(l, r, fl, fr, area);
+				return;
 			}
 
 			IntegralBody leftBody = new IntegralBody(l, c, fl, fc, al);
