@@ -93,7 +93,7 @@ public class AeIntegrate {
 				return;
 			}
 			if (Benchmark.useThreshold ? Math.abs(alr - area) <= Integrate.threshold : !rt.parallelize(current)) {
-				ret = SeqIntegrate.recEval(l, r, fl, fr, area);
+				ret = SeqIntegrate.recEval(c, r, fc, fr, ar) + SeqIntegrate.recEval(l, c, fl, fc, al);
 				return;
 			}
 
