@@ -54,7 +54,7 @@ public class AeIntegrate {
 				double fend = Integrate.computeFunction(end);
 				IntegralBody intBody = new IntegralBody(start, end, fstart, fend, a);
 				Task intTask = rt.createNonBlockingTask(intBody, Runtime.NO_HINTS);
-				rt.schedule(intTask, current, Runtime.NO_DEPS);
+				rt.schedule(intTask, Runtime.NO_PARENT, Runtime.NO_DEPS);
 				intTask.getResult();
 				integral = intBody.ret;
 			}
@@ -96,6 +96,7 @@ public class AeIntegrate {
 				try {
 					ret = SeqIntegrate.recEval(l, r, (l * l + 1.0) * l, (r * r + 1.0) * r, area);
 				} catch (StackOverflowError e) {
+					e.printStackTrace();
 					System.exit(1);
 				}
 				return;
@@ -103,10 +104,10 @@ public class AeIntegrate {
 
 			IntegralBody leftBody = new IntegralBody(l, c, fl, fc, al);
 			Task leftSide = rt.createNonBlockingTask(leftBody, (short) (Hints.RECURSION));
-			rt.schedule(leftSide, current, Runtime.NO_DEPS);
+			rt.schedule(leftSide, Runtime.NO_PARENT, Runtime.NO_DEPS);
 			IntegralBody rightBody = new IntegralBody(c, r, fc, fl, ar);
 			Task rightSide = rt.createNonBlockingTask(rightBody, (short) (Hints.RECURSION));
-			rt.schedule(rightSide, current, Runtime.NO_DEPS);
+			rt.schedule(rightSide, Runtime.NO_PARENT, Runtime.NO_DEPS);
 
 			leftSide.getResult();
 			rightSide.getResult();
