@@ -13,7 +13,7 @@ public class SeqPi {
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
 		long dartsc = DEFAULT_DART_SIZE;
-		if (be.args.length > 1) {
+		if (be.args.length > 0) {
 			dartsc = Integer.parseInt(be.args[0]);
 		}
 		while (!be.stop()) {
