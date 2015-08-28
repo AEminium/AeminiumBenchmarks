@@ -44,18 +44,25 @@ public class FjHealth extends RecursiveAction {
 		Benchmark be = new Benchmark(args);
 
 		int size = Health.sim_time;
+		int level = Health.sim_level;
+		
+		
 		if (be.args.length > 0) {
-			size = Integer.parseInt(be.args[0]);
+			level = Integer.parseInt(be.args[0]);
+		}
+		
+		if (be.args.length > 1) {
+			size = Integer.parseInt(be.args[1]);
 		}
 
 		int threshold = Health.DEFAULT_THRESHOLD;
-		if (be.args.length > 0) {
-			threshold = Integer.parseInt(be.args[0]);
+		if (be.args.length > 2) {
+			threshold = Integer.parseInt(be.args[2]);
 		}
 
 		ForkJoinPool pool = new ForkJoinPool();
 
-		Village village = Health.allocate_village(Health.sim_level, 0, null);
+		Village village = Health.allocate_village(level, 0, null);
 
 		while (!be.stop()) {
 			be.start();
