@@ -16,7 +16,8 @@ public class AePi {
 	public static ThreadLocalRandom random = ThreadLocalRandom.current();
 	
 	public static class AePiBody implements Body {
-		public volatile long value;
+		public long value;
+		public volatile long r;
 		private int threshold;
 
 		public AePiBody(long n, int threshold) {
@@ -40,7 +41,7 @@ public class AePi {
 		@Override
 		public void execute(Runtime rt, Task current) {
 			if (value < 1 || (Benchmark.useThreshold ? value < threshold : !rt.parallelize(current))) {
-				value = seqPi(value);
+				r = seqPi(value);
 			} else {
 				AePiBody b1 = new AePiBody(value / 2, threshold);
 				Task t1 = rt.createNonBlockingTask(b1, Hints.RECURSION);
@@ -53,7 +54,7 @@ public class AePi {
 				t1.getResult();
 				t2.getResult();
 
-				value = b1.value + b2.value;
+				r = b1.r + b2.r;
 			}
 		}
 	}
@@ -82,7 +83,7 @@ public class AePi {
 			rt.shutdown();
 			be.end();
 			if (be.verbose) {
-				System.out.println("PI = " + (4.0 * (double) body.value / (double) darts));
+				System.out.println("PI = " + (4.0 * (double) body.r / (double) darts));
 			}
 		}
 
