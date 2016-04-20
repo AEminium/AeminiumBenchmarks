@@ -80,10 +80,10 @@ public class AeNH {
 				int half2 = size - half1;
 				NHBody b1 = new NHBody(evals, next, start, half1, threshold);
 				Task t1 = AeNH.rt.createNonBlockingTask(b1, Hints.RECURSION);
-				AeNH.rt.schedule(t1, current, Runtime.NO_DEPS);
+				AeNH.rt.schedule(t1, Runtime.NO_PARENT, Runtime.NO_DEPS);
 				NHBody b2 = new NHBody(evals, next, start + half1, half2, threshold);
 				Task t2 = AeNH.rt.createNonBlockingTask(b2, Hints.RECURSION);
-				AeNH.rt.schedule(t2, current, Runtime.NO_DEPS);
+				AeNH.rt.schedule(t2, Runtime.NO_PARENT, Runtime.NO_DEPS);
 				t1.getResult();
 				t2.getResult();
 				if (b1.paretoSize != half1) System.arraycopy(next, start + half1, next, start + b1.paretoSize, b2.paretoSize);
