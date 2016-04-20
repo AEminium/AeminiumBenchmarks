@@ -11,7 +11,7 @@ public class NH {
 	
 	public static int NDIM = 2;
 
-	public static int threshold = 100000;
+	public static int threshold = 5000;
 	
 	public static int[][] importDataObjects(String fileName) {
         String line = null;
@@ -60,7 +60,7 @@ public class NH {
 		for (int[] o : objects) {
 			int[] evals = Arrays.copyOf(paretoFront, paretoFront.length * 2);
 			for (int i=0; i<paretoFront.length; i++) {
-				evals[paretoFront.length+i] = evals[i]+o[i % o.length];
+				evals[paretoFront.length+i] = evals[i] + o[i % o.length];
 			}
 			paretoFront = dom.getNonDominated(evals);
 		}

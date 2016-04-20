@@ -16,13 +16,8 @@ public class SeqNH {
 		if (be.args.length > 1) threshold = Integer.parseInt(args[2]);*/
 
 		while (!be.stop()) {
-			int[][] objects = NH.importDataObjects(fname); 
-			for (int[] a : objects) {
-				System.out.println("o: " + a[1]);
-			}
-		
+			int[][] objects = NH.importDataObjects(fname);
 			DominanceMethod dom = new SequentialDominance();
-			
 			be.start();
 			int[] paretoFront = NH.computeParetoNH(objects, dom);
 			be.end();
@@ -37,9 +32,9 @@ public class SeqNH {
 		public int[] getNonDominated(int[] evals) {
 			int c = 0;
 			int[] next = new int[evals.length];
-			for (int i = 0; i< evals.length/NH.NDIM; i+=NH.NDIM) {
+			for (int i = 0; i< evals.length; i+=NH.NDIM) {
 				boolean isDominated = false;
-				for (int j=i; j<evals.length/NH.NDIM; j+=NH.NDIM) {
+				for (int j=i; j<evals.length; j+=NH.NDIM) {
 					if (evals[i] < evals[j] && evals[i+1] > evals[j+1]) {
 						isDominated = true;
 						break;
