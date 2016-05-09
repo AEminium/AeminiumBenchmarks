@@ -53,23 +53,23 @@ public class AeMergeSort {
 			if (array.length <= 1) return;
 			if (Benchmark.useThreshold ? array.length < threshold : !rt.parallelize(current)) {
 				Arrays.sort(array);
-				return;
+			} else {
+				List<long[]> partitionedArray = partitionArray();
+				final MergeSortBody left = new MergeSortBody(partitionedArray.get(0));
+				Task leftT = rt.createNonBlockingTask(left, Hints.RECURSION);
+				rt.schedule(leftT, Runtime.NO_PARENT, Runtime.NO_DEPS);
+	
+				final MergeSortBody right = new MergeSortBody(partitionedArray.get(1));
+				Task rightT = rt.createNonBlockingTask(right, Hints.RECURSION);
+				rt.schedule(rightT, Runtime.NO_PARENT, Runtime.NO_DEPS);
+	
+				leftT.getResult();
+				rightT.getResult();
+	
+				long[] mergedArray = new long[right.array.length + left.array.length];
+				mergeArrays(left.array, right.array, mergedArray);
+				array = mergedArray;
 			}
-			List<long[]> partitionedArray = partitionArray();
-			final MergeSortBody left = new MergeSortBody(partitionedArray.get(0));
-			Task leftT = rt.createNonBlockingTask(left, Hints.RECURSION);
-			rt.schedule(leftT, Runtime.NO_PARENT, Runtime.NO_DEPS);
-
-			final MergeSortBody right = new MergeSortBody(partitionedArray.get(1));
-			Task rightT = rt.createNonBlockingTask(right, Hints.RECURSION);
-			rt.schedule(rightT, Runtime.NO_PARENT, Runtime.NO_DEPS);
-
-			leftT.getResult();
-			rightT.getResult();
-
-			long[] mergedArray = new long[right.array.length + left.array.length];
-			mergeArrays(left.array, right.array, mergedArray);
-			array = mergedArray;
 		}
 
 		private List<long[]> partitionArray() {

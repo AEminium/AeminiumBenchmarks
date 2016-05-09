@@ -34,26 +34,26 @@ public class AeQuickSort {
 			if (data.length <= 1) return;
 			if (Benchmark.useThreshold ? data.length < threshold : !rt.parallelize(current)) {
 				SeqQuickSort.sort(data);
-				return;
+			} else {
+	
+				final int index = QuickSort.partition(this.data, this.left, this.right);
+	
+				Task leftT = null;
+				Task rightT = null;
+				if (this.left < index - 1) {
+					QuickSortBody lb = new QuickSortBody(data, left, index - 1);
+					leftT = rt.createNonBlockingTask(lb, Hints.RECURSION);
+					rt.schedule(leftT, Runtime.NO_PARENT, Runtime.NO_DEPS);
+				}
+				if (index < this.right) {
+					QuickSortBody lr = new QuickSortBody(data, index, right);
+					rightT = rt.createNonBlockingTask(lr, Hints.RECURSION);
+					rt.schedule(rightT, Runtime.NO_PARENT, Runtime.NO_DEPS);
+				}
+	
+				if (leftT != null) leftT.getResult();
+				if (rightT != null) rightT.getResult();
 			}
-
-			final int index = QuickSort.partition(this.data, this.left, this.right);
-
-			Task leftT = null;
-			Task rightT = null;
-			if (this.left < index - 1) {
-				QuickSortBody lb = new QuickSortBody(data, left, index - 1);
-				leftT = rt.createNonBlockingTask(lb, Hints.RECURSION);
-				rt.schedule(leftT, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			}
-			if (index < this.right) {
-				QuickSortBody lr = new QuickSortBody(data, index, right);
-				rightT = rt.createNonBlockingTask(lr, Hints.RECURSION);
-				rt.schedule(rightT, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			}
-
-			if (leftT != null) leftT.getResult();
-			if (rightT != null) rightT.getResult();
 		}
 
 	}

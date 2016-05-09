@@ -94,19 +94,18 @@ public class AeIntegrate {
 			}
 			if (Benchmark.useThreshold ? Math.abs(alr - area) <= Integrate.threshold : !rt.parallelize(current)) {
 				ret = SeqIntegrate.recEval(c, r, fc, fr, ar) + SeqIntegrate.recEval(l, c, fl, fc, al);
-				return;
+			} else {
+				IntegralBody leftBody = new IntegralBody(l, c, fl, fc, al);
+				Task leftSide = rt.createNonBlockingTask(leftBody, (short) (Hints.RECURSION));
+				rt.schedule(leftSide, Runtime.NO_PARENT, Runtime.NO_DEPS);
+				IntegralBody rightBody = new IntegralBody(c, r, fc, fr, ar);
+				Task rightSide = rt.createNonBlockingTask(rightBody, (short) (Hints.RECURSION));
+				rt.schedule(rightSide, Runtime.NO_PARENT, Runtime.NO_DEPS);
+	
+				leftSide.getResult();
+				rightSide.getResult();
+				ret = rightBody.ret + leftBody.ret;
 			}
-
-			IntegralBody leftBody = new IntegralBody(l, c, fl, fc, al);
-			Task leftSide = rt.createNonBlockingTask(leftBody, (short) (Hints.RECURSION));
-			rt.schedule(leftSide, Runtime.NO_PARENT, Runtime.NO_DEPS);
-			IntegralBody rightBody = new IntegralBody(c, r, fc, fr, ar);
-			Task rightSide = rt.createNonBlockingTask(rightBody, (short) (Hints.RECURSION));
-			rt.schedule(rightSide, Runtime.NO_PARENT, Runtime.NO_DEPS);
-
-			leftSide.getResult();
-			rightSide.getResult();
-			ret = rightBody.ret + leftBody.ret;
 		}
 	}
 }

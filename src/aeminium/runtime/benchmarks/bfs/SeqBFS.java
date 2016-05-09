@@ -27,8 +27,9 @@ public class SeqBFS {
 		if (target == graph.value) t = 1;
 		else t = 0;
 
-		for (int i = 0; i < graph.children.length; i++) {
-			t += seqCount(target, graph.children[i]);
+		Graph[] children = graph.children;
+		for (int i = 0; i < children.length; i++) {
+			t += seqCount(target, children[i]);
 		}
 		return t;
 	}
