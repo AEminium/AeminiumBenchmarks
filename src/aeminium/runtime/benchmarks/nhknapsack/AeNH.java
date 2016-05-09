@@ -22,7 +22,13 @@ public class AeNH {
 			fname = be.args[0];
 		}
 		int threshold = NH.threshold;
-		if (be.args.length > 1) threshold = Integer.parseInt(args[2]);
+		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
+		
+		int lookahead = NH.lookahead;
+		if (be.args.length > 2) lookahead = Integer.parseInt(be.args[2]);
+		
+		int th = NH.lookahead_threshold;
+		if (be.args.length > 3) th = Integer.parseInt(be.args[3]);
 
 		rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
@@ -32,7 +38,7 @@ public class AeNH {
 			DominanceMethod dom = new AeminiumDominance(threshold);
 			be.start();
 			rt.init();
-			int[] paretoFront = NH.computeParetoNH(objects, dom);
+			int[] paretoFront = NH.computeParetoNHWithLookAhead(objects, dom, lookahead, th);
 			rt.shutdown();
 			be.end();
 			if (be.verbose) NH.printPareto(paretoFront);
@@ -88,21 +94,21 @@ public class AeNH {
 				t2.getResult();
 				if (b1.paretoSize != half1) System.arraycopy(next, start + half1, next, start + b1.paretoSize, b2.paretoSize);
 				paretoSize = b1.paretoSize + b2.paretoSize;
-				return;
-			}
-			for (int i = start; i<start+size; i+=NH.NDIM) {
-				boolean isDominated = false;
-				for (int j=i; j<evals.length; j+=NH.NDIM) {
-					if (evals[i] < evals[j] && evals[i+1] > evals[j+1]) {
-						isDominated = true;
-						break;
+			} else { 
+				for (int i = start; i<start+size; i+=NH.NDIM) {
+					boolean isDominated = false;
+					for (int j=i; j<evals.length; j+=NH.NDIM) {
+						if (evals[i] < evals[j] && evals[i+1] > evals[j+1]) {
+							isDominated = true;
+							break;
+						}
 					}
-				}
-				if (!isDominated) {
-					for (int k=0; k<NH.NDIM; k++) {
-						next[start + paretoSize + k] = evals[i+k];
+					if (!isDominated) {
+						for (int k=0; k<NH.NDIM; k++) {
+							next[start + paretoSize + k] = evals[i+k];
+						}
+						paretoSize += NH.NDIM;
 					}
-					paretoSize += NH.NDIM;
 				}
 			}
 			

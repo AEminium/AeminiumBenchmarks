@@ -9,9 +9,13 @@ import java.util.Arrays;
 
 public class NH {
 	
-	public static int NDIM = 2;
+	public static final int lookahead = 0;
 
-	public static int threshold = 5000;
+	public static final int NDIM = 2;
+
+	public static final int threshold = 5000;
+
+	public static final int lookahead_threshold = 100;
 	
 	public static int[][] importDataObjects(String fileName) {
         String line = null;
@@ -61,6 +65,28 @@ public class NH {
 			int[] evals = Arrays.copyOf(paretoFront, paretoFront.length * 2);
 			for (int i=0; i<paretoFront.length; i++) {
 				evals[paretoFront.length+i] = evals[i] + o[i % o.length];
+			}
+			paretoFront = dom.getNonDominated(evals);
+		}
+		return paretoFront;
+	}
+	
+	public static int[] computeParetoNHWithLookAhead(int[][] objects, DominanceMethod dom, int lookahead, int th) {
+		int[] paretoFront = new int[NDIM];
+		for (int i=0; i<NDIM; i++)
+			paretoFront[i] = 0;
+		
+		for (int oid =0; oid < objects.length; oid++) {
+			int look = lookahead;
+			if (lookahead == -1) {
+				look = (paretoFront.length < th) ? 1 : 0;
+			}
+			int[] evals = Arrays.copyOf(paretoFront, paretoFront.length * (2 + look) );
+			for (int l=0; l < (1+look) && oid+l < objects.length; l++) {
+				int[] o = objects[oid+l];
+				for (int i=0; i < paretoFront.length; i++) {
+					evals[ paretoFront.length * (1+l) + i ] = evals[i] + o[i % o.length];
+				}
 			}
 			paretoFront = dom.getNonDominated(evals);
 		}
