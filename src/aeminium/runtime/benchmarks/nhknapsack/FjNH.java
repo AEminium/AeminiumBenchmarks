@@ -13,11 +13,16 @@ public class FjNH {
 		if (be.args.length > 0) {
 			fname = be.args[0];
 		}
+		
+		int dim = NH.NDIM;
+		if (be.args.length > 1) dim = Integer.parseInt(be.args[1]);
+		NH.NDIM = dim;
+		
 		int threshold = NH.threshold;
-		if (be.args.length > 1) threshold = Integer.parseInt(args[2]);
+		if (be.args.length > 2) threshold = Integer.parseInt(args[2]);
 
 		while (!be.stop()) {
-			int[][] objects = NH.importDataObjects(fname);
+			int[][] objects = NH.importDataObjects(fname, dim);
 			DominanceMethod dom = new ForkJoinDominance(threshold);
 			be.start();
 			int[] paretoFront = NH.computeParetoNH(objects, dom);

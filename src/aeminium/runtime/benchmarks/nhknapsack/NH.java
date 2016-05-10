@@ -11,13 +11,13 @@ public class NH {
 	
 	public static final int lookahead = 0;
 
-	public static final int NDIM = 2;
+	public static int NDIM = 2;
 
 	public static final int threshold = 5000;
 
 	public static final int lookahead_threshold = 100;
 	
-	public static int[][] importDataObjects(String fileName) {
+	public static int[][] importDataObjects(String fileName, int dim) {
         String line = null;
         int[][] arr = null;
         int size = 0;
@@ -27,13 +27,14 @@ public class NH {
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             while((line = bufferedReader.readLine()) != null) {
             	if (size == 0) {
-            		size = Integer.parseInt(line);
-            		arr = new int[size][NDIM];
+            		size = Integer.parseInt(line.trim());
+            		arr = new int[size][dim];
             	} else {
-            		int[] o = new int[NDIM];
+            		int[] o = new int[dim];
             		String[] parts = line.trim().replaceAll(" +", " ").split(" ");
-            		o[0] = Integer.parseInt(parts[1].trim());
-            		o[1] = Integer.parseInt(parts[2].trim());
+            		for (int j=0; j<dim; j++) {
+            			o[j] = Integer.parseInt(parts[1+j].trim());
+            		}
             		arr[i++] = o;
             		if (i == size) break;
             	}
@@ -76,12 +77,19 @@ public class NH {
 		for (int i=0; i<NDIM; i++)
 			paretoFront[i] = 0;
 		
+		int look = lookahead;
+		int newSize = 2;
+		if (look != -1) {
+			for (int k=0;k<look;k++) {
+				newSize *= 2;
+			}
+		}
 		for (int oid =0; oid < objects.length; oid++) {
-			int look = lookahead;
 			if (lookahead == -1) {
 				look = (paretoFront.length < th) ? 1 : 0;
+				newSize = (look == 1) ? 4 : 2;
 			}
-			int[] evals = Arrays.copyOf(paretoFront, paretoFront.length * (2 + look) );
+			int[] evals = Arrays.copyOf(paretoFront, paretoFront.length * newSize );
 			for (int l=0; l < (1+look) && oid+l < objects.length; l++) {
 				int[] o = objects[oid+l];
 				for (int i=0; i < paretoFront.length; i++) {

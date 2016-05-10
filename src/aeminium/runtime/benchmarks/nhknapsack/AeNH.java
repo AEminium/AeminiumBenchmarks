@@ -21,20 +21,24 @@ public class AeNH {
 		if (be.args.length > 0) {
 			fname = be.args[0];
 		}
+		int dim = NH.NDIM;
+		if (be.args.length > 1) dim = Integer.parseInt(be.args[1]);
+		NH.NDIM = dim;
+		
 		int threshold = NH.threshold;
-		if (be.args.length > 1) threshold = Integer.parseInt(be.args[1]);
+		if (be.args.length > 2) threshold = Integer.parseInt(be.args[2]);
 		
 		int lookahead = NH.lookahead;
-		if (be.args.length > 2) lookahead = Integer.parseInt(be.args[2]);
+		if (be.args.length > 3) lookahead = Integer.parseInt(be.args[3]);
 		
 		int th = NH.lookahead_threshold;
-		if (be.args.length > 3) th = Integer.parseInt(be.args[3]);
+		if (be.args.length > 4) th = Integer.parseInt(be.args[4]);
 
 		rt = Factory.getRuntime();
 		rt.addErrorHandler(new PrintErrorHandler());
 		
 		while (!be.stop()) {
-			int[][] objects = NH.importDataObjects(fname);
+			int[][] objects = NH.importDataObjects(fname, dim);
 			DominanceMethod dom = new AeminiumDominance(threshold);
 			be.start();
 			rt.init();

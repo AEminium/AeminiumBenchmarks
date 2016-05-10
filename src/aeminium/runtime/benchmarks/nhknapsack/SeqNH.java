@@ -12,11 +12,12 @@ public class SeqNH {
 		if (be.args.length > 0) {
 			fname = be.args[0];
 		}
-		/*int threshold = NH.threshold;
-		if (be.args.length > 1) threshold = Integer.parseInt(args[2]);*/
+		int dim = NH.NDIM;
+		if (be.args.length > 1) dim = Integer.parseInt(be.args[1]);
+		NH.NDIM = dim;
 
 		while (!be.stop()) {
-			int[][] objects = NH.importDataObjects(fname);
+			int[][] objects = NH.importDataObjects(fname, dim);
 			DominanceMethod dom = new SequentialDominance();
 			be.start();
 			int[] paretoFront = NH.computeParetoNH(objects, dom);
