@@ -85,8 +85,7 @@ public class AeNH {
 		@Override
 		public void execute(Runtime rt, Task current) {
 			if (Benchmark.useThreshold ? size >= threshold * NH.NDIM : rt.parallelize(current) && size >= 4 * NH.NDIM) {
-				int half1 = size/2;
-				half1 -= half1 % NH.NDIM;
+				int half1 = (size/NH.NDIM)/2 * NH.NDIM;
 				int half2 = size - half1;
 				NHBody b1 = new NHBody(evals, next, start, half1, threshold);
 				Task t1 = AeNH.rt.createNonBlockingTask(b1, Hints.RECURSION);
@@ -101,11 +100,16 @@ public class AeNH {
 			} else { 
 				for (int i = start; i<start+size; i+=NH.NDIM) {
 					boolean isDominated = false;
-					for (int j=i; j<evals.length; j+=NH.NDIM) {
-						if (evals[i] < evals[j] && evals[i+1] > evals[j+1]) {
-							isDominated = true;
-							break;
+					for (int j=0; j<evals.length; j+=NH.NDIM) {
+						isDominated = true;
+						for (int k=0;k<NH.NDIM; k++) {
+							boolean cond = (k == 0) ? evals[i+k] > evals[j+k] : evals[i+k] < evals[j+k];
+							if (!cond) {
+								isDominated = false;
+								break;
+							}
 						}
+						if (isDominated) break;
 					}
 					if (!isDominated) {
 						for (int k=0; k<NH.NDIM; k++) {

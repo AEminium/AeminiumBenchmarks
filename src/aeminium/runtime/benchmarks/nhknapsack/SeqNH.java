@@ -35,11 +35,16 @@ public class SeqNH {
 			int[] next = new int[evals.length];
 			for (int i = 0; i< evals.length; i+=NH.NDIM) {
 				boolean isDominated = false;
-				for (int j=i; j<evals.length; j+=NH.NDIM) {
-					if (evals[i] < evals[j] && evals[i+1] > evals[j+1]) {
-						isDominated = true;
-						break;
+				for (int j=0; j<evals.length; j+=NH.NDIM) {
+					isDominated = true;
+					for (int k=0;k<NH.NDIM; k++) {
+						boolean cond = (k == 0) ? evals[i+k] > evals[j+k] : evals[i+k] < evals[j+k];
+						if (!cond) {
+							isDominated = false;
+							break;
+						}
 					}
+					if (isDominated) break;
 				}
 				if (!isDominated) {
 					for (int k=0; k<NH.NDIM; k++) {

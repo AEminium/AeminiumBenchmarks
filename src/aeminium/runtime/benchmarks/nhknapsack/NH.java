@@ -51,11 +51,13 @@ public class NH {
 	}
 	
 	public static void printPareto(int[] paretoFront) {
+		System.out.println(paretoFront.length);
+		/*
 		for (int i=0; i<paretoFront.length/NDIM; i+=NDIM) {
 			int value = paretoFront[i];
 			int weight = paretoFront[i+1];
 			System.out.println("v:" + value + ", w:" + weight);
-		}
+		}*/
 	}
 	
 	public static int[] computeParetoNH(int[][] objects, DominanceMethod dom) {
@@ -78,25 +80,23 @@ public class NH {
 			paretoFront[i] = 0;
 		
 		int look = lookahead;
-		int newSize = 2;
-		if (look != -1) {
-			for (int k=0;k<look;k++) {
-				newSize *= 2;
+		boolean last=false;
+		for (int oid =0; oid < objects.length; oid++) {
+			int[] evals = Arrays.copyOf(paretoFront, paretoFront.length * 2 );
+			int[] o = objects[oid];
+			for (int i=0; i < paretoFront.length; i++) {
+				evals[ paretoFront.length + i ] = evals[i] + o[i % o.length];
+			}
+			last = false;
+			if (look == 0 || (look > 0 && oid % (1+look) == 0 ) || ( look == -1 && evals.length >= th) ) {
+				paretoFront = dom.getNonDominated(evals);
+				last = true;
+			} else {
+				paretoFront = evals;
 			}
 		}
-		for (int oid =0; oid < objects.length; oid++) {
-			if (lookahead == -1) {
-				look = (paretoFront.length < th) ? 1 : 0;
-				newSize = (look == 1) ? 4 : 2;
-			}
-			int[] evals = Arrays.copyOf(paretoFront, paretoFront.length * newSize );
-			for (int l=0; l < (1+look) && oid+l < objects.length; l++) {
-				int[] o = objects[oid+l];
-				for (int i=0; i < paretoFront.length; i++) {
-					evals[ paretoFront.length * (1+l) + i ] = evals[i] + o[i % o.length];
-				}
-			}
-			paretoFront = dom.getNonDominated(evals);
+		if (!last) {
+			paretoFront = dom.getNonDominated(paretoFront);
 		}
 		return paretoFront;
 	}

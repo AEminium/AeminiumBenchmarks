@@ -80,10 +80,15 @@ public class FjNH {
 			for (int i = start; i<start+size; i+=NH.NDIM) {
 				boolean isDominated = false;
 				for (int j=i; j<evals.length; j+=NH.NDIM) {
-					if (evals[i] < evals[j] && evals[i+1] > evals[j+1]) {
-						isDominated = true;
-						break;
+					isDominated = false;
+					for (int k=0;k<NH.NDIM; k++) {
+						boolean cond = (k == 0) ? evals[i+k] > evals[j+k] : evals[i+k] < evals[j+k];
+						if (cond) {
+							isDominated = true;
+							break;
+						}
 					}
+					if (isDominated) break;
 				}
 				if (!isDominated) {
 					for (int k=0; k<NH.NDIM; k++) {
