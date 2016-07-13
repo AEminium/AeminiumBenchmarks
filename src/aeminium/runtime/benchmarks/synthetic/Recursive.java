@@ -58,9 +58,9 @@ public class Recursive {
 		LEAFS_SIDE_FACTOR = Integer.parseInt(be.args[9]);
 		
 		BRANCHING = Integer.parseInt(be.args[10]);
-		BRANCHING_DEPTH_FACTOR = Integer.parseInt(be.args[11]);
-		BRANCHING_STATIC_FACTOR = Integer.parseInt(be.args[12]);
-		BRANCHING_SIDE_FACTOR = Integer.parseInt(be.args[13]);
+		BRANCHING_STATIC_FACTOR = Integer.parseInt(be.args[11]);
+		BRANCHING_SIDE_FACTOR = Integer.parseInt(be.args[12]);
+		BRANCHING_DEPTH_FACTOR = Integer.parseInt(be.args[13]);
 		
 		
 		if (parallel) {
@@ -94,6 +94,7 @@ public class Recursive {
 		}
 		
 		public static int[] allocate(int size) {
+			if (size == 0) return null;
 			int[] a =  new int[size];
 			a[size-1] = 1;
 			return a;
@@ -121,11 +122,13 @@ public class Recursive {
 				System.out.println("Depth: " + depth + ", side: " + side);
 			}
 			allocate(ALLOCATION_BEFORE);
-			work((int) (BEFORE * side));
+			work((int) (BEFORE * (BEFORE_STATIC_FACTOR + side * BEFORE_SIDE_FACTOR + depth * BEFORE_DEPTH_FACTOR)));
 			if (depth < MAX_DEPTH) {
-				for (int i=0; i< BRANCHING; i++) {
+				for (int i=0; i< (BRANCHING * (BRANCHING_STATIC_FACTOR + side * BRANCHING_SIDE_FACTOR + depth * BRANCHING_DEPTH_FACTOR)); i++) {
 					seq(depth+1, side + (i * 100.0 )*(depth+1) );
 				}
+			} else {
+				work((int) (LEAFS * (LEAFS_STATIC_FACTOR + side * LEAFS_SIDE_FACTOR)));	
 			}
 		}
 		
@@ -146,7 +149,7 @@ public class Recursive {
 						ts[i] = rt.createNonBlockingTask(b, Hints.RECURSION);
 						rt.schedule(ts[i], Runtime.NO_PARENT, Runtime.NO_DEPS);
 					}
-					for (int i=0; i< BRANCHING; i++) {
+					for (int i=0; i< (BRANCHING * (BRANCHING_STATIC_FACTOR + side * BRANCHING_SIDE_FACTOR + depth * BRANCHING_DEPTH_FACTOR)); i++) {
 						ts[i].getResult();
 					}
 				} else {
