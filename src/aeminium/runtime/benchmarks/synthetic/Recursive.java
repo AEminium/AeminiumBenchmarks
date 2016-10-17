@@ -29,9 +29,9 @@ public class Recursive {
 	
 	
 	public static int BRANCHING = 2;
-	private static long BRANCHING_DEPTH_FACTOR = 0;
 	private static int BRANCHING_STATIC_FACTOR = 0;
 	private static double BRANCHING_SIDE_FACTOR = 0;
+	private static long BRANCHING_DEPTH_FACTOR = 0;
 	
 	public static void main(String[] args) {
 		Benchmark be = new Benchmark(args);
@@ -68,7 +68,7 @@ public class Recursive {
 			while (!be.stop()) {
 				be.start();
 				r.init();
-				Task t = r.createNonBlockingTask(new TBody(0, 0), Runtime.NO_HINTS);
+				Task t = r.createNonBlockingTask(new TBody(0, 1), Runtime.NO_HINTS);
 				r.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
 				r.shutdown();
 				be.end();
@@ -76,7 +76,7 @@ public class Recursive {
 		} else {
 			while (!be.stop()) {
 				be.start();
-				TBody.seq(0,0);
+				TBody.seq(0,1);
 				be.end();
 			}
 		}
@@ -86,9 +86,9 @@ public class Recursive {
 	public static class TBody implements Body {
 		
 		public volatile long depth;
-		public volatile double side;
+		public volatile long side;
 
-		public TBody(long n, double side) {
+		public TBody(long n, long side) {
 			this.depth = n;
 			this.side = side;
 		}
@@ -117,15 +117,16 @@ public class Recursive {
 		}
 		
 		
-		public static void seq(long depth, double side) {
+		public static void seq(long depth, long side) {
 			if (VERBOSE) {
 				System.out.println("Depth: " + depth + ", side: " + side);
 			}
 			allocate(ALLOCATION_BEFORE);
 			work((int) (BEFORE * (BEFORE_STATIC_FACTOR + side * BEFORE_SIDE_FACTOR + depth * BEFORE_DEPTH_FACTOR)));
-			if (depth < MAX_DEPTH) {
-				for (int i=0; i< (BRANCHING * (BRANCHING_STATIC_FACTOR + side * BRANCHING_SIDE_FACTOR + depth * BRANCHING_DEPTH_FACTOR)); i++) {
-					seq(depth+1, side + (i * 100.0 )*(depth+1) );
+			int br = (int) (BRANCHING * (BRANCHING_STATIC_FACTOR + side * BRANCHING_SIDE_FACTOR + depth * BRANCHING_DEPTH_FACTOR));
+			if (depth < MAX_DEPTH && br > 0) {
+				for (int i=0; i < br; i++) {
+					seq(depth+1, i);
 				}
 			} else {
 				work((int) (LEAFS * (LEAFS_STATIC_FACTOR + side * LEAFS_SIDE_FACTOR)));	
@@ -142,14 +143,15 @@ public class Recursive {
 			} else {
 				allocate(ALLOCATION_BEFORE);
 				work((int) (BEFORE * (BEFORE_STATIC_FACTOR + side * BEFORE_SIDE_FACTOR + depth * BEFORE_DEPTH_FACTOR)));
-				Task[] ts = new Task[BRANCHING];
-				if (depth < MAX_DEPTH) {
-					for (int i=0; i< (BRANCHING * (BRANCHING_STATIC_FACTOR + side * BRANCHING_SIDE_FACTOR + depth * BRANCHING_DEPTH_FACTOR) ); i++) {
-						Body b = new TBody(depth+1, side + (i * 100.0 )*(depth+1));
+				int br = (int) (BRANCHING * (BRANCHING_STATIC_FACTOR + side * BRANCHING_SIDE_FACTOR + depth * BRANCHING_DEPTH_FACTOR));
+				Task[] ts = new Task[br];
+				if (depth < MAX_DEPTH && br > 0) {
+					for (int i=0; i<br; i++) {
+						Body b = new TBody(depth+1, i);
 						ts[i] = rt.createNonBlockingTask(b, Hints.RECURSION);
 						rt.schedule(ts[i], Runtime.NO_PARENT, Runtime.NO_DEPS);
 					}
-					for (int i=0; i< (BRANCHING * (BRANCHING_STATIC_FACTOR + side * BRANCHING_SIDE_FACTOR + depth * BRANCHING_DEPTH_FACTOR)); i++) {
+					for (int i=0; i<br; i++) {
 						ts[i].getResult();
 					}
 				} else {
