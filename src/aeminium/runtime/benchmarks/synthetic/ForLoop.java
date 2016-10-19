@@ -17,34 +17,34 @@ public class ForLoop {
 	
 	public static boolean VERBOSE = false;
 	
-	public static int MAX_DEPTH = 10;
+	public static int MAX_DEPTH = 2;
 	
-	public static int ALLOCATION_BEFORE = 10000000;
+	public static int ALLOCATION_BEFORE = 0;
 	
-	public static int BEFORE = 1;
-	private static int BEFORE_STATIC_FACTOR = 1;
+	public static int BEFORE = 0;
+	private static int BEFORE_STATIC_FACTOR = 0;
 	private static double BEFORE_SIDE_FACTOR = 0;
 	
-	private static double LEAFS = 0;
-	private static double LEAFS_STATIC_FACTOR = 0;
+	private static double LEAFS = 1;
+	private static double LEAFS_STATIC_FACTOR = 5;
 	private static double LEAFS_SIDE_FACTOR = 0;
 	
-	private static double KERNELS = 0;
+	private static double KERNELS = 1;
+	private static int ITERATIONS = 10;
 	
 	public static Task createForLoop(Runtime r, final int depth) {
-		Task t = ForTask.createFor(r, new Range(0,1000), new ForBody<Integer>() {
+		Task t = ForTask.createFor(r, new Range(ITERATIONS), new ForBody<Integer>() {
 			@Override
 			public void iterate(Integer i, Runtime rt, Task current) {
 				work((int) (BEFORE * (BEFORE_STATIC_FACTOR + i * BEFORE_SIDE_FACTOR)));
 				if (depth == 0) {
-					work((int) (LEAFS * (LEAFS_STATIC_FACTOR + i * LEAFS_SIDE_FACTOR)));	
+					work((int) (LEAFS * (LEAFS_STATIC_FACTOR + i * LEAFS_SIDE_FACTOR)));
 				}
 				if (depth > 0) createForLoop(r, depth-1);
 			}}, Hints.LOOPS);
-		return t;
-		
+		r.schedule(t, Runtime.NO_PARENT, Runtime.NO_DEPS);
+		return t;	
 	}
-	
 	
 	public static int work(int its) {
 		int r = 1;
@@ -75,7 +75,7 @@ public class ForLoop {
 			VERBOSE = true;
 		}
 		
-		if (be.args.length < 10) {
+		if (be.args.length < 11) {
 			System.out.println("Not enough arguments");
 			System.exit(1);
 		}
@@ -93,6 +93,7 @@ public class ForLoop {
 		LEAFS_SIDE_FACTOR = Integer.parseInt(be.args[8]);
 		
 		KERNELS = Integer.parseInt(be.args[9]);
+		ITERATIONS = Integer.parseInt(be.args[10]);
 		
 		if (parallel) {
 			Runtime r = Factory.getRuntime();
@@ -101,7 +102,7 @@ public class ForLoop {
 				r.init();
 				allocate(ALLOCATION_BEFORE);
 				for (int i=0; i<KERNELS; i++)
-					createForLoop(r, MAX_DEPTH).getResult();
+					createForLoop(r, MAX_DEPTH);
 				r.shutdown();
 				be.end();
 			}	
